@@ -1,0 +1,23 @@
+﻿@model SurveyContributorRequestViewModel
+@{
+    ViewBag.Title = "Survey Contributor Request";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="alert alert-success" role="alert">
+    <p>@ViewBag.Message</p>
+</div>
+
+<form asp-action="RequestContributor" method="post">
+    <h3>
+        Add Contributor:
+    </h3>
+    <input asp-for="EmailAddress" type="email" placeholder="email address" />
+    <input type="hidden" asp-for="SurveyId" value="@ViewBag.SurveyId" />
+    <div class="row">
+        <div class="pull-right">
+            <input type="submit" name="Add" value="Add Contributor" />
+        </div>
+    </div>
+</form>

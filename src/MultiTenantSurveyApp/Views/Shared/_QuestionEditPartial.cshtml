@@ -1,0 +1,35 @@
+﻿@model QuestionDTO
+
+<div class="form-group">
+    <input asp-for="SurveyId" type="hidden" />
+    <span asp-validation-for="SurveyId" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="Text"></label>
+    <input asp-for="Text" class="form-control" placeholder="Question" />
+    <span asp-validation-for="Text" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="Type"></label>
+    <select asp-for="Type" class="form-control" placeholder="Type">
+        <option value="0">SimpleText</option>
+        <option value="1">MultipleChoice</option>
+        <option value="2">FiveStars</option>
+    </select>
+    <span asp-validation-for="Type" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="PossibleAnswers"></label>
+    <textarea asp-for="PossibleAnswers" class="form-control" rows="5" placeholder="PossibleAnswers"></textarea>
+    <span asp-validation-for="PossibleAnswers" class="text-danger"></span>
+</div>
+<div class="row">
+    <div class="pull-right">
+        <span class="text-info">(Enter one choice per line)</span>
+        <button type="submit" class="btn btn-default">Confirm</button>
+        <a asp-controller="Survey" asp-action="Edit" asp-route-id="@Model.SurveyId" class="btn btn-default">Back</a>
+    </div>
+</div>

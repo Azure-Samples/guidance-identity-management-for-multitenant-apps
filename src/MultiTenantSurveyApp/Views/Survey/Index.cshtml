@@ -1,0 +1,115 @@
+﻿@model UserSurveysDTO
+@{
+    ViewData["Title"] = "My Surveys";
+}
+<h2>@ViewData["Title"]</h2>
+
+<div class="list-group container">
+    <div class="list-group-item-heading">
+        <h3>Surveys I Created:</h3>
+    </div>
+    @if (Model.Own == null || !Model.Own.Any())
+    {
+        <div class="list-group-item-text">
+            <div class="alert alert-info" role="alert">
+                <p>No surveys have been added yet.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        foreach (var item in Model.Own)
+        {
+            <div class="list-group-item row">
+                <span>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </span>
+                <div class="pull-right">
+                    <span>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-default">Details</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-default">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-default">Delete</a>
+                        <a asp-action="ShowContributors" asp-route-id="@item.Id" class="btn btn-default">Contributors</a>
+                        <a asp-action="Publish" asp-route-id="@item.Id" class="btn btn-default">Publish</a>
+                    </span>
+                </div>
+            </div>
+        }
+    }
+    @if ((bool)ViewBag.IsUserCreator)
+    {
+        <div class="row pull-right">
+            <p>
+                <a asp-action="Create"  class="btn btn-default">Create Survey</a>
+            </p>
+        </div>
+    }
+</div>
+
+<div class="list-group container">
+    <div class="list-group-item-heading">
+        <h3>Surveys I Can Contribute To:</h3>
+    </div>
+    @if (Model.Contribute == null || !Model.Contribute.Any())
+    {
+        <div class="list-group-item-text alert alert-info" role="alert">
+            <p>
+                No surveys were found where you are a contributor.
+            </p>
+        </div>
+    }
+    else
+    {
+        foreach (var item in Model.Contribute)
+        {
+            <div class="list-group-item row">
+                <div class="col-md-8">
+                    @item.Title
+                </div>
+                <div class="col-md-4">
+                    <div class="pull-right">
+                        <span>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-default">Details</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-default">Edit</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div class="list-group container">
+    <div class="list-group-item-heading">
+        <h3>Surveys I Published:</h3>
+    </div>
+    @if (Model.Published == null || !Model.Published.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            <p>No surveys have been published yet.</p>
+        </div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var item in Model.Published)
+            {
+                <div class="list-group-item row">
+                    <div class="col-md-8">
+                        <span>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </span>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="pull-right">
+                            <span>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-default">Details</a>
+                                <a asp-action="UnPublish" asp-route-id="@item.Id" class="btn btn-default">UnPublish</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,13 @@
+﻿<div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+
+@if (ViewBag.Forbidden != null && ViewBag.Forbidden)
+{
+    <div class="text-danger validation-summary-errors">
+        <ul>
+            <li>
+                You are not allowed for the operation.
+                Check with your administrator for the permission.
+            </li>
+        </ul>
+    </div>
+}

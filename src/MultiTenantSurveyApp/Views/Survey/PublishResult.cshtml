@@ -1,0 +1,10 @@
+﻿@model SurveyDTO
+@{
+    ViewData["Title"] = "Publish Survey Result";
+}
+<h2>@ViewData["Title"]</h2>
+
+@Html.Partial("~/Views/Shared/_ValidationPartial")
+
+<p class="alert-success">@ViewBag.Message</p>
+@Html.Partial("~/Views/Shared/_SurveyDetailPartial", Model)

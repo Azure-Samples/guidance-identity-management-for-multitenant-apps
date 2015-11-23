@@ -1,0 +1,13 @@
+﻿@model QuestionDTO
+@{
+    ViewData["Title"] = "Edit Question";
+}
+<h2>@ViewData["Title"]</h2>
+
+@Html.Partial("~/Views/Shared/_ValidationPartial")
+
+<div>
+    <form asp-action="Edit" method="post">
+        @Html.Partial("~/Views/Shared/_QuestionEditPartial", Model)
+    </form>
+</div>

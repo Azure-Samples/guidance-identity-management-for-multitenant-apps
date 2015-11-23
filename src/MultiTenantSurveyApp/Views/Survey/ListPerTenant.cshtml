@@ -1,0 +1,87 @@
+﻿@model TenantSurveysDTO
+@{
+    ViewData["Title"] = "Tenant Surveys";
+}
+<h2>@ViewData["Title"]</h2>
+
+<div class="list-group container">
+    <div class="list-group-item-heading">
+        <h3>UnPublished:</h3>
+    </div>
+    @if (Model.UnPublished == null || !Model.UnPublished.Any())
+    {
+        <div class="list-group-item-text">
+            <div class="alert alert-info" role="alert">
+                <p>No pendings surveys found.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        foreach (var item in Model.UnPublished)
+        {
+            <div class="list-group-item row">
+                <span>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </span>
+                <div class="pull-right">
+                    @if ((bool)ViewBag.IsUserAdmin)
+                    {
+                        <span>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-default">Details</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-default">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-default">Delete</a>
+                            <a asp-action="ShowContributors" asp-route-id="@item.Id" class="btn btn-default">Contributors</a>
+                            <a asp-action="Publish" asp-route-id="@item.Id" class="btn btn-default">Publish</a>
+                        </span>
+                    }
+                    else
+                    {
+                        <span>
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        </span>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+<div class="list-group container">
+    <div class="list-group-item-heading">
+        <h3>Published:</h3>
+    </div>
+    @if (Model.Published == null || !Model.Published.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            <p>No surveys have been published yet.</p>
+        </div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var item in Model.Published)
+            {
+                <div class="list-group-item row">
+                    <span>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </span>
+                    <div class="pull-right">
+                        @if ((bool)ViewBag.IsUserAdmin)
+                        {
+                            <span>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-default">Details</a>
+                                <a asp-action="UnPublish" asp-route-id="@item.Id" class="btn btn-default">UnPublish</a>
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                            </span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

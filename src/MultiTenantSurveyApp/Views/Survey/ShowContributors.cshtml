@@ -1,0 +1,18 @@
+﻿@model ContributorsDTO
+
+@{
+    ViewData["Title"] = "Survey Contributors";
+}
+<h2>@ViewData["Title"]</h2>
+
+<ul class="list-group">
+    @foreach (var contributor in Model.Contributors)
+    {
+        <li class="list-group-item">@contributor.ObjectId</li>
+    }
+</ul>
+<div class="row pull-right">
+    <a asp-action="RequestContributor" asp-route-id="@ViewBag.SurveyId" class="btn btn-default">Add Contributors</a>
+    <a onclick="window.history.back()" class="btn btn-default">Back</a>
+</div>
+

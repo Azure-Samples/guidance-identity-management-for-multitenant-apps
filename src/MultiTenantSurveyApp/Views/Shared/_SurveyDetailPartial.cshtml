@@ -1,0 +1,54 @@
+﻿@model SurveyDTO
+
+<div class="container">
+    <div class="row">
+        <label class="col-md-2 control-label">
+            @Html.DisplayNameFor(model => model.Title)
+        </label>
+        <div class="col-md-10">
+            @Model.Title
+        </div>
+    </div>
+
+    <div class="row">
+        <label class="col-md-2 control-label">
+            @Html.DisplayNameFor(model => model.Published)
+        </label>
+        <div class="col-md-10">
+            @Model.Published
+        </div>
+    </div>
+
+    <h2>@Html.DisplayNameFor(model => model.Questions)</h2>
+    
+    @foreach (var item in Model.Questions)
+    {
+        <div class="row">
+            <label class="col-md-2 control-label">
+                @Html.DisplayNameFor(modelItem => item.Text)
+            </label>
+            <div class="col-md-10">
+                @Html.DisplayFor(modelItem => item.Text)
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-md-2 control-label">
+                @Html.DisplayNameFor(modelItem => item.Type)
+            </label>
+            <div class="col-md-10">
+                @Html.DisplayFor(modelItem => item.Type)
+            </div>
+        </div>
+        if (item.Type == QuestionType.MultipleChoice)
+        {
+            <div class="row">
+                <label class="col-md-2 control-label">
+                    @Html.DisplayNameFor(modelItem => item.PossibleAnswers)
+                </label>
+                <div class="col-md-10">
+                    <textarea rows="5" readonly>@Html.DisplayFor(modelItem => item.PossibleAnswers)</textarea>
+                </div>
+            </div>
+        }
+    }
+</div>

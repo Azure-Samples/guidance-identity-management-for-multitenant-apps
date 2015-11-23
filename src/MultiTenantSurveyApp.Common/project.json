@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0-*",
+  "description": "MultiTenantSurveyApp.Common Class Library",
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "frameworks": {
+    "dnx451": {
+      "dependencies": {
+      }
+    },
+    "dnxcore50": { }
+  },
+  "dependencies": {
+    "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+    "System.Net.Http": "4.0.1-beta-23516",
+    "Newtonsoft.Json": "7.0.1"
+  }
+}

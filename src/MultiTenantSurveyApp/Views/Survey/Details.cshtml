@@ -1,0 +1,16 @@
+﻿@model SurveyDTO
+@{
+    ViewData["Title"] = "Survey Detail";
+}
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="pull-right">
+        <a onclick="window.history.back()" class="btn btn-default">Back</a>
+    </div>
+</div>
+
+@Html.Partial("~/Views/Shared/_SurveyDetailPartial",Model)
+
+
+

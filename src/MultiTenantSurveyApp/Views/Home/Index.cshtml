@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNet.Authorization
+
+@model IEnumerable<SurveyDTO>
+@{
+    ViewData["Title"] = "Published Surveys";
+}
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="jumbotron">
+        <h1>
+            Welcome to Tailspin!
+        </h1>
+        <p><a asp-controller="Account" asp-action="SignUp" class="btn btn-primary btn-lg">Enroll your company in Tailspin!</a></p>
+        
+        <span> (You need to be an admin of the Azure Active Directroy of your company to enroll.) </span>
+    </div>
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        <p>No surveys have been published.</p>
+    </div>
+}
+else
+{
+    <div class="list-group container">
+        @foreach (var item in Model)
+        {
+            <div class="list-group-item row">
+                <a asp-action="Details" asp-route-id="@item.Id">
+                    @Html.DisplayFor(modelItem => item.Title)
+                </a>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,26 @@
+﻿@model SurveyDTO
+@{
+    ViewData["Title"] = "Create Survey";
+}
+<h2>@ViewData["Title"]</h2>
+
+
+<div>
+    @Html.Partial("~/Views/Shared/_ValidationPartial")
+
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <div class="row">
+                <label asp-for="Title"></label>
+            </div>
+            <div class="row">
+                <input asp-for="Title" class="form-control" placeholder="Title" />
+            </div>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="row">
+            @Html.Partial("~/Views/Shared/_ConfirmPartial")
+        </div>
+    </form>
+</div>
+
