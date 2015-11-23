@@ -29,7 +29,6 @@ namespace MultiTentantSurveyAppTests
 {
     public class SurveyControllerTests
     {
-        private Mock<IContributorRequestStore> _contributorRequestStore;
         private Mock<ISurveyService> _surveyService;
         private Mock<ILogger<SurveyController>> _logger;
         private Mock<IAccessTokenService> _accessTokenService;
@@ -38,7 +37,6 @@ namespace MultiTentantSurveyAppTests
 
         public SurveyControllerTests()
         {
-            _contributorRequestStore = new Mock<IContributorRequestStore>();
             _surveyService = new Mock<ISurveyService>();
             _logger = new Mock<ILogger<SurveyController>>();
             _accessTokenService = new Mock<IAccessTokenService>();
@@ -66,9 +64,6 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public async Task Index_GetsUserSurveys()
         {
-            _contributorRequestStore.Setup(c => c.GetRequestsForUserAsync("unregistereduser@contoso.com"))
-                .ReturnsAsync(null);
-
             var apiResultUserSurveys = new Mock<ApiResult<UserSurveysDTO>>();
             apiResultUserSurveys.SetupGet(s => s.Succeeded).Returns(true);
             apiResultUserSurveys.SetupGet(s => s.Item).Returns(new UserSurveysDTO());
@@ -103,9 +98,10 @@ namespace MultiTentantSurveyAppTests
         {
             var contributorRequestViewModel = new SurveyContributorRequestViewModel { SurveyId = 123, EmailAddress = "unregistereduser@contoso.com" };
 
+            var apiResult = new Mock<ApiResult>();
             var invitations = new List<ContributorRequest>();
-            _contributorRequestStore.Setup(c => c.AddRequestAsync(It.IsAny<ContributorRequest>()))
-                .Returns(Task.Delay(0))
+            _surveyService.Setup(c => c.AddContributorRequestAsync(It.IsAny<ContributorRequest>()))
+                .ReturnsAsync(apiResult.Object)
                 .Callback<ContributorRequest>(c => invitations.Add(c));
 
             var result = await _target.RequestContributor(contributorRequestViewModel);
