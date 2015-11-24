@@ -11,6 +11,10 @@ using MultiTenantSurveyApp.Services;
 
 namespace MultiTenantSurveyApp.Controllers
 {
+    /// <summary>
+    /// This MVC controller provides actions for the management of questions.
+    /// The actions in this controller class require the user to be signed in.
+    /// </summary>
     [Authorize]
     public class QuestionController : Controller
     {
@@ -23,12 +27,22 @@ namespace MultiTenantSurveyApp.Controllers
             _signInManager = signInManager;
         }
 
+        /// <summary>
+        /// This action provides the Http Get experience for creating a question in the context of a survey.
+        /// </summary>
+        /// <param name="id">The id of a survey</param>
+        /// <returns>A view with form fields for a new question</returns>
         public IActionResult Create(int id)
         {
             var question = new QuestionDTO { SurveyId = id };
             return View(question);
         }
 
+        /// <summary>
+        /// This action provides the Http Post experience for creating a question.
+        /// </summary>
+        /// <param name="question">The QuestionDTO instance that contains the fields necessary to create a question</param>
+        /// <returns>A view that either shows validation errors or a redirection to the Survey Edit experience</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(QuestionDTO question)
@@ -72,6 +86,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Get experience for editing a question.
+        /// </summary>
+        /// <param name="id">The id of a question</param>
+        /// <returns>A view with form fields for the question being edited</returns>
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -96,6 +115,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Post experience for editing a question.
+        /// </summary>
+        /// <param name="question">The QuestionDTO instance that contains the question's updated fields</param>
+        /// <returns>A view that either shows validation errors or a redirection to the Survey Edit experience</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(QuestionDTO question)
@@ -139,6 +163,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Get experience for deleting a question.
+        /// </summary>
+        /// <param name="id">The id of the question</param>
+        /// <returns>A view that shows a delete confirmation prompt</returns>
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -163,6 +192,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Post experience for deleting a question.
+        /// </summary>
+        /// <param name="question">The QuestionDTO instance that contains the id of the question to be deleted</param>
+        /// <returns>A view that either shows validation errors or a redirection to the Survey Edit experience</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(QuestionDTO question)

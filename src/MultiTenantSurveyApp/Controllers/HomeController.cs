@@ -9,6 +9,9 @@ using MultiTenantSurveyApp.Services;
 
 namespace MultiTenantSurveyApp.Controllers
 {
+    /// <summary>
+    /// This controller provides MVC actions for the Home, Error and Forbidden experiences.
+    /// </summary>
     public class HomeController : Controller
     {
         private readonly ISurveyService _surveyService;
@@ -18,6 +21,10 @@ namespace MultiTenantSurveyApp.Controllers
             _surveyService = surveyService;
         }
 
+        /// <summary>
+        /// This action provides the Home experience.
+        /// </summary>
+        /// <returns>A view that shows all the published surveys.</returns>
         public async Task<IActionResult> Index()
         {
             var result = await _surveyService.GetPublishedSurveysAsync();
@@ -29,11 +36,21 @@ namespace MultiTenantSurveyApp.Controllers
             return new HttpStatusCodeResult(result.StatusCode);
         }
 
+        /// <summary>
+        /// This action provides a placeholder for the experience
+        /// of taking a survey.
+        /// </summary>
+        /// <param name="id">The id of a Survey</param>
+        /// <returns>A view that shows a placeholder for the experience of taking a Survey</returns>
         public IActionResult Details(int id)
         {
             return View();
         }
 
+        /// <summary>
+        /// This action provides a general error experience.
+        /// </summary>
+        /// <returns>A view that shows an error message if available</returns>
         public IActionResult Error()
         {
             var error = HttpContext.Features.Get<IExceptionHandlerFeature>();
@@ -44,14 +61,13 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides a forbidden access experience.
+        /// </summary>
+        /// <returns>A view that tells the user that they are not allowed to access the requested resource</returns>
         public IActionResult Forbidden()
         {
             return View("~/Views/Shared/Forbidden.cshtml");
-        }
-
-        public IActionResult NotSignedUp()
-        {
-            return View();
         }
     }
 }

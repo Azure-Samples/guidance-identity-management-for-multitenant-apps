@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using MultiTenantSurveyApp.Common.Configuration;
 using MultiTenantSurveyApp.DAL.DataModels;
 using MultiTenantSurveyApp.Logging;
-using MultiTenantSurveyApp.Security;
 
 namespace MultiTenantSurveyApp.Security
 {

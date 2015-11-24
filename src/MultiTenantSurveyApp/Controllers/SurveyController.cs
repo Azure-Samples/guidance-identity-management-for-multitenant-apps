@@ -19,6 +19,10 @@ using Microsoft.AspNet.Authentication.Cookies;
 
 namespace MultiTenantSurveyApp.Controllers
 {
+    /// <summary>
+    /// This MVC controller provides actions for the management of surveys.
+    /// Most of the actions in this controller class require the user to be signed in.
+    /// </summary>
     [Authorize]
     public class SurveyController : Controller
     {
@@ -38,11 +42,18 @@ namespace MultiTenantSurveyApp.Controllers
             _authorizationService = authorizationService;
         }
 
-
+        /// <summary>
+        /// This action shows a list of surveys related to the user. This includes surveys that the user owns, 
+        /// surveys that the user contributes to, and surveys the user has published.
+        /// 
+        /// This action also calls the Survey Survice to process pending contributor requests.
+        /// </summary>
+        /// <returns>A view that shows the user's surveys</returns>
         public async Task<IActionResult> Index()
         {
             try
             {
+                // If there are any pending contributor requests that 
                 await _surveyService.ProcessPendingContributorRequestsAsync();
 
                 var userId = User.GetUserKey();
@@ -51,10 +62,11 @@ namespace MultiTenantSurveyApp.Controllers
                 var actionName = ActionContext.ActionDescriptor.Name;
                 _logger.GetSurveysForUserOperationStarted(actionName, user, tenantId);
 
-
+                // The SurveyService.GetSurveysForUserAsync returns a UserSurveysDTO that has properties for Published, Own, and Contribute
                 var result = await _surveyService.GetSurveysForUserAsync(userId);
                 if (result.Succeeded)
                 {
+                    // If the user is in the creator role, the view shows a "Create Survey" button.
                     ViewBag.IsUserCreator = await _authorizationService.AuthorizeAsync(User, PolicyNames.RequireSurveyCreator);
                     _logger.GetSurveysForUserOperationSucceeded(actionName, user, tenantId);
                     return View(result.Item);
@@ -78,6 +90,10 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action shows a list of surveys owned by users in the same tenant as the current user.
+        /// </summary>
+        /// <returns>A view that shows surveys in the same tenant as the current user</returns>
         public async Task<IActionResult> ListPerTenant()
         {
             try
@@ -87,6 +103,7 @@ namespace MultiTenantSurveyApp.Controllers
 
                 if (result.Succeeded)
                 {
+                    // If the user is an administrator, additional functionality is exposed. 
                     ViewBag.IsUserAdmin = await _authorizationService.AuthorizeAsync(User, PolicyNames.RequireSurveyAdmin);
                     return View(result.Item);
                 }
@@ -105,7 +122,16 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
-        // RequireSurveyCreator is defined in MultiTenantSurveyApp.Policies.SurveyCreatorRequirement
+        /// <summary>
+        /// This action provides the Http Get experience for creating a survey.
+        /// This action is restricted to users in the survey creator role. 
+        /// Creator role inclusion is implemented using the RequireSurveyCreator policy
+        /// which is defined in MultiTenantSurveyApp.Security.Policy.SurveyCreatorRequirement.
+        /// 
+        /// By setting the CookieAuthenticationDefaults.AuthenticationScheme as the ActiveAuthenticationScheme,
+        /// if an authenticated user is not in the survey creator role, they will be redirected to the "forbidden" experience.
+        /// </summary>
+        /// <returns>A view with form fields ued to create a survey</returns>
         [Authorize(Policy = PolicyNames.RequireSurveyCreator, ActiveAuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult Create()
         {
@@ -113,6 +139,12 @@ namespace MultiTenantSurveyApp.Controllers
             return View(survey);
         }
 
+        /// <summary>
+        /// This action provides the Http Post experience for creating a question.
+        /// This action is restricted to users in the survey creator role.
+        /// </summary>
+        /// <param name="survey">The SurveyDTO instance that contains the fields necessary to create a survey</param>
+        /// <returns>A view that either shows validation errors or a redirection to the Survey Edit experience</returns>
         [HttpPost]
         [Authorize(Policy = PolicyNames.RequireSurveyCreator)]
         [ValidateAntiForgeryToken]
