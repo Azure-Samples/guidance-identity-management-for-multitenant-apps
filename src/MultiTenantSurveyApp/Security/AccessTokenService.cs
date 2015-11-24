@@ -58,7 +58,7 @@ namespace MultiTenantSurveyApp.Security
 
                 //start-asymmetric: Use the block of code below for assymetric encryption, follow config steps in docs before switching to assymetric 
                 // var result = await authContext.AcquireTokenSilentAsync(resource,
-                await _appCredentialService.GetAsymmetricCredentialsAsync();
+               // await _appCredentialService.GetAsymmetricCredentialsAsync(),
                 //new UserIdentifier(userId, UserIdentifierType.UniqueId));
                 //end-asymmetric
 
