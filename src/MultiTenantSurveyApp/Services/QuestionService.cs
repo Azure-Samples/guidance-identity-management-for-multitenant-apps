@@ -75,7 +75,6 @@ namespace MultiTenantSurveyApp.Services
         {
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User).ConfigureAwait(false));
             return await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
-
         }
     }
 }

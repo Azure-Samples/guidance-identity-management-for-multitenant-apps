@@ -26,12 +26,10 @@ namespace MultiTenantSurveyApp.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAccessTokenService _accessTokenService;
         private readonly HttpClient _httpClient;
-        private readonly AppSettingsOptions _appSettings;
 
-        public SurveyService(HttpClientService factory, IHttpContextAccessor contextAccessor, IAccessTokenService accessTokenService, IOptions<ConfigurationOptions> options)
+        public SurveyService(HttpClientService factory, IHttpContextAccessor contextAccessor, IAccessTokenService accessTokenService)
         {
             _httpContextAccessor = contextAccessor;
-            _appSettings = options?.Value?.AppSettings;
             _httpClient = factory.GetHttpClient();
             _accessTokenService = accessTokenService;
         }
@@ -40,8 +38,7 @@ namespace MultiTenantSurveyApp.Services
         {
             var path = $"/surveys/{id}";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
-            await AddBearerTokenToAuthenticationHeader(requestMessage).ConfigureAwait(false);
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
@@ -49,8 +46,7 @@ namespace MultiTenantSurveyApp.Services
         {
             var path = $"/users/{userId}/surveys";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
-            await AddBearerTokenToAuthenticationHeader(requestMessage).ConfigureAwait(false);
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
             return await ApiResult<UserSurveysDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
@@ -58,15 +54,14 @@ namespace MultiTenantSurveyApp.Services
         {
             var path = $"/tenants/{tenantId}/surveys";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
-            await AddBearerTokenToAuthenticationHeader(requestMessage).ConfigureAwait(false);
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
             return await ApiResult<TenantSurveysDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
         public async Task<ApiResult<IEnumerable<SurveyDTO>>> GetPublishedSurveysAsync()
         {
             var path = "/surveys/published";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
             return await ApiResult<IEnumerable<SurveyDTO>>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
@@ -74,8 +69,7 @@ namespace MultiTenantSurveyApp.Services
         {
             var path = "/surveys";
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, path) {Content = CreateJsonContent(survey)};
-            await AddBearerTokenToAuthenticationHeader(requestMessage);
-            var response = await _httpClient.SendAsync(requestMessage);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response);
         }
 
@@ -83,8 +77,7 @@ namespace MultiTenantSurveyApp.Services
         {
             var path = $"/surveys/{survey.Id}";
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, path) {Content = CreateJsonContent(survey)};
-            await AddBearerTokenToAuthenticationHeader(requestMessage).ConfigureAwait(false);
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
@@ -92,24 +85,21 @@ namespace MultiTenantSurveyApp.Services
         {
             var path = $"/surveys/{id}";
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, path);
-            await AddBearerTokenToAuthenticationHeader(requestMessage).ConfigureAwait(false);
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
         public async Task<ApiResult<SurveyDTO>> PublishSurveyAsync(int id)
         {
             var path = $"/surveys/{id}/publish";
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, path);
-            await AddBearerTokenToAuthenticationHeader(requestMessage).ConfigureAwait(false);
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
         public async Task<ApiResult<SurveyDTO>> UnPublishSurveyAsync(int id)
         {
             var path = $"/surveys/{id}/unpublish";
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, path);
-            await AddBearerTokenToAuthenticationHeader(requestMessage).ConfigureAwait(false);
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
@@ -117,8 +107,7 @@ namespace MultiTenantSurveyApp.Services
         {
             var path = $"/surveys/{id}/contributors";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
-            await AddBearerTokenToAuthenticationHeader(requestMessage);
-            var response = await _httpClient.SendAsync(requestMessage);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
             return await ApiResult<ContributorsDTO>.FromResponseAsync(response);
         }
 
@@ -126,8 +115,7 @@ namespace MultiTenantSurveyApp.Services
         {
             var path = $"/surveys/processpendingcontributorrequests";
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, path);
-            await AddBearerTokenToAuthenticationHeader(requestMessage).ConfigureAwait(false);
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
             return new ApiResult { Response = response };
         }
 
@@ -135,8 +123,7 @@ namespace MultiTenantSurveyApp.Services
         {
             var path = $"/surveys/{contributorRequest.SurveyId}/contributorrequests";
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, path) { Content = CreateJsonContent(contributorRequest) };
-            await AddBearerTokenToAuthenticationHeader(requestMessage).ConfigureAwait(false);
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
             return new ApiResult { Response = response };
         }
 
@@ -146,9 +133,10 @@ namespace MultiTenantSurveyApp.Services
             return new StringContent(json, System.Text.Encoding.UTF8, "application/json");
         }
 
-        private async Task AddBearerTokenToAuthenticationHeader(HttpRequestMessage requestMessage)
+        private async Task<HttpResponseMessage> SendMessagewithBearerTokenAsync(HttpRequestMessage requestMessage)
         {
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User).ConfigureAwait(false));
+            return await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
         }
     }
 }
