@@ -72,7 +72,6 @@ namespace MultiTenantSurveyApp
             var adOptions = configOptions.AzureAd;
             services.Configure<SurveyAppConfiguration.ConfigurationOptions>(_configuration);
 
-            //services.AddAuthentication(sharedOptions => sharedOptions.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(PolicyNames.RequireSurveyCreator, policy => policy.AddRequirements(new SurveyCreatorRequirement()));
@@ -87,10 +86,6 @@ namespace MultiTenantSurveyApp
             services.AddScoped<TenantManager, TenantManager>();
             services.AddScoped<UserManager, UserManager>();
 
-            //services.Configure<CookieAuthenticationOptions>(options =>
-            //{
-            //    options.AutomaticAuthentication = true;
-            //});
 
             // Add MVC services to the services container.
             services.AddMvc();
@@ -119,19 +114,11 @@ namespace MultiTenantSurveyApp
             services.AddScoped<ITokenCacheService, TokenCacheService>();
             services.AddScoped<IAccessTokenService, AccessTokenService>();
 
-            // HttpClient should not be created per request: http://stackoverflow.com/a/15708633
-            //services.AddSingleton<HttpClient>(factory =>
-            //{
-            //    var loggerFactory = factory.GetService<ILoggerFactory>();
-            //    return new HttpClient(new HttpClientLogHandler(new HttpClientHandler(), loggerFactory.CreateLogger<HttpClientLogHandler>(), null)) { BaseAddress = new Uri(configOptions.AppSettings.WebApiUrl) };
-            //});
-
             services.AddSingleton<HttpClientService>();
             services.AddSingleton<IAppCredentialService, AppCredentialService>();
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<SignInManager, SignInManager>();
-            //services.AddInstance<IConfiguration>(_configuration);
         }
 
         // Configure is called after ConfigureServices is called.
@@ -174,17 +161,10 @@ namespace MultiTenantSurveyApp
             });
 
             // Add OpenIdConnect middleware so you can login using Azure AD.
-            //app.UseOpenIdConnectAuthentication();
             app.UseOpenIdConnectAuthentication(options =>
             {
                 options.AutomaticAuthenticate = true;
                 options.AutomaticChallenge = true;
-                //options.ClientId = authoptions.AzureAd.ClientId;
-                //options.Authority = authoptions.AzureAd.Authority;
-                //options.PostLogoutRedirectUri = authoptions.AzureAd.PostLogoutRedirectUri;
-                //options.RedirectUri = authoptions.AzureAd.PostLogoutRedirectUri;
-                //options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-
                 options.ClientId = configOptions.AzureAd.ClientId;
                 options.Authority = Constants.AuthEndpointPrefix + "common/";
                 options.PostLogoutRedirectUri = configOptions.AzureAd.PostLogoutRedirectUri;
@@ -260,24 +240,6 @@ namespace MultiTenantSurveyApp
             }
 
             return string.Format(CultureInfo.InvariantCulture, Constants.IssuerFormat, tenantId);
-
-            /*
-            // We most likely have a string in the form of *.onmicrosoft.com identifying our tenant, so let's use the graph api to
-            // find out our OID.
-            var authContext = new AuthenticationContext(Constants.AuthEndpointPrefix +
-                Configuration["AzureAd:TenantId"]);
-            var authResult = authContext.AcquireTokenAsync("https://graph.windows.net",
-                                        new ClientCredential(ClientId, ClientSecret)).Result;
-            var httpClient = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Get, "https://graph.windows.net/" +
-                Configuration["AzureAd:TenantId"] + "/tenantDetails?api-version=1.6");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authResult.AccessToken);
-            var response = await httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
-            // This should be safe.  The documentation is not specific, but there shouldn't be more than one of these.
-            return payload.Value<JArray>("value").First.Value<string>("objectId");
-            */
         }
     }
 }
