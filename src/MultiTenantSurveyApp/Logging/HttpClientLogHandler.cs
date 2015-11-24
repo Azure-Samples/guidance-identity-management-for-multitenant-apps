@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Logging;
 using MultiTenantSurveyApp.Security;
+using System.Diagnostics;
 
 namespace MultiTenantSurveyApp.Logging
 {
@@ -24,22 +25,24 @@ namespace MultiTenantSurveyApp.Logging
         // [masimms-roshar] What does this method do?
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
         {
-            // [masimms-roshar] Suggest simplification - only log the completion with a success/error code and a timing
+            // Get the user Id and tenant Id from signed-in user's ClaimsPrincipal
             var userId = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.ObjectId) ?? "Anonymous";
-            var tenantId = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.TenantId) ?? "";
+            var tenantId = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.TenantId) ?? "-";
 
             var method = request.Method?.Method;
             var uri = request.RequestUri.AbsoluteUri;
-            _logger.RequestStarted(method, uri, userId, tenantId);
 
+            var requestStopwatch = Stopwatch.StartNew();
             var response = await base.SendAsync(request, cancellationToken);
-            if ( response.IsSuccessStatusCode)
+            requestStopwatch.Stop();
+
+            if (response.IsSuccessStatusCode)
             {
-                _logger.RequestSucceeded(method, uri, userId, tenantId);
+                _logger.RequestSucceeded(method, uri, requestStopwatch.Elapsed, userId, tenantId);
             }
             else
             {
-                _logger.RequestFailed(method,uri, response.ReasonPhrase, response.StatusCode.ToString(), userId, tenantId);
+                _logger.RequestFailed(method, uri, requestStopwatch.Elapsed, response.ReasonPhrase, response.StatusCode.ToString(), userId, tenantId);
 
             }
             return response;
