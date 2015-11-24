@@ -29,6 +29,10 @@ namespace MultiTenantSurveyApp.Controllers
             _signInManager = signInManager;
         }
 
+        /// <summary>
+        /// Starts the AAD/OpenIdConnect authentication flow for a user.
+        /// </summary>
+        /// <returns>A <see cref="Microsoft.AspNet.Mvc.ChallengeResult"/> to authenticate a user with AAD and OpenIdConnect.</returns>
         [AllowAnonymous]
         public IActionResult SignIn()
         {
@@ -40,12 +44,20 @@ namespace MultiTenantSurveyApp.Controllers
                 });
         }
 
+        /// <summary>
+        /// Signs out a previously authenticated user.
+        /// </summary>
+        /// <returns>A <see cref="Microsoft.AspNet.Mvc.IActionResult"/> containing the result of the sign out operation.</returns>
         public async Task<IActionResult> SignOut()
         {
             var callbackUrl = Url.Action("SignOutCallback", "Account", values: null, protocol: Request.Scheme);
             return await _signInManager.SignOutAsync(callbackUrl);
         }
 
+        /// <summary>
+        /// Generates a cross site request forgery token used to verify the sign up request.
+        /// </summary>
+        /// <returns>A temporary <see cref="MultiTenantSurveyApp.DAL.DataModels.Tenant"/> containing the CSRF token.</returns>
         private static Tenant GenerateCsrfTenant()
         {
             // We need to generate a state that we can pass along so we know the request came from us
@@ -56,6 +68,10 @@ namespace MultiTenantSurveyApp.Controllers
             };
         }
 
+        /// <summary>
+        /// Starts the tenant registration flow.
+        /// </summary>
+        /// <returns>A <see cref="Microsoft.AspNet.Mvc.ChallengeResult"/> to authenticate a user with AAD and OpenIdConnect.</returns>
         [AllowAnonymous]
         public async Task<IActionResult> SignUp()
         {
@@ -84,6 +100,11 @@ namespace MultiTenantSurveyApp.Controllers
                 });
         }
 
+        /// <summary>
+        /// Callback method used by the tenant sign up flow.  This can be used for any sign up post-processing work.
+        /// </summary>
+        /// <param name="returnUrl">Unused in the current implementation.</param>
+        /// <returns>A <see cref="Microsoft.AspNet.Mvc.IActionResult"/> containing the result of the sign out operation.</returns>
         [HttpGet]
         public async Task<IActionResult> SignUpCallback(string returnUrl = null)
         {
@@ -99,25 +120,24 @@ namespace MultiTenantSurveyApp.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Callback method used when a previously authenticated user is signed up.  This can be used for any sign out post-processing.
+        /// </summary>
+        /// <returns>A <see cref="Microsoft.AspNet.Mvc.RedirectToActionResult"/> representing where to redirect the user after sign out has completed.</returns>
         [AllowAnonymous]
         public IActionResult SignOutCallback()
         {
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
+        /// <summary>
+        /// Callback method used when a user has been successfully authenticated.  This can be used for any sign in post-processing.
+        /// </summary>
+        /// <remarks>Any modifications to the user's <see cref="System.Security.Claims.ClaimsPrincipal"/> within this callback will not be persisted across requests.</remarks>
+        /// <returns>A <see cref="Microsoft.AspNet.Mvc.RedirectToActionResult"/> representing where to redirect the user after authentication has completed.</returns>
         [HttpGet]
         public IActionResult SignInCallback(string returnUrl = null)
         {
-            return RedirectToLocal(returnUrl);
-        }
-
-        private IActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
     }
