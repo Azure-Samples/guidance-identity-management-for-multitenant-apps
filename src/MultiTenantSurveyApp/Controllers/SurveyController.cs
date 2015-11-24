@@ -20,7 +20,7 @@ using Microsoft.AspNet.Authentication.Cookies;
 namespace MultiTenantSurveyApp.Controllers
 {
     /// <summary>
-    /// This MVC controller provides actions for the management of surveys.
+    /// This MVC controller provides actions for the management of <see cref="Survey"/>s.
     /// Most of the actions in this controller class require the user to be signed in.
     /// </summary>
     [Authorize]
@@ -43,12 +43,12 @@ namespace MultiTenantSurveyApp.Controllers
         }
 
         /// <summary>
-        /// This action shows a list of surveys related to the user. This includes surveys that the user owns, 
-        /// surveys that the user contributes to, and surveys the user has published.
+        /// This action shows a list of <see cref="Survey"/>s related to the user. This includes <see cref="Survey"/>s that the user owns, 
+        /// <see cref="Survey"/>s that the user contributes to, and <see cref="Survey"/>s the user has published.
         /// 
-        /// This action also calls the Survey Survice to process pending contributor requests.
+        /// This action also calls the <see cref="SurveyService"/> to process pending contributor requests.
         /// </summary>
-        /// <returns>A view that shows the user's surveys</returns>
+        /// <returns>A view that shows the user's <see cref="Survey"/>s</returns>
         public async Task<IActionResult> Index()
         {
             try
@@ -91,9 +91,9 @@ namespace MultiTenantSurveyApp.Controllers
         }
 
         /// <summary>
-        /// This action shows a list of surveys owned by users in the same tenant as the current user.
+        /// This action shows a list of <see cref="Survey"/>s owned by users in the same <see cref="Tenant"/> as the current user.
         /// </summary>
-        /// <returns>A view that shows surveys in the same tenant as the current user</returns>
+        /// <returns>A view that shows <see cref="Survey"/>s in the same <see cref="Tenant"/> as the current user</returns>
         public async Task<IActionResult> ListPerTenant()
         {
             try
@@ -123,15 +123,15 @@ namespace MultiTenantSurveyApp.Controllers
         }
 
         /// <summary>
-        /// This action provides the Http Get experience for creating a survey.
+        /// This action provides the Http Get experience for creating a <see cref="Survey"/>.
         /// This action is restricted to users in the survey creator role. 
         /// Creator role inclusion is implemented using the RequireSurveyCreator policy
-        /// which is defined in MultiTenantSurveyApp.Security.Policy.SurveyCreatorRequirement.
+        /// which is defined in <see cref="SurveyCreatorRequirement"/>.
         /// 
         /// By setting the CookieAuthenticationDefaults.AuthenticationScheme as the ActiveAuthenticationScheme,
         /// if an authenticated user is not in the survey creator role, they will be redirected to the "forbidden" experience.
         /// </summary>
-        /// <returns>A view with form fields ued to create a survey</returns>
+        /// <returns>A view with form fields ued to create a <see cref="Survey"/></returns>
         [Authorize(Policy = PolicyNames.RequireSurveyCreator, ActiveAuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult Create()
         {
@@ -140,10 +140,10 @@ namespace MultiTenantSurveyApp.Controllers
         }
 
         /// <summary>
-        /// This action provides the Http Post experience for creating a question.
+        /// This action provides the Http Post experience for creating a <see cref="Survey"/>.
         /// This action is restricted to users in the survey creator role.
         /// </summary>
-        /// <param name="survey">The SurveyDTO instance that contains the fields necessary to create a survey</param>
+        /// <param name="survey">The <see cref="SurveyDTO"/> instance that contains the fields necessary to create a <see cref="Survey"/></param>
         /// <returns>A view that either shows validation errors or a redirection to the Survey Edit experience</returns>
         [HttpPost]
         [Authorize(Policy = PolicyNames.RequireSurveyCreator)]
@@ -187,6 +187,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action shows the details of a specific <see cref="Survey"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>A view showing the contents of a <see cref="Survey"/>, or an error message if the <see cref="Survey"/> is not found</returns>
         public async Task<IActionResult> Details(int id)
         {
             try
@@ -218,6 +223,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Get experience for editing a <see cref="Survey"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>A view showing the <see cref="Survey"/>'s title and questions</returns>
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -255,31 +265,53 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult EditTitle([Bind("Id", "Title","ExistingTitle")] SurveyDTO model)
+        /// <summary>
+        /// This action provides the Http Get experience for editing the title of a <see cref="Survey"/>
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>A view with form fields for the <see cref="Survey"/> being edited</returns>
+        public async Task<IActionResult> EditTitle(int id)
         {
             try
             {
-                if (ModelState.IsValid)
+                var result = await _surveyService.GetSurveyAsync(id);
+                if (result.Succeeded)
                 {
+                    var model = result.Item;
                     model.ExistingTitle = model.Title;
                     return View(model);
                 }
-                ViewBag.Message = "Bad Request. Can not edit title.";
+
+                if (result.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    ModelState.AddModelError(string.Empty, $"The survey can not be found.");
+                    ViewBag.Message = $"The survey can not be found";
+                    return View("~/Views/Shared/Error.cshtml");
+                }
+
+                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
+                {
+                    return await SignOut();
+                }
+
+                ViewBag.Message = result.StatusCode;
             }
             catch
             {
                 ViewBag.Message = "Unexpected Error";
             }
-            ModelState.AddModelError(string.Empty, "Bad Request. Can not edit title.");
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Post experience for editing a <see cref="Survey"/>.
+        /// </summary>
+        /// <param name="model">The <see cref="SurveyDTO"/> instance that contains the <see cref="Survey"/>'s updated fields</param>
+        /// <returns>A view that either shows validation errors or a redirection to the Survey Edit experience</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         // We want to bind Id and Title and exclude Published, we don't want to publish when editing
-        public async Task<IActionResult> UpdateTitle([Bind("Id", "Title", "ExistingTitle")] SurveyDTO model)
+        public async Task<IActionResult> EditTitle([Bind("Id", "Title", "ExistingTitle")] SurveyDTO model)
         {
             try
             {
@@ -299,9 +331,9 @@ namespace MultiTenantSurveyApp.Controllers
                                 return await SignOut();
                             case (int)HttpStatusCode.Forbidden:
                                 ViewBag.Forbidden = true;
-                                return View("EditTitle", model);
+                                return View(model);
                             default:
-                                return View("EditTitle", model);
+                                return View(model);
                         }
                     }
                 }
@@ -318,6 +350,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Get experience for deleting a <see cref="Survey"/>.
+        /// </summary>
+        /// <param name="id">The id for the <see cref="Survey"/></param>
+        /// <returns>A view that shows a delete confirmation prompt</returns>
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -349,6 +386,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Post experience for deleting a <see cref="Survey"/>.
+        /// </summary>
+        /// <param name="model">The <see cref="SurveyDTO"/> instance that contains the id of the <see cref="Survey"/> to be deleted</param>
+        /// <returns>A view that either shows validation errors or a redirection to the Survey Edit experience</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete([Bind("Id")]SurveyDTO model)
@@ -369,9 +411,9 @@ namespace MultiTenantSurveyApp.Controllers
                         ModelState.AddModelError(string.Empty, $"Unable to delete survey. (HTTP {result.StatusCode})");
                         switch (result.StatusCode)
                         {
-                            case (int) HttpStatusCode.Unauthorized:
+                            case (int)HttpStatusCode.Unauthorized:
                                 return await SignOut();
-                            case (int) HttpStatusCode.Forbidden:
+                            case (int)HttpStatusCode.Forbidden:
                                 ViewBag.Forbidden = true;
                                 break;
                         }
@@ -392,6 +434,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action shows a list of contributors associated with a specific <see cref="Survey"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>A view showing contributors associated with a <see cref="Survey"/></returns>
         public async Task<IActionResult> ShowContributors(int id)
         {
             try
@@ -424,6 +471,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Get experience for creating a <see cref="ContributorRequest"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>A view with form fields used to create the <see cref="ContributorRequest"/></returns>
         public async Task<IActionResult> RequestContributor(int id)
         {
             try
@@ -456,6 +508,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Post experience for creating a <see cref="ContributorRequest"/>.
+        /// </summary>
+        /// <param name="contributorRequestViewModel">The <see cref="SurveyContributorRequestViewModel"/> instance with fields used to create a new <see cref="ContributorRequest"/></param>
+        /// <returns>A redirection to the Show Contributors experience if persistance succeeds, or a view showing validation errors if not.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RequestContributor(SurveyContributorRequestViewModel contributorRequestViewModel)
@@ -484,6 +541,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Get experience for publishing a <see cref="Survey"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>A page that asks the user to confirm that he/she wants to publish this <see cref="Survey"/></returns>
         public async Task<IActionResult> Publish(int id)
         {
             try
@@ -523,7 +585,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
-
+        /// <summary>
+        /// This action provides the Http Post experience for publishing a <see cref="Survey"/>.
+        /// </summary>
+        /// <param name="model">The <see cref="SurveyDTO"/> instance that has the id field used to publish a <see cref="Survey"/></param>
+        /// <returns>A confirmation page showing that the <see cref="Survey"/> was published, or errors</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Publish([Bind("Id")]SurveyDTO model)
@@ -569,6 +635,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
+        /// <summary>
+        /// This action provides the Http Get experience for unpublishing a <see cref="Survey"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>A page that asks the user to confirm that he/she wants to publish this <see cref="Survey"/></returns>
         public async Task<IActionResult> UnPublish(int id)
         {
             try
@@ -608,7 +679,11 @@ namespace MultiTenantSurveyApp.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
-
+        /// <summary>
+        /// This action provides the Http Post experience for unpublishing a <see cref="Survey"/>.
+        /// </summary>
+        /// <param name="model">The <see cref="SurveyDTO"/> instance that has the id field used to unpublish a <see cref="Survey"/></param>
+        /// <returns>A confirmation page showing that the <see cref="Survey"/> was unpublished, or errors</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnPublish([Bind("Id")]SurveyDTO model)

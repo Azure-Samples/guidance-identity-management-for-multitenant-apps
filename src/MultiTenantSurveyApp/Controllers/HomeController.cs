@@ -24,7 +24,7 @@ namespace MultiTenantSurveyApp.Controllers
         /// <summary>
         /// This action provides the Home experience.
         /// </summary>
-        /// <returns>A view that shows all the published surveys.</returns>
+        /// <returns>A view that shows all the published <see cref="MultiTenantSurveyApp.DAL.DataModels.Survey"/>s.</returns>
         public async Task<IActionResult> Index()
         {
             var result = await _surveyService.GetPublishedSurveysAsync();
@@ -38,10 +38,10 @@ namespace MultiTenantSurveyApp.Controllers
 
         /// <summary>
         /// This action provides a placeholder for the experience
-        /// of taking a survey.
+        /// of taking a <see cref="MultiTenantSurveyApp.DAL.DataModels.Survey"/>.
         /// </summary>
-        /// <param name="id">The id of a Survey</param>
-        /// <returns>A view that shows a placeholder for the experience of taking a Survey</returns>
+        /// <param name="id">The id of a <see cref="MultiTenantSurveyApp.DAL.DataModels.Survey"/></param>
+        /// <returns>A view that shows a placeholder for the experience of taking a <see cref="MultiTenantSurveyApp.DAL.DataModels.Survey"/></returns>
         public IActionResult Details(int id)
         {
             return View();

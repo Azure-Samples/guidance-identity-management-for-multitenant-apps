@@ -32,10 +32,10 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method returns a Survey if one is found with a matching id property. 
+        /// This method returns a <see cref="Survey"/> if one is found with a matching id property. 
         /// </summary>
-        /// <param name="id">The id of the Survey</param>
-        /// <returns>An ActionResult that contains a SurveyDTO if found, otherwise a Not Found response</returns>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>An <see cref="ObjectResult"/> that contains a <see cref="SurveyDTO"/> if found, otherwise a <see cref="HttpNotFoundResult"/></returns>
         [HttpGet("surveys/{id:int}", Name = "GetSurvey")]
         public async Task<IActionResult> Get(int id)
         {
@@ -55,10 +55,10 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method returns Surveys associated to the user: Published, Owned, or Contributed.
+        /// This method returns <see cref="Survey"/>s associated to the user: Published, Owned, or Contributed.
         /// </summary>
         /// <param name="userId">The id of the user</param>
-        /// <returns>An ActionResult that contains a UserSurveysDTO populated with surveys that the user owns or contributes to, and published surveys</returns>
+        /// <returns>An <see cref="ObjectResult"/> that contains a <see cref="UserSurveysDTO"/> populated with <see cref="Survey"/>s that the user owns or contributes to, or published</returns>
         [HttpGet("users/{userId}/surveys")]
         public async Task<IActionResult> GetSurveysForUser(int userId)
         {
@@ -76,10 +76,10 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method returns all surveys owned by users of a specific tenant.
+        /// This method returns all <see cref="Survey"/>s owned by users of a specific tenant.
         /// </summary>
-        /// <param name="tenantId">The id of the tenant</param>
-        /// <returns>An ActionResult that contains a TenantSurveysDTO populated with Published and Unpublished surveys associated with a tenant</returns>
+        /// <param name="tenantId">The id of the <see cref="Tenant"/></param>
+        /// <returns>An <see cref="ObjectResult"/> that contains a <see cref="TenantSurveysDTO"/> populated with Published and Unpublished surveys associated with a <see cref="Tenant"/></returns>
         [HttpGet("tenants/{tenantId}/surveys")]
         public async Task<IActionResult> GetSurveysForTenant(string tenantId)
         {
@@ -90,9 +90,9 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method returns all published surveys. This method is anonymously accessible.
+        /// This method returns all published <see cref="Survey"/>s. This method is anonymously accessible.
         /// </summary>
-        /// <returns>An ActionResult that contains an enumarable collection of published surveys</returns>
+        /// <returns>An <see cref="ObjectResult"/> that contains an enumerable collection of published <see cref="Survey"/>s</returns>
         [HttpGet("surveys/published")]
         [AllowAnonymous]
         public async Task<IActionResult> GetPublishedSurveys()
@@ -102,10 +102,10 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method returns the contributors to a Survey.
+        /// This method returns the contributors to a <see cref="Survey"/>.
         /// </summary>
-        /// <param name="id">The id of the Survey</param>
-        /// <returns>An ActionResult that contains a ContributorDTO populated with an enumerable collection of users who contribute to the specified Survey</returns>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>An <see cref="ObjectResult"/> that contains a <see cref="ContributorsDTO"/> populated with an enumerable collection of users who contribute to the specified <see cref="Survey"/></returns>
         [HttpGet("surveys/{id}/contributors")]
         public async Task<IActionResult> GetSurveyContributors(int id)
         {
@@ -129,11 +129,11 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method attempts to persist a new Survey using the values in the SurveyDTO instance.
+        /// This method attempts to persist a new <see cref="Survey"/> using the values in the <see cref="SurveyDTO"/> instance.
         /// This action is decorated with an authorization policy that requires only users in the Survey Creator role can call it.
         /// </summary>
-        /// <param name="item">An SurveyDTO that contains the values used to create and persist a new Survey</param>
-        /// <returns>A CreatedAtRouteResult of the newly created Survey if successfully persisted</returns>
+        /// <param name="item">An <see cref="SurveyDTO"/> that contains the values used to create and persist a new <see cref="Survey"/></param>
+        /// <returns>A <see cref="CreatedAtRouteResult"/> of the newly created <see cref="Survey"/> if successfully persisted</returns>
         [HttpPost("surveys")]
         [Authorize(Policy = PolicyNames.RequireSurveyCreator, ActiveAuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Create([FromBody] SurveyDTO item)
@@ -159,11 +159,11 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method attempts to update the Survey with the specified id value.
+        /// This method attempts to update the <see cref="Survey"/> with the specified id value.
         /// </summary>
-        /// <param name="id">The id of the Survey</param>
-        /// <param name="item">A SurveyDTO containing property values of the Survey</param>
-        /// <returns>An ActionResult that contains a SurveyDTO containing property values of the updated Survey</returns>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <param name="item">A <see cref="SurveyDTO"/> containing property values of the <see cref="Survey"/></param>
+        /// <returns>An <see cref="ObjectResult"/> that contains a <see cref="SurveyDTO"/> containing property values of the updated <see cref="Survey"/></returns>
         [HttpPut("surveys/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] SurveyDTO item)
         {
@@ -197,10 +197,10 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method deletes the Survey with the specified id value.
+        /// This method deletes the <see cref="Survey"/> with the specified id value.
         /// </summary>
-        /// <param name="id">The id of the Survey</param>
-        /// <returns>An ActionResult that contains the deleted Survey if deletion is successful or a Not Found response if the Survey is not found</returns>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>An <see cref="ObjectResult"/> that contains the deleted <see cref="Survey"/> if deletion is successful or a <see cref="HttpNotFoundResult"/> if the <see cref="Survey"/> is not found</returns>
         [HttpDelete("surveys/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -223,10 +223,10 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         /// <summary>
         /// This method persists a survey contributor request.
         /// </summary>
-        /// <param name="item">A ContributorRequest instance</param>
-        /// <returns>A No Content response if the ContributorRequest is successful persisted 
-        /// or a Bad Request response if the corresponding Survey is not found, 
-        /// or the ContributorRequest is not valid</returns>
+        /// <param name="item">A <see cref="ContributorRequest"/> instance</param>
+        /// <returns>A <see cref="NoContentResult"/> if the <see cref="ContributorRequest"/> is successfully persisted 
+        /// or a <see cref="BadRequestResult"/> if the corresponding <see cref="Survey"/> is not found 
+        /// or the <see cref="ContributorRequest"/> is not valid</returns>
         [HttpPost("/surveys/{id}/contributorrequests")]
         public async Task<IActionResult> AddContributorRequest([FromBody] ContributorRequest item)
         {
@@ -257,9 +257,9 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method processes pending ContributorRequests for the current user.
+        /// This method processes pending <see cref="ContributorRequest"/>s for the current user.
         /// </summary>
-        /// <returns>A No Content response</returns>
+        /// <returns>A <see cref="NoContentResult"/></returns>
         [HttpPost("surveys/processpendingcontributorrequests")]
         public async Task<IActionResult> ProcessPendingContributorRequests()
         {
@@ -288,10 +288,10 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method publishes the Survey with the matching id.
+        /// This method publishes the <see cref="Survey"/> with the matching id.
         /// </summary>
-        /// <param name="id">The id of the Survey</param>
-        /// <returns>An ActionResult that contains a SurveyDTO of a published Survey, or a Not Found response if the survey is not found</returns>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>An <see cref="ObjectResult"/> that contains a <see cref="SurveyDTO"/> of a published <see cref="Survey"/>, or a <see cref="HttpNotFoundResult"/> if the <see cref="Survey"/> is not found</returns>
         [HttpPut("surveys/{id}/publish")]
         public async Task<IActionResult> Publish(int id)
         {
@@ -313,10 +313,10 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method unpublishes the Survey with the matching id.
+        /// This method unpublishes the <see cref="Survey"/> with the matching id.
         /// </summary>
-        /// <param name="id">The id of the Survey</param>
-        /// <returns>An ActionResult that contains a SurveyDTO of an unpublished Survey, or a Not Found response if the survey is not found</returns>
+        /// <param name="id">The id of the <see cref="Survey"/></param>
+        /// <returns>An <see cref="ObjectResult"/> that contains a <see cref="SurveyDTO"/> of an unpublished <see cref="Survey"/>, or a <see cref="HttpNotFoundResult"/> if the <see cref="Survey"/> is not found</returns>
         [HttpPut("surveys/{id}/unpublish")]
         public async Task<IActionResult> UnPublish(int id)
         {

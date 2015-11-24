@@ -34,7 +34,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         /// This method returns the Question with a matching id property.
         /// </summary>
         /// <param name="id">The id of the Question</param>
-        /// <returns>An ActionResult that contains a QuestionDTO if found, otherwise a Not Found response</returns>
+        /// <returns>An <see cref="ObjectResult"/> that contains a <see cref="QuestionDTO"/> if found, otherwise a <see cref="HttpNotFoundResult"/></returns>
         [HttpGet("questions/{id:int}", Name = "GetQuestion")]
         public async Task<IActionResult> Get(int id)
         {
@@ -48,11 +48,11 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method persists a new Question with the specified id value.
+        /// This method persists a new <see cref="Question"/> with the specified id value.
         /// </summary>
-        /// <param name="id">The id of the question</param>
-        /// <param name="questionDto">A DTO containing property values of the Question</param>
-        /// <returns>A CreatedAtRouteResult of the newly created Question if successfully persisted</returns>
+        /// <param name="id">The id of the <see cref="Question"/></param>
+        /// <param name="questionDto">A <see cref="QuestionDTO"/> containing property values of the <see cref="Question"/></param>
+        /// <returns>A <see cref="CreatedAtRouteResult"/> of the newly created <see cref="Question"/> if successfully persisted</returns>
         [HttpPost("surveys/{id:int}/questions")]
         public async Task<IActionResult> Create(int id, [FromBody] QuestionDTO questionDto)
         {
@@ -91,11 +91,11 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method updates the Question with the specified id value.
+        /// This method updates the <see cref="Question"/> with the specified id value.
         /// </summary>
-        /// <param name="id">The id of the Question</param>
-        /// <param name="questionDto">A QuestionDTO containing property values of the Question</param>
-        /// <returns>An ActionResult that contains a QuestionDTO containing property values of the updated Question</returns>
+        /// <param name="id">The id of the <see cref="Question"/></param>
+        /// <param name="questionDto">A <see cref="QuestionDTO"/> containing property values of the <see cref="Question"/></param>
+        /// <returns>An <see cref="ObjectResult"/> that contains a <see cref="QuestionDTO"/> containing property values of the updated <see cref="Question"/></returns>
         [HttpPut("questions/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] QuestionDTO questionDto)
         {
@@ -139,10 +139,10 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         }
 
         /// <summary>
-        /// This method deletes the Question with the specified id value.
+        /// This method deletes the <see cref="Question"/> with the specified id value.
         /// </summary>
-        /// <param name="id">The id of the Question</param>
-        /// <returns>A No Content response if deletion is successful or a Not Found response if the Question is not found</returns>
+        /// <param name="id">The id of the <see cref="Question"/></param>
+        /// <returns>A <see cref="NoContentResult"/> if deletion is successful or a <see cref="HttpNotFoundResult"/> if the <see cref="Question"/> is not found</returns>
         [HttpDelete("questions/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
