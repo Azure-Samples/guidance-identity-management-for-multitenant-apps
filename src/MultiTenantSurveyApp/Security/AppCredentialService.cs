@@ -43,7 +43,7 @@ namespace MultiTenantSurveyApp.Security
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<ClientAssertionCertificate> GetAsymmetricCredentials()
+        public async Task<ClientAssertionCertificate> GetAsymmetricCredentialsAsync()
         {
             return await _assertion.Value;
         }

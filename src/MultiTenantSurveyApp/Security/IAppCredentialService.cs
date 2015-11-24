@@ -8,6 +8,6 @@ namespace MultiTenantSurveyApp.Security
 {
     public interface IAppCredentialService
     {
-        Task<ClientAssertionCertificate> GetAsymmetricCredentials();
+        Task<ClientAssertionCertificate> GetAsymmetricCredentialsAsync();
     }
 }
