@@ -5,37 +5,25 @@
 <h2>@ViewData["Title"]</h2>
 
 <div class="list-group container">
-    <form asp-action="EditTitle" method="post" asp-route-id="@Model.Id" class="form-horizontal" role="form">
-        <div class="list-group-item">
-            <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <input asp-for="Id" type="hidden" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-                <input asp-for="Title" type="hidden" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-
-            <div class="row">
-                <label class="col-md-1">
-                    @Html.DisplayNameFor(model => model.Title)
-                </label>
-
-                <div class="col-md-11">
-                    <span>
-                        @Html.DisplayFor(model => model.Title)
-                    </span>
-                </div>
-            </div>
-        </div>
+    <div class="list-group-item">
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
         <div class="row">
-            <div class="col-md-12">
-                <div class="pull-right">
-                    <input type="submit" class="btn btn-default" value="Edit Title" />
-                </div>
+            <label class="col-md-1">
+                @Html.DisplayNameFor(model => model.Title)
+            </label>
+
+            <div class="col-md-11">
+                @Html.DisplayFor(model => model.Title)
             </div>
         </div>
-    </form>
-
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="pull-right">
+            <a asp-action="EditTitle" asp-route-id="@Model.Id" class="btn btn-default">Edit Title</a>
+            </div>
+        </div>
+    </div>
 
     <h2>@Html.DisplayNameFor(model => model.Questions)</h2>
     @foreach (var item in Model.Questions)

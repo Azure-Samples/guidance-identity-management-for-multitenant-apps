@@ -6,7 +6,7 @@
 
 @Html.Partial("~/Views/Shared/_ValidationPartial")
 
-<form asp-action="UpdateTitle" method="post" asp-route-id="@Model.Id" class="form-horizontal" role="form">
+<form asp-action="EditTitle" method="post" asp-route-id="@Model.Id" class="form-horizontal" role="form">
     <div class="form-group">
         <input asp-for="Id" type="hidden" />
         <input asp-for="ExistingTitle" type="hidden" />
@@ -17,7 +17,7 @@
         <div class="row">
             <label class="col-md-1 control-label">From:</label>
             <div class="col-md-11">
-                <textarea rows="5" readonly>@Html.DisplayFor(model => model.ExistingTitle)</textarea>
+                <textarea rows="5" readonly>@Model.ExistingTitle</textarea>
             </div>
         </div>
         <div class="row">
