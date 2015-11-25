@@ -15,11 +15,15 @@ using Newtonsoft.Json;
 
 namespace MultiTenantSurveyApp.Services
 {
-    // This is the client for MultiTenantSurveyApp.WebAPI QuestionController
-    // Note: If we used Swagger for the API definition, we could generate the client.
-    // (see Azure API Apps) 
-    // Note the MVC6 version of Swashbuckler is called "Ahoy" and is still in beta: https://github.com/domaindrivendev/Ahoy
-     
+    /// <summary>
+    /// This is the client for MultiTenantSurveyApp.WebAPI QuestionController
+    /// Note: If we used Swagger for the API definition, we could generate the client.
+    /// (see Azure API Apps) 
+    /// Note the MVC6 version of Swashbuckler is called "Ahoy" and is still in beta: https://github.com/domaindrivendev/Ahoy
+    /// 
+    /// All methods set the user's access token in the Bearer authorization header 
+    /// to allow the WebAPI to run on behalf of the signed in user.
+    /// </summary>
     public class QuestionService: IQuestionService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;

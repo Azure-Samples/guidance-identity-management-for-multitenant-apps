@@ -9,6 +9,11 @@ using MultiTenantSurveyApp.Models;
 
 namespace MultiTenantSurveyApp.Services
 {
+    /// <summary>
+    /// This interface defines the CRUD operations for <see cref="Survey"/>s.
+    /// This interface also defines operations related to publishing <see cref="Survey"/>s
+    /// and adding and processing <see cref="ContributorRequest"/>s.
+    /// </summary>
     public interface ISurveyService
     {
         Task<ApiResult<SurveyDTO>> GetSurveyAsync(int id);

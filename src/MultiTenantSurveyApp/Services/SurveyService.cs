@@ -16,11 +16,15 @@ using Newtonsoft.Json;
 
 namespace MultiTenantSurveyApp.Services
 {
-    // This is the client for MultiTenantSurveyApp.WebAPI SurveyController
-    // Note: If we used Swagger for the API definition, we could generate the client.
-    // (see Azure API Apps) 
-    // Note the MVC6 version of Swashbuckler is called "Ahoy" and is still in beta: https://github.com/domaindrivendev/Ahoy
-
+    /// <summary>
+    /// This is the client for MultiTenantSurveyApp.WebAPI SurveyController
+    /// Note: If we used Swagger for the API definition, we could generate the client.
+    /// (see Azure API Apps) 
+    /// Note the MVC6 version of Swashbuckler is called "Ahoy" and is still in beta: https://github.com/domaindrivendev/Ahoy
+    ///
+    /// All methods except GetPublishedSurveysAsync set the user's access token in the Bearer authorization header 
+    /// to allow the WebAPI to run on behalf of the signed in user.
+    /// </summary>
     public class SurveyService : ISurveyService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -69,8 +73,8 @@ namespace MultiTenantSurveyApp.Services
         {
             var path = "/surveys";
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, path) {Content = CreateJsonContent(survey)};
-            var response = await SendMessagewithBearerTokenAsync(requestMessage);
-            return await ApiResult<SurveyDTO>.FromResponseAsync(response);
+            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
         public async Task<ApiResult<SurveyDTO>> UpdateSurveyAsync(SurveyDTO survey)
@@ -108,7 +112,7 @@ namespace MultiTenantSurveyApp.Services
             var path = $"/surveys/{id}/contributors";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
             var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
-            return await ApiResult<ContributorsDTO>.FromResponseAsync(response);
+            return await ApiResult<ContributorsDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
         public async Task<ApiResult> ProcessPendingContributorRequestsAsync()
