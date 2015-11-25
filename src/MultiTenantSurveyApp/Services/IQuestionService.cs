@@ -7,6 +7,9 @@ using MultiTenantSurveyApp.Models;
 
 namespace MultiTenantSurveyApp.Services
 {
+    /// <summary>
+    /// This interface defines the CRUD operations for <see cref="MultiTenantSurveyApp.DAL.DataModels.Question"/>s
+    /// </summary>
     public interface IQuestionService
     {
         Task<ApiResult<QuestionDTO>> GetQuestionAsync(int id);
