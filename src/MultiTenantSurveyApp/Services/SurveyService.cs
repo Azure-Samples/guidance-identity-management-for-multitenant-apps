@@ -61,7 +61,7 @@ namespace MultiTenantSurveyApp.Services
         {
             var path = "/surveys/published";
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
             return await ApiResult<IEnumerable<SurveyDTO>>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
