@@ -20,3 +20,4 @@ To get started with the reference implementation, see [Running the Surveys appli
     - How to authenticate via Active Directory Federation Services (AD FS), in order to federate with a customer's on-premise Active Directory.
 - Appendixes
     - [Authorization APIs in ASP.NET 5](docs/appendixes/aspnet5-authorization.md)
+    - [Overview of OAuth 2 and OpenID Connect](docs/appendixes/about-oauth2-oidc.md)
