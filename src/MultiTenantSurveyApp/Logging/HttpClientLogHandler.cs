@@ -11,6 +11,10 @@ using System.Diagnostics;
 
 namespace MultiTenantSurveyApp.Logging
 {
+    /// <summary>
+    /// This is a Delegating handlers which intercepts calls made to the WebService.
+    /// Logs timing information and HttpStatus codes of the remote calls.
+    /// </summary>
     internal class HttpClientLogHandler : DelegatingHandler
     {
         private readonly ILogger _logger;
@@ -22,7 +26,12 @@ namespace MultiTenantSurveyApp.Logging
             _httpContextAccessor = contextAccessor;
         }
 
-        // [masimms-roshar] What does this method do?
+        /// <summary>
+        /// Overrides the SendAsync method of the DelegatingHandler for the purpose of logging REST call success or failure events along with timing information and status codes
+        ///         /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
         {
             // Get the user Id and tenant Id from signed-in user's ClaimsPrincipal

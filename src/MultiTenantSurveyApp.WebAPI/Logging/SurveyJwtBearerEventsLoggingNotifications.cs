@@ -8,6 +8,7 @@ namespace MultiTenantSurveyApp.WebAPI.Logging
 {
     internal static class SurveyJwtBearerEventsLoggingNotifications
     {
+        /// ILogger extensions for bearer token authentication events which occur in the OpenID notifications in SurveyJwtBearerEvents
         public static void AuthenticationFailed(this ILogger logger, Exception e)
         {
             logger.LogError("Authentication failed Exception: {0}", e);

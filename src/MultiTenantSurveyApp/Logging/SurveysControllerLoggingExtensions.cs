@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace MultiTenantSurveyApp.Logging
 {
+    /// <summary>
+    /// ILogger extensions for events which occur in the SurveysController
+    /// </summary>
     internal static class SurveysControllerLoggingExtensions
     {
         public static void GetSurveysForUserOperationStarted(this ILogger logger, string action, string user, string tenantId)

@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace MultiTenantSurveyApp.TokenStorage
 {
+    /// <summary>
+    /// ILogger extensions for events which occur in the RedisTokenCache
+    /// </summary>
     internal static class RedisTokenCacheLoggingExtensions
     {
         public static void ReadFromCacheFailed(this ILogger logger, Exception exp)

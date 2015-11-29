@@ -3,7 +3,10 @@
 
 using System;
 using Microsoft.Extensions.Logging;
-
+/// <summary>
+/// ILogger extensions for events which occur in the AccessTokenService
+/// These events are logged when ADAL is made use of to access tokens
+/// </summary>
 namespace MultiTenantSurveyApp.Logging
 {
     internal static class AccessTokenServiceLoggingExtensions
