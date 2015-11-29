@@ -13,6 +13,7 @@ using System;
 
 namespace MultiTenantSurveyApp.Logging
 {
+    ///ILogger extensions for events which occur in the HttpClientLogHandler when web api calls are made
     internal static class WebApiCallsLoggingExtensions
     {
         public static void RequestStarted(this ILogger logger, string method, string uri, string userId, string tenantId)

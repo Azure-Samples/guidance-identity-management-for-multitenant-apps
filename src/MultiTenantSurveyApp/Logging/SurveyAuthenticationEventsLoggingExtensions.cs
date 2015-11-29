@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace MultiTenantSurveyApp.Logging
 {
+    /// <summary>
+    /// ILogger extensions for events which occur when OpenID Authentication notifications occur.
+    /// </summary>
     internal static class SurveyAuthenticationEventsLoggingExtensions
     {
         public static void RedirectToIdentityProvider(this ILogger logger)

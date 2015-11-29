@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace MultiTenantSurveyApp.Logging
 {
+    /// <summary>
+    /// ILogger extensions for events which occur in the AccountController
+    /// </summary>
     internal static class AccountControllerLoggingExtensions
     {
         public static void SignoutStarted(this ILogger logger, string user, string issuer)
