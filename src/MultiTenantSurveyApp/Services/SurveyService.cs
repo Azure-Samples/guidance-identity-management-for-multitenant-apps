@@ -3,18 +3,14 @@
 
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
-using Microsoft.Extensions.OptionsModel;
 using MultiTenantSurveyApp.Common;
-using MultiTenantSurveyApp.Configuration;
 using MultiTenantSurveyApp.DAL.DataModels;
 using MultiTenantSurveyApp.DAL.DTOs;
 using MultiTenantSurveyApp.Models;
 using MultiTenantSurveyApp.Security;
-using Newtonsoft.Json;
 
 namespace MultiTenantSurveyApp.Services
 {

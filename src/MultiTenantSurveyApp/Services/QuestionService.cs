@@ -1,19 +1,14 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
-using Microsoft.Extensions.OptionsModel;
 using MultiTenantSurveyApp.Common;
-using MultiTenantSurveyApp.Configuration;
 using MultiTenantSurveyApp.DAL.DTOs;
 using MultiTenantSurveyApp.Models;
 using MultiTenantSurveyApp.Security;
-using Newtonsoft.Json;
 
 namespace MultiTenantSurveyApp.Services
 {
@@ -44,7 +39,6 @@ namespace MultiTenantSurveyApp.Services
         public async Task<ApiResult<QuestionDTO>> GetQuestionAsync(int id)
         {
             var path = $"/questions/{id}";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
             var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Get, path, null,
                         await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
                                 .ConfigureAwait(false), _cancellationToken);
