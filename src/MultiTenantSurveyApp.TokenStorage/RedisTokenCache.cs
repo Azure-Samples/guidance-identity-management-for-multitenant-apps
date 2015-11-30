@@ -16,56 +16,52 @@ namespace MultiTenantSurveyApp.TokenStorage
     //[manikris] done
     public class RedisTokenCache : TokenCache
     {
-        private IConnectionMultiplexer _connection;
         private IDatabase _cache;
         private TokenCacheKey _key;
         private ILogger _logger;
 
-        // [masimms-roshar] Wrong verb - this creates, not retrieves
-        //[manikris] done
         public async static Task<RedisTokenCache> CreateCacheAsync(IConnectionMultiplexer connection, TokenCacheKey key, ILogger logger)
         {
-            var redisTokenCache = new RedisTokenCache();
-            await redisTokenCache.InitializeAsync(connection, key, logger).ConfigureAwait(false);
-            return redisTokenCache;
-        }
-        private RedisTokenCache() : base() { }
-
-        private async Task InitializeAsync(IConnectionMultiplexer connection, TokenCacheKey key, ILogger logger)
-        {
-            _connection = connection;
-            _key = key;
-            _logger = logger;
-            _cache = _connection.GetDatabase();
-           // BeforeAccess = BeforeAccessNotification;
-            AfterAccess = AfterAccessNotification;
-
-            await LoadFromStoreAsync().ConfigureAwait(false);
-        }
-
-        private async Task LoadFromStoreAsync()
-        {
+            var cache = connection.GetDatabase();
+            byte[] cachedData = null;
             try
             {
-                byte[] cachedData = await _cache.StringGetAsync(_key.ToString()).ConfigureAwait(false);
-                this.Deserialize((cachedData == null) ? null : cachedData);
-                _logger.TokensRetrievedFromStore(this._key.ToString());
+                cachedData = await cache.StringGetAsync(key.ToString()).ConfigureAwait(false);
+                logger.TokensRetrievedFromStore(key.ToString());
             }
             catch (Exception exp)
             {
-                _logger.ReadFromCacheFailed(exp);
+                logger.ReadFromCacheFailed(exp);
                 throw;
             }
+
+            return new RedisTokenCache(cache, key, logger, cachedData);
         }
 
-        // Triggered right before ADAL needs to access the cache.
-        // Reload the cache from the persistent store in case it changed since the last access.
-        //TODO- verify this. the assumption right now is that we dont need to impement this in a web app
-        //This ie because will be reading from redis for every request and writing back if the state changes so that the next request gets the latest
-        //public async void BeforeAccessNotification(TokenCacheNotificationArgs args)
-        //{
-        //    await LoadFromStoreAsync();
-        //}
+        private RedisTokenCache(IDatabase database, TokenCacheKey key, ILogger logger, byte[] cachedData)
+            : base()
+        {
+            if (database == null)
+            {
+                throw new ArgumentNullException(nameof(database));
+            }
+
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            _cache = database;
+            _key = key;
+            _logger = logger;
+            AfterAccess = AfterAccessNotification;
+            Deserialize(cachedData);
+        }
 
         // Triggered right after ADAL accessed the cache.
         public async void AfterAccessNotification(TokenCacheNotificationArgs args)
