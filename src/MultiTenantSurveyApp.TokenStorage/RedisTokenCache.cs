@@ -19,6 +19,7 @@ namespace MultiTenantSurveyApp.TokenStorage
         private TokenCacheKey _key;
         private ILogger _logger;
 
+<<<<<<< HEAD
         /// <summary>
         /// Factory method to create instances of <see cref="MultiTenantSurveyApp.TokenStorage.RedisTokenCache"/>.  The constructor
         /// is intentionally made private.  Since we need to do some async initialization, the instance of the class is not ready
@@ -77,18 +78,59 @@ namespace MultiTenantSurveyApp.TokenStorage
                     .ConfigureAwait(false);
                 this.Deserialize(cachedData);
                 _logger.TokensRetrievedFromStore(_key.ToString());
+=======
+        public async static Task<RedisTokenCache> CreateCacheAsync(IConnectionMultiplexer connection, TokenCacheKey key, ILogger logger)
+        {
+            var cache = connection.GetDatabase();
+            byte[] cachedData = null;
+            try
+            {
+                cachedData = await cache.StringGetAsync(key.ToString()).ConfigureAwait(false);
+                logger.TokensRetrievedFromStore(key.ToString());
+>>>>>>> Changed configuration for redis
             }
             catch (Exception exp)
             {
-                _logger.ReadFromCacheFailed(exp);
+                logger.ReadFromCacheFailed(exp);
                 throw;
             }
+
+            return new RedisTokenCache(cache, key, logger, cachedData);
         }
 
+<<<<<<< HEAD
         /// <summary>
         /// Handles the AfterAccessNotification event, which is triggered right after ADAL accesses the cache.
         /// </summary>
         /// <param name="args">An instance of <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.TokenCacheNotificationArgs"/> containing information for this event.</param>
+=======
+        private RedisTokenCache(IDatabase database, TokenCacheKey key, ILogger logger, byte[] cachedData)
+            : base()
+        {
+            if (database == null)
+            {
+                throw new ArgumentNullException(nameof(database));
+            }
+
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            _cache = database;
+            _key = key;
+            _logger = logger;
+            AfterAccess = AfterAccessNotification;
+            Deserialize(cachedData);
+        }
+
+        // Triggered right after ADAL accessed the cache.
+>>>>>>> Changed configuration for redis
         public async void AfterAccessNotification(TokenCacheNotificationArgs args)
         {
             if (this.HasStateChanged)
