@@ -27,7 +27,7 @@ namespace MultiTenantSurveyApp.Security
             Guard.ArgumentNotNull(aadOptions, "configOptions.AzureAd");
             Guard.ArgumentNotNull(aadOptions.Asymmetric, "configOptions.AzureAd.Assymetric");
 
-            _assertion = new Lazy<Task<ClientAssertionCertificate>>(() => 
+            _assertion = new Lazy<Task<ClientAssertionCertificate>>(() =>
                 Task.Factory.StartNew(() =>
                 {
                     return GetAsymmetricCredentials(
@@ -35,14 +35,14 @@ namespace MultiTenantSurveyApp.Security
                             aadOptions.Asymmetric.StoreName,
                             aadOptions.Asymmetric.StoreLocation,
                             aadOptions.Asymmetric.CertificateThumbprint,
-                            false);
+                            aadOptions.Asymmetric.ValidationRequired);
                 })
             );
         }
         /// <summary>
-        /// 
+        /// Returns the ClientAssertionCertificate instance creating it the first time
         /// </summary>
-        /// <returns></returns>
+        /// <returns>ClientAssertionCertificate</returns>
         public async Task<ClientAssertionCertificate> GetAsymmetricCredentialsAsync()
         {
             return await _assertion.Value;

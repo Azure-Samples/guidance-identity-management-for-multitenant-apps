@@ -18,6 +18,7 @@ using MultiTenantSurveyApp.Security.Policy;
 using AppConfiguration = MultiTenantSurveyApp.WebApi.Configuration;
 using Constants = MultiTenantSurveyApp.Common.Constants;
 using Microsoft.Extensions.PlatformAbstractions;
+using System;
 #if DNX451
 using MultiTenantSurveyApp.Configuration.Secrets;
 #endif
@@ -31,7 +32,7 @@ namespace MultiTenantSurveyApp.WebApi
     {
         private AppConfiguration.ConfigurationOptions _configOptions = new AppConfiguration.ConfigurationOptions();
 
-        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
+        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv, ILoggerFactory loggerFactory)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(appEnv.ApplicationBasePath)
@@ -45,13 +46,15 @@ namespace MultiTenantSurveyApp.WebApi
             }
             builder.AddEnvironmentVariables();
             //Uncomment the block of code below if you have setup secrets in KeyVault and want to load your secrets from it
-            //#if DNX451
-            //            var config = builder.Build();
-            //            builder.AddKeyVaultSecrets(config["AzureAd:ClientId"],
-            //                config["KeyVault:Name"],
-            //                config["AzureAd:Asymmetric:CertificateThumbprint"],
-            //                false);
-            //#endif
+//#if DNX451
+//            InitializeLogging(loggerFactory);
+//            var config = builder.Build();
+//            builder.AddKeyVaultSecrets(config["AzureAd:ClientId"],
+//                config["KeyVault:Name"],
+//                config["AzureAd:Asymmetric:CertificateThumbprint"],
+//                Convert.ToBoolean(config["AzureAd:Asymmetric:ValidationRequired"]),
+//                loggerFactory);
+//#endif
             builder.Build().Bind(_configOptions);
         }
 
@@ -98,8 +101,7 @@ namespace MultiTenantSurveyApp.WebApi
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext dbContext, ILoggerFactory loggerFactory)
         {
-            loggerFactory.MinimumLevel = LogLevel.Information;
-            loggerFactory.AddDebug(LogLevel.Information);
+            InitializeLogging(loggerFactory);
             if (env.IsDevelopment())
             {
                 //app.UseBrowserLink();
@@ -148,6 +150,11 @@ namespace MultiTenantSurveyApp.WebApi
             });
             // Add MVC to the request pipeline.
             app.UseMvc();
+        }
+        private void InitializeLogging(ILoggerFactory loggerFactory)
+        {
+            loggerFactory.MinimumLevel = LogLevel.Information;
+            loggerFactory.AddDebug(LogLevel.Information);
         }
     }
 }

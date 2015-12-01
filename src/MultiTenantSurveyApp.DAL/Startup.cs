@@ -16,6 +16,7 @@ using MultiTenantSurveyApp.DAL.Configuration;
 using MultiTenantSurveyApp.DAL.DataModels;
 using System;
 using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.Extensions.Logging;
 #if DNX451
 using MultiTenantSurveyApp.Configuration.Secrets;
 #endif
@@ -23,7 +24,7 @@ using MultiTenantSurveyApp.Configuration.Secrets;
 public class Startup
 {
     private ConfigurationOptions _configOptions = new ConfigurationOptions();
-    public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
+    public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv, ILoggerFactory loggerFactory)
     {
         var builder = new ConfigurationBuilder()
             .SetBasePath(appEnv.ApplicationBasePath)
@@ -35,13 +36,15 @@ public class Startup
             builder.AddUserSecrets();
         }
         //Uncomment the block of code below if your database connection string is in KeyVault and you want migrations to run using the connection string in KeyVault
-        //#if DNX451
-        //        var config = builder.Build();
-        //        builder.AddKeyVaultSecrets(config["ClientId"],
-        //            config["KeyVault:Name"],
-        //            config["CertificateThumbprint"],
-        //            false);
-        //#endif
+//#if DNX451
+//        InitializeLogging(loggerFactory);
+//        var config = builder.Build();
+//        builder.AddKeyVaultSecrets(config["ClientId"],
+//            config["KeyVault:Name"],
+//            config["Asymmetric:CertificateThumbprint"],
+//            Convert.ToBoolean(config["Asymmetric:ValidationRequired"]),
+//            loggerFactory);
+//#endif
         builder.Build().Bind(_configOptions);
     }
 
@@ -52,6 +55,10 @@ public class Startup
             .AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(_configOptions.Data.SurveysConnectionString));
     }
-
     public void Configure() { }
+    private void InitializeLogging(ILoggerFactory loggerFactory)
+    {
+        loggerFactory.MinimumLevel = LogLevel.Information;
+        loggerFactory.AddDebug(LogLevel.Information);
+    }
 }
