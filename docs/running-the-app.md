@@ -4,7 +4,7 @@ This topic describes how to run the Tailspin Surveys application locally, from V
 ## Prerequisites:
 -	[Visual Studio 2015](http://go.microsoft.com/fwlink/?LinkId=532606)
 -	[ASP.NET 5 and Microsoft Web Developer Tools](https://docs.asp.net/en/latest/getting-started/installing-on-windows.html#install-asp-net-with-visual-studio)
--	Microsoft Azure account
+-	[Microsoft Azure](https://azure.microsoft.com) account
 
 ## Set up your Azure AD tenant
 
@@ -14,7 +14,7 @@ Create a new Azure AD tenant or use an existing one. This tenant will represent 
 2. Click **New** > **App Services** > **Active Directory** > **Directory** > **Custom Create**.
 3. Enter the required information and click the **Finish** (checkmark) button.
 
-Register the Surveys application in your AD tenant:
+Register the Surveys application in your AD tenant.
 
 1.	In the [Azure management portal](https://manage.windowsazure.com), navigate to your AD tenant.
 2.	Click **Applications**.
@@ -34,17 +34,21 @@ Register the Surveys application in your AD tenant:
 11.	Click **Save**.
 12.	Copy the value of the key.  _Note_: Do this now, because the key won't be visible after you navigate away from this page, although you can always generate a new one.
 
-Next, register the Surveys web API:
+Register the Surveys web API.
 
 1. In the Azure portal, add a new application as described in the previous steps.
+
 2. In the **Add Application** dialog, use the following settings:
+
   - Name = `Surveys.WebAPI`
   - Sign-on URL = `https://localhost:44301/`
   - App ID URI = `https://(your AD tenant)/survey.webapi`
+
 3.	Set **Application is Multi-Tenant** to **YES**.
+
 4.	Click **Save**.
 
-You don't need to generate a key for the web API.
+    - You don't need to generate a key for the web API.
 
 Now give the web app permissions to call the web API:
 
@@ -55,7 +59,7 @@ Now give the web app permissions to call the web API:
 5.	Click the top checkmark to search.
 6.	Select `Surveys.API`.
 7.	Click the bottom checkmark to complete the dialog. This will add `Surveys.API` to the permissions list.
-8.	In the** Delegated Permissions** dropdown, select **Access Surveys.API**.
+8.	In the **Delegated Permissions** dropdown, select **Access Surveys.API**.
 9.	Click **Save**.
 
 ![Setting delegated permissions](media/running-the-app/delegated-permissions.png)
@@ -65,8 +69,11 @@ Now give the web app permissions to call the web API:
 Update the application manifest for the web API.
 
 1.	In the Azure portal, select the Surveys.WepAPI application.
+
 2.	Click **Manage Manifest** and select **Download Manifest**.
+
 3.	Open the manifest JSON file.
+
 4.	Add the following to the `appRoles` element. For the `id` properties, generate new GUIDs.
 
           {
@@ -93,6 +100,7 @@ Update the application manifest for the web API.
   This setting adds the Surveys app to the list of clients authorized to call the web API.
 
 6.	Save your changes to the JSON file.
+
 7.	Go back to the portal. Click **Manage Manifest** > **Upload Manifest** and upload the JSON file.
 
 Now repeat the same steps for the Surveys app, except do not add an entry for `knownClientApplications`. Use the same role definitions.
@@ -108,7 +116,9 @@ The Surveys application uses Redis to cache OAuth 2 access tokens. To create the
 ## Set user secrets
 
 1.	Open the MultiTenantSurveyApp solution in Visual Studio.
+
 2.	In Solution Explorer, right-click the MultiTenantSurveyApp project and select **Manage User Secrets**.
+
 3.	In the secrets.json file, paste in the following:
 
           {
@@ -119,15 +129,11 @@ The Surveys application uses Redis to cache OAuth 2 access tokens. To create the
                 "PostLogoutRedirectUri": "https://localhost:44300/",
                 "WebApiResourceId": "[App ID URI of your Survey.WebAPI application]",
                 "GraphResourceId": "https://graph.windows.net/",
-                "TenantId": "[Your tenant ID]",
-                "CertificateThumbprint": ""
+                "TenantId": "[Your tenant ID]"
               },
             "Redis": {
                 "Endpoint": "[Redis cache endpoint]",
                 "Password": "[Redis cache primary key]"
-              },
-              "KeyVault": {
-                "Name": ""
               }
           }
 
@@ -135,14 +141,13 @@ The Surveys application uses Redis to cache OAuth 2 access tokens. To create the
 
     - `ClientId`: The client ID of the Surveys app.
     - `ClientSecret`: The key that your generated when you registered the Surveys application in Azure AD.
-    - `WebApiResourceId`: The APP ID URI that you specified when you created the Surveys.WebAPI application in Azure AD.
-    - `TenantId`: The object ID for your Azure AD tenant. To find this value in the Azure portal, navigate to your tenant and click View Endpoints. The tenant ID is the GUID that appears in the endpoint URLs.
-    You can leave `CertificateThumbprint` and `KeyVault::Name` empty; these are used when deploying to
-    Azure.
+    - `WebApiResourceId`: The App ID URI that you specified when you created the Surveys.WebAPI application in Azure AD.
+    - `TenantId`: The object ID for your Azure AD tenant. To find this value in the Azure portal, navigate to your tenant and click View **Endpoints**. The tenant ID is the GUID that appears in the endpoint URLs.
     - `Endpoint`: URL of the Redis cache.
     - `Password`: Primary key for the Redis cache.
 
 4.	Save the updated secrets.json file.
+
 5.	Repeat these steps for the MultiTenantSurveyApp.WebAPI project, but paste the following into secrets.json:
 
           {
@@ -153,18 +158,19 @@ The Surveys application uses Redis to cache OAuth 2 access tokens. To create the
             "Redis": {
                 "Endpoint": "[Redis cache endpoint]",
                 "Password": "[Redis cache primary key]"
-              },
-              "KeyVault": {
-                "Name": ""
               }
           }
+
+      Replace the entries in [square brackets] with the correct values, as above.
 
 ## Initialize the database
 
 In this step, you will use Entity Framework 7 to create a local SQL database, using LocalDB.
 
 1.	Open a command window
+
 2.	Navigate to the MultiTenantSurveyApp.DAL project.
+
 3.	Run the following command:
 
           dnx ef database update
@@ -173,25 +179,25 @@ In this step, you will use Entity Framework 7 to create a local SQL database, us
 
 To run the application, start both the MultiTenantSurveyApp.WebAPI and MultiTenantSurveyApp projects.
 
-Note: You can set Visual Studio to run both projects automatically on F5:
+Note: You can set Visual Studio to run both projects automatically on F5, as follows:
 
 1.	In Solution Explorer, right-click the solution and click **Set Startup Projects**.
 2.	Select **Multiple startup projects**.
 3.	Set **Action** = **Start** for the MultiTenantSurveyApp and MultiTenantSurveyApp.WebAPI projects.
 
-## Sign up a tenant
+## Sign up a new tenant
 
 When the application starts, you are not signed in, so you see the welcome page:
 
 ![Welcome page](media/running-the-app/screenshot1.png)
 
-To sign up organization:
+To sign up:
 
 1.	Click **Enroll your company in Tailspin**.
 2.	Sign in as an Azure AD admin user.
 3.	Accept the consent prompt.
 
-The application registers your tenant, and then signs you out. (The reason for signing the user out is because the AD admin needs to set up the application roles in Azure AD, before using the application.)
+The application registers your tenant, and then signs you out. (The app signs you out because you need to set up the application roles in Azure AD, before using the application.)
 
 ![After sign up](media/running-the-app/screenshot2.png)
 
@@ -200,30 +206,34 @@ The application registers your tenant, and then signs you out. (The reason for s
 When a tenant signs up, an AD admin for the tenant must assign application roles to users.
 
 1. Sign into the Azure management portal and navigate to your Azure AD tenant.
-2. Click** Applications**. The portal will list `Survey` and `Survey.WebAPI` as "applications that your company uses." If not, make sure you completed the sign up process.
+2. Click **Applications**. The portal will list `Survey` and `Survey.WebAPI` under "Applications that my company uses". If not, make sure you completed the sign up process.
 
 ![Registered apps](media/running-the-app/registered-apps.png)
 
 If you have Azure AD Premium:
 
 1.	Click on the Survey application.
+
 2.	Click **Users and Groups**.
+
 3.	In the **Show** dropdown, select either **Groups** or **Users**.
+
 4.	Click the top checkmark to search.
 
-  ![Assigned users](media/running-the-app/app-roles.png)
+    ![Assigned users](media/running-the-app/app-roles.png)
 
 5.	Select a user or group.
+
 6.	At the bottom of the portal, click **Assign**.
 
-  ![Assign button](media/running-the-app/assign-button.png)
+    ![Assign button](media/running-the-app/assign-button.png)
 
 7.	Select a role and click the bottom checkmark.
 
-  ![Assign a role to a user](media/running-the-app/assign-users.png)
+    ![Assign a role to a user](media/running-the-app/assign-users.png)
 
 
-If you do not have Azure AD Premium, the steps are similar, but there is no option for Groups:
+If you do not have Azure AD Premium, the steps are similar, except there is no option for Groups:
 
 1.	Click on the Survey application.
 2.	Click **Users**.
@@ -233,8 +243,8 @@ If you do not have Azure AD Premium, the steps are similar, but there is no opti
 
 Next, repeat the same steps to assign roles for the Survey.WebAPI application.
 
-Important: A user should always have the same roles in both Survey and Survey.WebAPI. Otherwise, the user will have inconsistent permissions, which may lead to 403 (Forbidden) errors from the Web API.
+> Important: A user should always have the same roles in both Survey and Survey.WebAPI. Otherwise, the user will have inconsistent permissions, which may lead to 403 (Forbidden) errors from the Web API.
 
-Now go back to the app and sign in again. Click **My Surveys**" If the user is assigned to the SurveyAdmin or SurveyCreator role, you will see a **Create Survey** button, indicating that the user has permissions to create a new survey.
+Now go back to the app and sign in again. Click **My Surveys**. If the user is assigned to the SurveyAdmin or SurveyCreator role, you will see a **Create Survey** button, indicating that the user has permissions to create a new survey.
 
 ![My surveys](media/running-the-app/screenshot3.png)
