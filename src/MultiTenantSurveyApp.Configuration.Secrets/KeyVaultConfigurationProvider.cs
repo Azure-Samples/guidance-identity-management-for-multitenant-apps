@@ -10,6 +10,7 @@ using Microsoft.Azure.KeyVault;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using MultiTenantSurveyApp.Common;
+using Microsoft.Extensions.Logging;
 
 namespace MultiTenantSurveyApp.Configuration.Secrets
 {
@@ -27,6 +28,7 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
         private readonly bool _validateCertificate;
         private readonly StoreName _storeName;
         private readonly StoreLocation _storeLocation;
+        private readonly ILogger _logger;
 
         private ClientAssertionCertificate _assertion;
 
@@ -37,8 +39,8 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
         /// <param name="vaultName"></param>
         /// <param name="certificateThumbPrint"></param>
         /// <param name="validateCertificate"></param>
-        public KeyVaultConfigurationProvider(string appClientId, string vaultName, string certificateThumbprint, bool validateCertificate)
-            : this(appClientId, vaultName, StoreName.My, StoreLocation.CurrentUser, certificateThumbprint, validateCertificate)
+        public KeyVaultConfigurationProvider(string appClientId, string vaultName, string certificateThumbprint, bool validateCertificate, ILogger logger)
+            : this(appClientId, vaultName, StoreName.My, StoreLocation.CurrentUser, certificateThumbprint, validateCertificate, logger)
         {
         }
 
@@ -51,11 +53,12 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
         /// <param name="storeLocation"></param>
         /// <param name="certificateThumbPrint"></param>
         /// <param name="validateCertificate"></param>
-        public KeyVaultConfigurationProvider(string appClientId, string vaultName, StoreName storeName, StoreLocation storeLocation, string certificateThumbprint, bool validateCertificate)
+        public KeyVaultConfigurationProvider(string appClientId, string vaultName, StoreName storeName, StoreLocation storeLocation, string certificateThumbprint, bool validateCertificate, ILogger logger)
         {
             Guard.ArgumentNotNullOrEmpty(appClientId, "appClientId");
             Guard.ArgumentNotNullOrEmpty(vaultName, "vaultName");
             Guard.ArgumentNotNullOrEmpty(certificateThumbprint, "certificateThumbprint");
+            Guard.ArgumentNotNull(logger, "logger");
 
             _appClientId = appClientId;
             _vault = $"https://{vaultName}.vault.azure.net:443/";
@@ -63,6 +66,7 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
             _storeLocation = storeLocation;
             _certificateThumbprint = certificateThumbprint;
             _validateCertificate = validateCertificate;
+            _logger = logger;
         }
 
         /// <summary>
@@ -72,11 +76,20 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
         /// </summary>
         public override void Load()
         {
-            LoadAsync(CancellationToken.None).Wait();
+            try
+            {
+                LoadAsync(CancellationToken.None).Wait();
+                _logger.ConfigurationLoadSuccessful(_appClientId);
+            }
+            catch (Exception exp)
+            {
+                _logger.ConfigurationLoadFailed(_appClientId, exp);
+                throw;
+            }
         }
         /// <summary>
         /// Loads all secrets which are delimited by : so that they can be retrieved by the config system
-        /// SSince KeyVault does not  allow characters as delimiters the share secret name is not used as key for configuration, the Tag properties are used instead
+        /// Since KeyVault does not  allow characters as delimiters the share secret name is not used as key for configuration, the Tag properties are used instead
         /// The tag should always be of the form "ConfigKey"="ParentKey1:Child1:.."
         /// </summary>
         /// <param name="token"></param>
@@ -87,7 +100,6 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
             var cert = CertificateUtility.FindCertificateByThumbprint(_storeName, _storeLocation, _certificateThumbprint, _validateCertificate);
             var certBytes = CertificateUtility.ExportCertificateWithPrivateKey(cert, out password);
             _assertion = new ClientAssertionCertificate(_appClientId, certBytes, password);
-
             Data = new Dictionary<string, string>();
 
             // This returns a list of identifiers which are uris to the secret, you need to use the identifier to get the actual secrets again.
@@ -106,9 +118,19 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
 
         private async Task<string> GetTokenAsync(string authority, string resource, string scope)
         {
-            // We want to use the default shared cache. Otherwise we would need to store the redis connection string in config files and that would not be ideal. We want to get that also from keyvault
-            var authContext = new AuthenticationContext(authority, TokenCache.DefaultShared);
-            var result = await authContext.AcquireTokenAsync(resource, _assertion);
+            // We want to use the default shared cache. Otherwise we would need to store the redis connection string in config files 
+            //We want to get that also from keyvault
+            AuthenticationResult result = null;
+            try
+            {
+                var authContext = new AuthenticationContext(authority, TokenCache.DefaultShared);
+                result = await authContext.AcquireTokenAsync(resource, _assertion);
+            }
+            catch (Exception exp)
+            {
+                _logger.AuthenticationFailed(_appClientId, exp);
+                throw;
+            }
             if (result == null)
             {
                 throw new InvalidOperationException("bearer token acquisition to Key Vault failed");

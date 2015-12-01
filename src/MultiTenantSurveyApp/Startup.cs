@@ -35,7 +35,7 @@ namespace MultiTenantSurveyApp
     {
         private readonly IConfiguration _configuration;
 
-        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
+        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv, ILoggerFactory loggerFactory)
         {
             // Setup configuration sources.
             var builder = new ConfigurationBuilder()
@@ -53,11 +53,13 @@ namespace MultiTenantSurveyApp
             builder.AddEnvironmentVariables();
             //Uncomment the block of code below if you have setup secrets in KeyVault and want to load your secrets from it
 //#if DNX451
+//            InitializeLogging(loggerFactory);
 //            _configuration = builder.Build();
 //            builder.AddKeyVaultSecrets(_configuration["AzureAd:ClientId"],
 //                _configuration["KeyVault:Name"],
 //                _configuration["AzureAd:Asymmetric:CertificateThumbprint"],
-//                false);
+//                Convert.ToBoolean(_configuration["AzureAd:Asymmetric:ValidationRequired"]),
+//                loggerFactory);
 //#endif
             _configuration = builder.Build();
         }
@@ -142,8 +144,7 @@ namespace MultiTenantSurveyApp
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             var configOptions = app.ApplicationServices.GetService<IOptions<SurveyAppConfiguration.ConfigurationOptions>>().Value;
-            loggerFactory.MinimumLevel = LogLevel.Information;
-            loggerFactory.AddDebug(LogLevel.Information);
+            InitializeLogging(loggerFactory);
             // Configure the HTTP request pipeline.
 
             // Add the following to the request pipeline only in development environment.
@@ -206,6 +207,11 @@ namespace MultiTenantSurveyApp
             SeedDatabase(app, configOptions).Wait();
         }
 
+        private void InitializeLogging(ILoggerFactory loggerFactory)
+        {
+            loggerFactory.MinimumLevel = LogLevel.Information;
+            loggerFactory.AddDebug(LogLevel.Information);
+        }
         private async Task SeedDatabase(IApplicationBuilder app, SurveyAppConfiguration.ConfigurationOptions configOptions)
         {
             if (app == null)
