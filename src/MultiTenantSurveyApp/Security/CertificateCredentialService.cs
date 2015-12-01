@@ -36,7 +36,7 @@ namespace MultiTenantSurveyApp.Security
                     aadOptions.Asymmetric.StoreName,
                     aadOptions.Asymmetric.StoreLocation,
                     aadOptions.Asymmetric.CertificateThumbprint,
-                    false);
+                    aadOptions.Asymmetric.ValidationRequired);
                 string password = null;
                 var certBytes = CertificateUtility.ExportCertificateWithPrivateKey(cert, out password);
                 return Task.FromResult(new AdalCredential(new ClientAssertionCertificate(aadOptions.ClientId, certBytes, password)));
