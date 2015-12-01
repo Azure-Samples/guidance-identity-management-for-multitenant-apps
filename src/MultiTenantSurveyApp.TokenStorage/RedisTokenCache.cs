@@ -11,18 +11,22 @@ namespace MultiTenantSurveyApp.TokenStorage
 {
     // sample implementation of a token cache which persists tokens specific to a user to redis to be used in multi tenanted scenarios
     // the key is the users object unique object identifier   
-    // [masimms-roshar] Since we expect this to act as a copy-paste sample, please add an optional verbose log for 
-    // all access to ease future debugging
-    //[manikris] done
     public class RedisTokenCache : TokenCache
     {
         private IConnectionMultiplexer _connection;
         private IDatabase _cache;
         private TokenCacheKey _key;
         private ILogger _logger;
-
-        // [masimms-roshar] Wrong verb - this creates, not retrieves
-        //[manikris] done
+        /// <summary>
+        /// This factory method loads up the dictionary in the base TokenCache class with the tokens read from redis
+        /// Read http://www.cloudidentity.com/blog/2014/07/09/the-new-token-cache-in-adal-v2/ for more details on writing a custom token cache
+        /// The post above explains why we need to load up the base class token cache dictionary as soon as the cache is created. 
+        /// We want to do this asynchronously and the factory method is needed: unlike ADAL samples which make the remote calls from the constructor synchronously
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="key"></param>
+        /// <param name="logger"></param>
+        /// <returns></returns>
         public async static Task<RedisTokenCache> CreateCacheAsync(IConnectionMultiplexer connection, TokenCacheKey key, ILogger logger)
         {
             var redisTokenCache = new RedisTokenCache();
@@ -37,9 +41,8 @@ namespace MultiTenantSurveyApp.TokenStorage
             _key = key;
             _logger = logger;
             _cache = _connection.GetDatabase();
-           // BeforeAccess = BeforeAccessNotification;
+            // BeforeAccess = BeforeAccessNotification;
             AfterAccess = AfterAccessNotification;
-
             await LoadFromStoreAsync().ConfigureAwait(false);
         }
 
