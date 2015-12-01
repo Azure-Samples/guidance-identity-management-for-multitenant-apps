@@ -79,7 +79,7 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
             try
             {
                 LoadAsync(CancellationToken.None).Wait();
-                _logger.ConfigurationLoadedSuccessful(_appClientId);
+                _logger.ConfigurationLoadSuccessful(_appClientId);
             }
             catch (Exception exp)
             {
@@ -89,7 +89,7 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
         }
         /// <summary>
         /// Loads all secrets which are delimited by : so that they can be retrieved by the config system
-        /// SSince KeyVault does not  allow characters as delimiters the share secret name is not used as key for configuration, the Tag properties are used instead
+        /// Since KeyVault does not  allow characters as delimiters the share secret name is not used as key for configuration, the Tag properties are used instead
         /// The tag should always be of the form "ConfigKey"="ParentKey1:Child1:.."
         /// </summary>
         /// <param name="token"></param>
@@ -118,7 +118,8 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
 
         private async Task<string> GetTokenAsync(string authority, string resource, string scope)
         {
-            // We want to use the default shared cache. Otherwise we would need to store the redis connection string in config files and that would not be ideal. We want to get that also from keyvault
+            // We want to use the default shared cache. Otherwise we would need to store the redis connection string in config files 
+            //We want to get that also from keyvault
             AuthenticationResult result = null;
             try
             {

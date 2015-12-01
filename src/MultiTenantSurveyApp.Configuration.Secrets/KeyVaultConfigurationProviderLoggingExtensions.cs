@@ -9,9 +9,9 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
     /// <summary>
     /// ILogger extensions for events which occur inside the KeyVaultConfigurationProvider
     /// </summary>
-    internal static class KeyVaultConfigurationProviderExtensions
+    internal static class KeyVaultConfigurationProviderLoggingExtensions
     {
-        public static void ConfigurationLoadedSuccessful(this ILogger logger, string clientId)
+        public static void ConfigurationLoadSuccessful(this ILogger logger, string clientId)
         {
             logger.LogInformation("Configuration loaded successfully for Client: {0)", clientId);
         }
