@@ -14,9 +14,10 @@ using MultiTenantSurveyApp.Logging;
 
 namespace MultiTenantSurveyApp.Security
 {
-    // [masimms-roshar pushing back...] This should probably be the "AzureAd" access token service, not a generic one
-    // [masimms] What does this class do?
-    public class AccessTokenService : IAccessTokenService
+    /// <summary>
+    /// 
+    /// </summary>
+    public class AzureADTokenService : IAccessTokenService
     {
         private readonly AzureAdOptions _adOptions;
         private readonly ITokenCacheService _tokenCacheService;
@@ -24,10 +25,10 @@ namespace MultiTenantSurveyApp.Security
         // this is used only for using client credentials with assymetric encryption
         private readonly IAppCredentialService _appCredentialService;
 
-        public AccessTokenService(IOptions<ConfigurationOptions> options,
+        public AzureADTokenService(IOptions<ConfigurationOptions> options,
                                   ITokenCacheService tokenCacheService,
                              IAppCredentialService appCredentialService,
-                                  ILogger<AccessTokenService> logger)
+                                  ILogger<AzureADTokenService> logger)
         {
             _adOptions = options?.Value?.AzureAd;
             _tokenCacheService = tokenCacheService;
