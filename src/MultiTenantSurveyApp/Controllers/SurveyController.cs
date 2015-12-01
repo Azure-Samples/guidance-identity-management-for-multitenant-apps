@@ -127,12 +127,9 @@ namespace MultiTenantSurveyApp.Controllers
         /// This action is restricted to users in the survey creator role. 
         /// Creator role inclusion is implemented using the RequireSurveyCreator policy
         /// which is defined in <see cref="SurveyCreatorRequirement"/>.
-        /// 
-        /// By setting the CookieAuthenticationDefaults.AuthenticationScheme as the ActiveAuthenticationScheme,
-        /// if an authenticated user is not in the survey creator role, they will be redirected to the "forbidden" experience.
         /// </summary>
         /// <returns>A view with form fields ued to create a <see cref="Survey"/></returns>
-        [Authorize(Policy = PolicyNames.RequireSurveyCreator, ActiveAuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        [Authorize(Policy = PolicyNames.RequireSurveyCreator)]
         public IActionResult Create()
         {
             var survey = new SurveyDTO();
