@@ -115,7 +115,9 @@ namespace MultiTenantSurveyApp
             services.AddScoped<IAccessTokenService, AccessTokenService>();
 
             services.AddSingleton<HttpClientService>();
-            services.AddSingleton<IAppCredentialService, AppCredentialService>();
+            // Use this for client certificate support
+            //services.AddSingleton<ICredentialService, CertificateCredentialService>();
+            services.AddSingleton<ICredentialService, ClientCredentialService>();
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<SignInManager, SignInManager>();
