@@ -1,10 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using MultiTenantSurveyApp.Common;
 using System;
 
 namespace MultiTenantSurveyApp.TokenStorage
 {
+    /// <summary>
+    /// Key to be used for RedisTokenCache. 
+    /// We want to always make use of the clientId and UserIdentifier as the key in redis to isolate different apps and users
+    /// </summary>
     public class TokenCacheKey
     {
         private string _key;
@@ -14,7 +19,9 @@ namespace MultiTenantSurveyApp.TokenStorage
         // use this for on behalf of tokens
         public TokenCacheKey(string uniqueUserId, string clientId)
         {
-            //TODO right now the guard class is not usable here due to circular references. 
+            Guard.ArgumentNotNullOrEmpty("uniqueUserId", uniqueUserId);
+            Guard.ArgumentNotNullOrEmpty("clientId", clientId);
+
             if (String.IsNullOrEmpty(uniqueUserId)) throw new ArgumentNullException("uniqueUserId");
             if (String.IsNullOrEmpty(clientId)) throw new ArgumentNullException("clientId");
             _uniqueUserId = uniqueUserId;
