@@ -22,14 +22,7 @@ namespace MultiTenantSurveyApp.TokenStorage
             _key = string.Format("UserId:{0}::ClientId:{1}", uniqueUserId, clientId);
 
         }
-        // use this for client credential flow
-        public TokenCacheKey(string clientId)
-        {
-            //TODO right now the guard class is not usable here due to circular references. 
-            if (String.IsNullOrEmpty(clientId)) throw new ArgumentNullException("clientId");
-            _key = string.Format("ClientId:{0}", clientId);
 
-        }
         public string Key
         {
             get
