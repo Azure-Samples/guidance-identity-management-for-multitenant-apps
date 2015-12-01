@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using StackExchange.Redis;
+using MultiTenantSurveyApp.Common;
 
 namespace MultiTenantSurveyApp.TokenStorage
 {
     // sample implementation of a token cache which persists tokens specific to a user to redis to be used in multi tenanted scenarios
-    // the key is the users object unique object identifier   
     public class RedisTokenCache : TokenCache
     {
         private IConnectionMultiplexer _connection;
@@ -18,10 +18,12 @@ namespace MultiTenantSurveyApp.TokenStorage
         private TokenCacheKey _key;
         private ILogger _logger;
         /// <summary>
-        /// This factory method loads up the dictionary in the base TokenCache class with the tokens read from redis
-        /// Read http://www.cloudidentity.com/blog/2014/07/09/the-new-token-cache-in-adal-v2/ for more details on writing a custom token cache
-        /// The post above explains why we need to load up the base class token cache dictionary as soon as the cache is created. 
-        /// We want to do this asynchronously and the factory method is needed: unlike ADAL samples which make the remote calls from the constructor synchronously
+        /// This factory method loads up the dictionary in the base TokenCache class with the tokens read from redis.
+        /// Read http://www.cloudidentity.com/blog/2014/07/09/the-new-token-cache-in-adal-v2/ for more details on writing a custom token cache.
+        /// The post above explains why we need to load up the base class token cache dictionary as soon as the cache is created.
+        /// We want to do this asynchronously and the factory method is needed: unlike ADAL samples which make the remote calls from the constructor synchronously.
+        /// This may look like a leaky abstraction but we want the consumer to pass the connection since the connection could be potentially used for other cache operations.
+        /// StackExchange.Redis recommends creating only a single connection.
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="key"></param>
@@ -29,6 +31,10 @@ namespace MultiTenantSurveyApp.TokenStorage
         /// <returns></returns>
         public async static Task<RedisTokenCache> CreateCacheAsync(IConnectionMultiplexer connection, TokenCacheKey key, ILogger logger)
         {
+            Guard.ArgumentNotNull(connection, "IConnectionMultiplexer");
+            Guard.ArgumentNotNull(key, "key");
+            Guard.ArgumentNotNull(logger, "logger");
+
             var redisTokenCache = new RedisTokenCache();
             await redisTokenCache.InitializeAsync(connection, key, logger).ConfigureAwait(false);
             return redisTokenCache;
@@ -41,7 +47,6 @@ namespace MultiTenantSurveyApp.TokenStorage
             _key = key;
             _logger = logger;
             _cache = _connection.GetDatabase();
-            // BeforeAccess = BeforeAccessNotification;
             AfterAccess = AfterAccessNotification;
             await LoadFromStoreAsync().ConfigureAwait(false);
         }
@@ -60,15 +65,6 @@ namespace MultiTenantSurveyApp.TokenStorage
                 throw;
             }
         }
-
-        // Triggered right before ADAL needs to access the cache.
-        // Reload the cache from the persistent store in case it changed since the last access.
-        //TODO- verify this. the assumption right now is that we dont need to impement this in a web app
-        //This ie because will be reading from redis for every request and writing back if the state changes so that the next request gets the latest
-        //public async void BeforeAccessNotification(TokenCacheNotificationArgs args)
-        //{
-        //    await LoadFromStoreAsync();
-        //}
 
         // Triggered right after ADAL accessed the cache.
         public async void AfterAccessNotification(TokenCacheNotificationArgs args)
