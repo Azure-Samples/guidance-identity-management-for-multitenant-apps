@@ -58,6 +58,7 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
             Guard.ArgumentNotNullOrEmpty(appClientId, "appClientId");
             Guard.ArgumentNotNullOrEmpty(vaultName, "vaultName");
             Guard.ArgumentNotNullOrEmpty(certificateThumbprint, "certificateThumbprint");
+            Guard.ArgumentNotNull(logger, "logger");
 
             _appClientId = appClientId;
             _vault = $"https://{vaultName}.vault.azure.net:443/";
