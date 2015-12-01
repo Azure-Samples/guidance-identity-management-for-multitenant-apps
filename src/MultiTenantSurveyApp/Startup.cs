@@ -26,7 +26,6 @@ using Microsoft.Extensions.PlatformAbstractions;
 using System.Threading.Tasks;
 
 #if DNX451
-using StackExchange.Redis;
 using MultiTenantSurveyApp.Configuration.Secrets;
 #endif
 
@@ -121,18 +120,21 @@ namespace MultiTenantSurveyApp
             // dnx ef database update
 
 #if DNX451
-            var redisConfig = new ConfigurationOptions();
-            redisConfig.EndPoints.Add(configOptions.Redis.Endpoint);
-            redisConfig.Password = configOptions.Redis.Password;
-            redisConfig.Ssl = true;
-            services.AddSingleton<IConnectionMultiplexer>(factory => ConnectionMultiplexer.Connect(redisConfig));
+            services.AddRedisConnection(options =>
+            {
+                options.AddEndpoint(configOptions.Redis.Endpoint)
+                    .UsePassword(configOptions.Redis.Password)
+                    .UseSsl();
+            });
 #endif
 
             services.AddScoped<ITokenCacheService, TokenCacheService>();
             services.AddScoped<IAccessTokenService, AzureADTokenService>();
 
             services.AddSingleton<HttpClientService>();
-            services.AddSingleton<IAppCredentialService, AppCredentialService>();
+            // Use this for client certificate support
+            //services.AddSingleton<ICredentialService, CertificateCredentialService>();
+            services.AddSingleton<ICredentialService, ClientCredentialService>();
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<SignInManager, SignInManager>();

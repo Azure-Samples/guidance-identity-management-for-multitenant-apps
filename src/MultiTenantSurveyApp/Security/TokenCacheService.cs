@@ -15,12 +15,10 @@ using StackExchange.Redis;
 
 namespace MultiTenantSurveyApp.Security
 {
-    // [masimms-mani] What does this class do?
-    //[manikris] done
     /// <summary>
     /// Returns and manages the instance of token cache to be used when making use of ADAL. 
     /// This returns the default token cache in the case of DNX core and Redis token cache when using DNX451 since Redis client is supported only in DNX451
-    /// Lifetime should be scoped- we need a not instance for every request if we are using the redis cache
+    /// Lifetime should be scoped- we need a new instance for every request if we are using the redis cache
     public class TokenCacheService : ITokenCacheService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -29,6 +27,11 @@ namespace MultiTenantSurveyApp.Security
 
         private TokenCache cache = null;
 
+        /// <summary>
+        /// Creates a new instance of <see cref="MultiTenantSurveyApp.Security.TokenCacheService"/>
+        /// </summary>
+        /// <param name="contextAccessor"><see cref="Microsoft.AspNet.Http.IHttpContextAccessor"/> used to access the current <see cref="Microsoft.AspNet.Http.HttpContext"/></param>
+        /// <param name="loggerFactory"><see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> used to create type-specific <see cref="Microsoft.Extensions.Logging.ILogger"/> instances.</param>
         public TokenCacheService(IHttpContextAccessor contextAccessor, ILoggerFactory loggerFactory)
         {
             _httpContextAccessor = contextAccessor;
@@ -36,6 +39,12 @@ namespace MultiTenantSurveyApp.Security
             _logger = _loggerFactory.CreateLogger<TokenCacheService>();
         }
 
+        /// <summary>
+        /// Returns an instance of <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.TokenCache"/>.
+        /// </summary>
+        /// <param name="userObjectId">Azure Active Directory user's ObjectIdentifier.</param>
+        /// <param name="clientId">Azure Active Directory ApplicationId.</param>
+        /// <returns>An instance of <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.TokenCache"/>.</returns>
         public async Task<TokenCache> GetCacheAsync(string userObjectId, string clientId)
         {
             if (cache != null)
@@ -57,6 +66,11 @@ namespace MultiTenantSurveyApp.Security
 #endif
         }
 
+        /// <summary>
+        /// Clears the token cache.
+        /// </summary>
+        /// <param name="userObjectId">Azure Active Directory user's ObjectIdentifier.</param>
+        /// <param name="clientId">Azure Active Directory ApplicationId.</param>
         public async Task ClearCacheAsync(string userObjectId, string clientId)
         {
             var cache = await GetCacheAsync(userObjectId, clientId);
