@@ -5,12 +5,15 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
 namespace MultiTenantSurveyApp.Security.Policy
-{ 
+{
+    /// <summary>
+    /// ILogger extensions for logging event which occur during authorization
+    /// </summary>
     internal static class AuthorizationLoggingExtensions
     {
         public static void ValidatePermissionsSucceeded(this ILogger logger, string user, string userTenantId, string operationName, IEnumerable<string> permissionValues)
         {
-            logger.LogInformation("User: {0} of Tenant: {1} authorized to perform Operation: {2} with Permissions: {3}",user,userTenantId,operationName, permissionValues);
+            logger.LogInformation("User: {0} of Tenant: {1} authorized to perform Operation: {2} with Permissions: {3}", user, userTenantId, operationName, permissionValues);
         }
         public static void ValidatePermissionsFailed(this ILogger logger, string user, string userTenantId, string operationName, IEnumerable<string> permissionValues)
         {
