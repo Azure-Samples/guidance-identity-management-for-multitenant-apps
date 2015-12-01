@@ -23,16 +23,16 @@ namespace MultiTenantSurveyApp.Security
         private readonly ITokenCacheService _tokenCacheService;
         private readonly ILogger _logger;
         // this is used only for using client credentials with assymetric encryption
-        private readonly IAppCredentialService _appCredentialService;
+        private readonly ICredentialService _credentialService;
 
         public AzureADTokenService(IOptions<ConfigurationOptions> options,
                                   ITokenCacheService tokenCacheService,
-                             IAppCredentialService appCredentialService,
+                             ICredentialService credentialService,
                                   ILogger<AzureADTokenService> logger)
         {
             _adOptions = options?.Value?.AzureAd;
             _tokenCacheService = tokenCacheService;
-            _appCredentialService = appCredentialService;
+            _credentialService = credentialService;
             _logger = logger;
         }
 
@@ -51,17 +51,10 @@ namespace MultiTenantSurveyApp.Security
             {
                 _logger.BearerTokenAcquisitionStarted(resource, userName, tenantId);
                 var authContext = await CreateAuthenticationContext(user);
-                //start-symmetric: Use the block of code below for symmetric encryption
-                var credential = new ClientCredential(_adOptions.ClientId, _adOptions.ClientSecret);
-                var result = await authContext.AcquireTokenSilentAsync(resource, credential,
+                var result = await authContext.AcquireTokenSilentAsync(
+                    resource,
+                    await _credentialService.GetCredentialsAsync(),
                     new UserIdentifier(userId, UserIdentifierType.UniqueId));
-                //end-symmetric
-
-                //start-asymmetric: Use the block of code below for assymetric encryption, follow config steps in docs before switching to assymetric 
-                // var result = await authContext.AcquireTokenSilentAsync(resource,
-               // await _appCredentialService.GetAsymmetricCredentialsAsync(),
-                //new UserIdentifier(userId, UserIdentifierType.UniqueId));
-                //end-asymmetric
 
                 _logger.BearerTokenAcquisitionSucceeded(resource, userName, tenantId);
 
@@ -80,6 +73,7 @@ namespace MultiTenantSurveyApp.Security
             {
                 throw new ArgumentNullException(nameof(claimsPrincipal));
             }
+
             return new AuthenticationContext(
                Constants.AuthEndpointPrefix + claimsPrincipal.GetTenantIdValue(),
                 await _tokenCacheService.GetCacheAsync(claimsPrincipal.GetObjectIdentifierValue(), _adOptions.ClientId));
@@ -117,21 +111,11 @@ namespace MultiTenantSurveyApp.Security
                 var issuerValue = claimsPrincipal.GetIssuerValue();
                 _logger.AuthenticationCodeRedemptionStarted(userId, issuerValue, resource);
                 var authenticationContext = await CreateAuthenticationContext(claimsPrincipal);
-                //start-symmetric: Use the block of code below for symmetric encryption
                 var authenticationResult = await authenticationContext.AcquireTokenByAuthorizationCodeAsync(
                     authorizationCode,
                     new Uri(redirectUri),
-                    new ClientCredential(_adOptions.ClientId, _adOptions.ClientSecret),
+                    await _credentialService.GetCredentialsAsync(),
                     resource);
-                //end-symmetric
-
-                //start-asymmetric: Use the block of code below for assymetric encryption, follow config steps in docs before switching to assymetric 
-                //var authenticationResult = await authenticationContext.AcquireTokenByAuthorizationCodeAsync(
-                //       authorizationCode,
-                //        new Uri(_adOptions.PostLogoutRedirectUri),
-                //       await _appCredentialService.GetAsymmetricCredentialsAsync(),
-                //        resource);
-                //end-asymmetric
 
                 _logger.AuthenticationCodeRedemptionCompleted(userId, issuerValue, resource);
                 return authenticationResult;
