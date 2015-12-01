@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using StackExchange.Redis;
+using MultiTenantSurveyApp.Common;
 
 namespace MultiTenantSurveyApp.TokenStorage
 {
@@ -20,8 +21,11 @@ namespace MultiTenantSurveyApp.TokenStorage
         private ILogger _logger;
 
         /// <summary>
-        /// Factory method to create instances of <see cref="MultiTenantSurveyApp.TokenStorage.RedisTokenCache"/>.  The constructor
-        /// is intentionally made private.  Since we need to do some async initialization, the instance of the class is not ready
+        /// This factory method loads up the dictionary in the base TokenCache class with the tokens read from redis.
+        /// Read http://www.cloudidentity.com/blog/2014/07/09/the-new-token-cache-in-adal-v2/ for more details on writing a custom token cache.
+        /// The post above explains why we need to load up the base class token cache dictionary as soon as the cache is created.
+        /// This factory method is used to create instances of <see cref="MultiTenantSurveyApp.TokenStorage.RedisTokenCache"/>.  The constructor
+        /// is intentionally made private, since we need to do some async initialization and the instance of the class is not ready
         /// for use at the completion of the constructor.
         /// </summary>
         /// <param name="connection">An instance of <see cref="StackExchange.Redis.IConnectionMultiplexer"/> to use for a connection to Redis.</param>
@@ -30,8 +34,12 @@ namespace MultiTenantSurveyApp.TokenStorage
         /// <returns>An initialized instance of <see cref="MultiTenantSurveyApp.TokenStorage.TokenCacheKey"/>.</returns>
         public async static Task<RedisTokenCache> CreateCacheAsync(IConnectionMultiplexer connection, TokenCacheKey key, ILogger logger)
         {
+            Guard.ArgumentNotNull(connection, "IConnectionMultiplexer");
+            Guard.ArgumentNotNull(key, "key");
+            Guard.ArgumentNotNull(logger, "logger");
             var cache = new RedisTokenCache(connection, key, logger);
-            await cache.InitializeAsync();
+            await cache.InitializeAsync()
+                .ConfigureAwait(false);
             return cache;
         }
 

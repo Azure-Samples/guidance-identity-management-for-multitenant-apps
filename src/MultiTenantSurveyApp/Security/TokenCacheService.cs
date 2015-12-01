@@ -57,6 +57,10 @@ namespace MultiTenantSurveyApp.Security
             return (cache=TokenCache.DefaultShared);
 #else
             var key = new TokenCacheKey(userObjectId, clientId);
+            /// StackExchange.Redis recommends creating only a single connection. We choose to create connection outside and pass it in because:
+            /// 1. We want the consumer to pass the connection since the connection could be potentially used for other cache operations.
+            /// 2. There are many configuration settings for the connection and we want to leave it open to the user to choose whats appropriate.
+            /// 3. Testability if we allow injecting the connection
             var connection = _httpContextAccessor.HttpContext.ApplicationServices.GetService<IConnectionMultiplexer>();
             return (cache = await RedisTokenCache.CreateCacheAsync(connection, key, _loggerFactory.CreateLogger<RedisTokenCache>()));
 #endif
