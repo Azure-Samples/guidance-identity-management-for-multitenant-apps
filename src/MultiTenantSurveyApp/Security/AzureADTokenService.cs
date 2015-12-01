@@ -25,10 +25,11 @@ namespace MultiTenantSurveyApp.Security
         // this is used only for using client credentials with assymetric encryption
         private readonly ICredentialService _credentialService;
 
-        public AzureADTokenService(IOptions<ConfigurationOptions> options,
-                                  ITokenCacheService tokenCacheService,
-                             ICredentialService credentialService,
-                                  ILogger<AzureADTokenService> logger)
+        public AzureADTokenService(
+            IOptions<ConfigurationOptions> options,
+            ITokenCacheService tokenCacheService,
+            ICredentialService credentialService,
+            ILogger<AzureADTokenService> logger)
         {
             _adOptions = options?.Value?.AzureAd;
             _tokenCacheService = tokenCacheService;
