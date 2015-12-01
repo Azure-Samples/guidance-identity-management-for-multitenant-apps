@@ -21,9 +21,7 @@ namespace MultiTenantSurveyApp.TokenStorage
         /// This factory method loads up the dictionary in the base TokenCache class with the tokens read from redis.
         /// Read http://www.cloudidentity.com/blog/2014/07/09/the-new-token-cache-in-adal-v2/ for more details on writing a custom token cache.
         /// The post above explains why we need to load up the base class token cache dictionary as soon as the cache is created.
-        /// We want to do this asynchronously and the factory method is needed: unlike ADAL samples which make the remote calls from the constructor synchronously.
-        /// This may look like a leaky abstraction but we want the consumer to pass the connection since the connection could be potentially used for other cache operations.
-        /// StackExchange.Redis recommends creating only a single connection.
+        /// We want to do this asynchronously and this requires the factory method.
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="key"></param>
