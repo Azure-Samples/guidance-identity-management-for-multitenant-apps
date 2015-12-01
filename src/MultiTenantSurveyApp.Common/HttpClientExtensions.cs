@@ -14,13 +14,9 @@ namespace MultiTenantSurveyApp.Common
 {
     public static class HttpClientExtensions
     {
-        public static async Task<HttpResponseMessage> SendRequestWithBearerTokenAsync(this HttpClient httpClient, HttpMethod method, string path, Dictionary<string, object> requestBody, string accessToken, CancellationToken ct)
+        public static async Task<HttpResponseMessage> SendRequestWithBearerTokenAsync(this HttpClient httpClient, HttpMethod method, string path, object requestBody, string accessToken, CancellationToken ct)
         {
-            var request = new HttpRequestMessage
-            {
-                RequestUri = new Uri(path),
-                Method = method
-            };
+            var request = new HttpRequestMessage(method, path);
 
             if (requestBody != null)
             {

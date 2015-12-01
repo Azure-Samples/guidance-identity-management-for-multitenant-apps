@@ -74,8 +74,23 @@ namespace MultiTenantSurveyApp
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(PolicyNames.RequireSurveyCreator, policy => policy.AddRequirements(new SurveyCreatorRequirement()));
-                options.AddPolicy(PolicyNames.RequireSurveyAdmin, policy => policy.AddRequirements(new SurveyAdminRequirement()));
+                options.AddPolicy(PolicyNames.RequireSurveyCreator,
+                    policy => 
+                    {
+                        policy.AddRequirements(new SurveyCreatorRequirement());
+                        // By adding the CookieAuthenticationDefaults.AuthenticationScheme,
+                        // if an authenticated user is not in the appropriate role, they will be redirected to the "forbidden" experience.
+                        policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+                    });
+            
+                options.AddPolicy(PolicyNames.RequireSurveyAdmin,
+                    policy =>
+                    {
+                        policy.AddRequirements(new SurveyAdminRequirement());
+                        // By adding the CookieAuthenticationDefaults.AuthenticationScheme,
+                        // if an authenticated user is not in the appropriate role, they will be redirected to the "forbidden" experience.
+                        policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+                    });
             });
 
             // Add Entity Framework services to the services container.
@@ -112,7 +127,7 @@ namespace MultiTenantSurveyApp
 #endif
 
             services.AddScoped<ITokenCacheService, TokenCacheService>();
-            services.AddScoped<IAccessTokenService, AccessTokenService>();
+            services.AddScoped<IAccessTokenService, AzureADTokenService>();
 
             services.AddSingleton<HttpClientService>();
             services.AddSingleton<IAppCredentialService, AppCredentialService>();

@@ -3,16 +3,14 @@
 
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
-using Microsoft.Extensions.OptionsModel;
-using MultiTenantSurveyApp.Configuration;
+using MultiTenantSurveyApp.Common;
 using MultiTenantSurveyApp.DAL.DataModels;
 using MultiTenantSurveyApp.DAL.DTOs;
 using MultiTenantSurveyApp.Models;
 using MultiTenantSurveyApp.Security;
-using Newtonsoft.Json;
 
 namespace MultiTenantSurveyApp.Services
 {
@@ -30,35 +28,42 @@ namespace MultiTenantSurveyApp.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAccessTokenService _accessTokenService;
         private readonly HttpClient _httpClient;
+        private readonly CancellationToken _cancellationToken;
 
-        public SurveyService(HttpClientService factory, IHttpContextAccessor contextAccessor, IAccessTokenService accessTokenService)
+
+        public SurveyService(HttpClientService factory, IHttpContextAccessor httpContextAccessor, IAccessTokenService accessTokenService)
         {
-            _httpContextAccessor = contextAccessor;
+            _httpContextAccessor = httpContextAccessor;
             _httpClient = factory.GetHttpClient();
             _accessTokenService = accessTokenService;
+            _cancellationToken = httpContextAccessor?.HttpContext?.RequestAborted ?? CancellationToken.None;
         }
 
         public async Task<ApiResult<SurveyDTO>> GetSurveyAsync(int id)
         {
             var path = $"/surveys/{id}";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response =
+                await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Get, path, null,
+                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                                .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
         public async Task<ApiResult<UserSurveysDTO>> GetSurveysForUserAsync(int userId)
         {
             var path = $"/users/{userId}/surveys";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Get, path, null,
+                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                                .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<UserSurveysDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
         public async Task<ApiResult<TenantSurveysDTO>> GetSurveysForTenantAsync(string tenantId)
         {
             var path = $"/tenants/{tenantId}/surveys";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Get, path, null,
+                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                                .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<TenantSurveysDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
         public async Task<ApiResult<IEnumerable<SurveyDTO>>> GetPublishedSurveysAsync()
@@ -72,75 +77,71 @@ namespace MultiTenantSurveyApp.Services
         public async Task<ApiResult<SurveyDTO>> CreateSurveyAsync(SurveyDTO survey)
         {
             var path = "/surveys";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, path) {Content = CreateJsonContent(survey)};
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Post, path, survey,
+                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                                .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
         public async Task<ApiResult<SurveyDTO>> UpdateSurveyAsync(SurveyDTO survey)
         {
             var path = $"/surveys/{survey.Id}";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, path) {Content = CreateJsonContent(survey)};
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Put, path, survey,
+                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                                .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
         public async Task<ApiResult<SurveyDTO>> DeleteSurveyAsync(int id)
         {
             var path = $"/surveys/{id}";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, path);
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Delete, path, null,
+                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                                .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
         public async Task<ApiResult<SurveyDTO>> PublishSurveyAsync(int id)
         {
             var path = $"/surveys/{id}/publish";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, path);
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Put, path, null,
+                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                                .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
         public async Task<ApiResult<SurveyDTO>> UnPublishSurveyAsync(int id)
         {
             var path = $"/surveys/{id}/unpublish";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, path);
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Put, path, null,
+                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                                .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<SurveyDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
         public async Task<ApiResult<ContributorsDTO>> GetSurveyContributorsAsync(int id)
         {
             var path = $"/surveys/{id}/contributors";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Get, path, null,
+                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                                .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<ContributorsDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
 
         public async Task<ApiResult> ProcessPendingContributorRequestsAsync()
         {
             var path = $"/surveys/processpendingcontributorrequests";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, path);
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Post, path, null,
+                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                                .ConfigureAwait(false), _cancellationToken);
             return new ApiResult { Response = response };
         }
 
         public async Task<ApiResult> AddContributorRequestAsync(ContributorRequest contributorRequest)
         {
             var path = $"/surveys/{contributorRequest.SurveyId}/contributorrequests";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, path) { Content = CreateJsonContent(contributorRequest) };
-            var response = await SendMessagewithBearerTokenAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Post, path, contributorRequest,
+                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                                .ConfigureAwait(false), _cancellationToken);
             return new ApiResult { Response = response };
-        }
-
-        private static HttpContent CreateJsonContent<T>(T item)
-        {
-            var json = JsonConvert.SerializeObject(item);
-            return new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-        }
-
-        private async Task<HttpResponseMessage> SendMessagewithBearerTokenAsync(HttpRequestMessage requestMessage)
-        {
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User).ConfigureAwait(false));
-            return await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
         }
     }
 }

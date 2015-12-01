@@ -61,8 +61,18 @@ namespace MultiTenantSurveyApp.WebApi
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(PolicyNames.RequireSurveyCreator, policy => policy.AddRequirements(new SurveyCreatorRequirement()));
-                options.AddPolicy(PolicyNames.RequireSurveyAdmin, policy => policy.AddRequirements(new SurveyAdminRequirement()));
+                options.AddPolicy(PolicyNames.RequireSurveyCreator,
+                    policy =>
+                    {
+                        policy.AddRequirements(new SurveyCreatorRequirement());
+                        policy.AddAuthenticationSchemes("Bearer");
+                    });
+                options.AddPolicy(PolicyNames.RequireSurveyAdmin,
+                    policy =>
+                    {
+                        policy.AddRequirements(new SurveyAdminRequirement());
+                        policy.AddAuthenticationSchemes("Bearer");
+                    });
             });
 
             // Add Entity Framework services to the services container.
