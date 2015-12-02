@@ -33,7 +33,7 @@ For an example of using WS-Federation with ASP.NET 4, see https://github.com/Azu
 ## Authentication flow
 
 1.	When the user clicks "sign in", the application redirects to an OpenID Connect endpoint on the SaaS provider's AD FS.
-2.	The user enters his or her organizational user name ("alice@corp.contoso.com"). AD FS uses home realm discovery to redirect to the customer's AD FS, where the user enters their credentials.
+2.	The user enters his or her organizational user name ("`alice@corp.contoso.com`"). AD FS uses home realm discovery to redirect to the customer's AD FS, where the user enters their credentials.
 3.	The customer's AD FS sends user claims to the SaaS provider's AD FS, using WF-Federation (or SAML).
 4.	Claims flow from AD FS to the app, using OpenID Connect. This requires a protocol transition from WS-Federation.
 
@@ -41,20 +41,20 @@ For an example of using WS-Federation with ASP.NET 4, see https://github.com/Azu
 
 At the time of this writing, the application gets a limited set of claims in the OpenID id_token. AD FS 4.0 is in still preview, so this list might change. But if your app requires additional claims, that's currently not possible, and important to note before you proceed.
 
-The following claims are sent in the id_token:
+Currently, the following claims are sent in the id_token:
 
-Claim	| Description |	Claim Type
-------|-------------|-----------
-aud	| Audience &mdash; the application that the claims were issued for.	| "aud"
-authenticationinstant	| [Authentication instant](https://msdn.microsoft.com/en-us/library/system.security.claims.claimtypes.authenticationinstant%28v=vs.110%29.aspx) | "http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationinstant"
-c_hash	| Code hash value | "c_hash"
-exp	| [Expiration time](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-4.1.4) | "exp"
-iat	| [Issued at](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-4.1.6) | "iat"
+Claim	| Description
+------|-------------
+aud	| Audience &mdash; the application that the claims were issued for.
+authenticationinstant	| [Authentication instant](https://msdn.microsoft.com/en-us/library/system.security.claims.claimtypes.authenticationinstant%28v=vs.110%29.aspx)
+c_hash	| Code hash value
+exp	| [Expiration time](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-4.1.4)
+iat	| [Issued at](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25#section-4.1.6) |"
 iss	| Issuer. The value of this claim is always the resource partner's AD FS, not the customer's AD FS. (In other words, this claim will identify the SaaS provider as the issuer, rather than the customer.) | "iss"
-name	| User name. Example: john@corp.fabrikam.com. | "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
-nameidentifier | [Name identifier](https://technet.microsoft.com/en-us/library/ee913589.aspx) | "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-nonce	| Session nonce	| "nonce"
-upn	| User principal name (UPN). Example: john@corp.fabrikam.com | 	"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"
+name	| User name. Example: `john@corp.fabrikam.com`.
+nameidentifier | [Name identifier](https://technet.microsoft.com/en-us/library/ee913589.aspx)
+nonce	| Session nonce
+upn	| User principal name (UPN). Example: john@corp.fabrikam.com
 
 In particular, note that the "iss" claim does not specify the customer's AD FS. To know the cutomer's domain, you will need to look at the UPN.
 The rest of this topic describes how to set up the trust relationship between the RP (the app) and the account partner (the customer).
@@ -169,7 +169,12 @@ The customer must do the following:
 9.	Select "Send Claims Using a Custom Rule" and click **Next**.
 10.	Enter a name for the rule, such as "Anchor Claim".
 11.	Under **Custom rule**, enter the following:
-			EXISTS([Type == "http://schemas.microsoft.com/ws/2014/01/identity/claims/anchorclaimtype"])=> issue (Type = "http://schemas.microsoft.com/ws/2014/01/identity/claims/anchorclaimtype", Value = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn");
-  This rule maps the UPN claim to the Anchor claim.
+
+        EXISTS([Type == "http://schemas.microsoft.com/ws/2014/01/identity/claims/anchorclaimtype"])=>
+          issue (Type = "http://schemas.microsoft.com/ws/2014/01/identity/claims/anchorclaimtype",
+                 Value = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn");
+
+    This rule maps the UPN claim to the Anchor claim.
+
 12.	Click **Finish**.
 13.	Click **OK** to complete the wizard.

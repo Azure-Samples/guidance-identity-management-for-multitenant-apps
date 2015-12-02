@@ -26,7 +26,7 @@ If at a later point the application requires additional permissions, the custome
 ![Consent error](media/sign-up/consent-error.png)
 
 
-# Implementing tenant sign-Up
+# Implementing tenant sign-up
 
 For the Tailspin Surveys application,  we defined several requirements for the sign-up process:
 
@@ -44,9 +44,9 @@ When an anonymous user visits the Surveys application, the user is shown two but
 
 These buttons invoke actions in the `AccountController` class.
 
-> See `/src/MultiTenantSurveyApp/Controllers/AccountController.cs`
+> See [AccountController.cs](https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/MultiTenantSurveyApp/Controllers/AccountController.cs).
 
-The `SignIn` action returns a `ChallegeResult`, which causes the OpenID Connect middleware to redirect to the authentication endpoint. This is the default way to trigger authentication in ASP.NET 5.  
+The `SignIn` action returns a **ChallegeResult**, which causes the OpenID Connect middleware to redirect to the authentication endpoint. This is the default way to trigger authentication in ASP.NET 5.  
 
 ```
 [AllowAnonymous]
@@ -61,7 +61,7 @@ public IActionResult SignIn()
 }
 ```
 
-Now compare the SignUp action:
+Now compare the `SignUp` action:
 
 ```
 [AllowAnonymous]
@@ -90,12 +90,12 @@ public async Task<IActionResult> SignUp()
 }
 ```
 
-Note: This code includes a workaround for a known bug in ASP.NET 5 RC1. See the [Admin Consent](#admin-consent) section for more information.
+> This code includes a workaround for a known bug in ASP.NET 5 RC1. See the [Admin Consent](#admin-consent) section for more information.
 
 Like `SignIn`, the `SignUp` action also returns a `ChallengeResult`. But this time, we add two pieces of state information to the `AuthenticationProperties` in the `ChallengeResult`:
 
 -	_signup_: A Boolean flag, indicating that the user has started the sign-up process.
--	_csrf_token_: A random GUID to guard against cross-site request forgery (CSRF) attacks. We'll see how that's used in the section [Registering a Tenant](#registering-a-tenant). Note that the CSRF token is also stored in the application database, in the call to `_tenantManager.CreateAsync`.
+-	_csrf_token_: A random GUID to guard against cross-site request forgery (CSRF) attacks. We'll see how that's used in the section [Registering a tenant](#registering-a-tenant). Note that the CSRF token is also stored in the application database, in the call to `_tenantManager.CreateAsync`.
 
 The state information in `AuthenticationProperties` gets added to the OpenID Connect [state](http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest) parameter, which round trips during the authentication flow.
 
@@ -124,7 +124,7 @@ public override Task RedirectToAuthenticationEndpoint(RedirectContext context)
 }
 ```
 
-> See /src/MultiTenantSurveyApp/SurveyAuthenticationEvents.cs
+> See (SurveyAuthenticationEvents.cs)[https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/MultiTenantSurveyApp/SurveyAuthenticationEvents.cs].
 
 Setting` ProtocolMessage.Prompt` tells the middleware to add the "prompt" parameter to the authentication request.
 
@@ -170,7 +170,7 @@ internal static bool IsSigningUp(this BaseControlContext context)
 }
 ```
 
-> See /src/MultiTenantSurveyApp\Security/BaseControlContextExtensions.cs
+> See [BaseControlContextExtensions.cs](https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/MultiTenantSurveyApp\Security/BaseControlContextExtensions.cs).
 
 > Note: This code includes a workaround for a known bug in ASP.NET 5 RC1. In the `RedirectToAuthenticationEndpoint` event, there is no way to get the authentication properties that contains the "signup" state. As a workaround, the `AccountController.SignUp` method also puts the "signup" state into the `HttpContext`. This works because `RedirectToAuthenticationEndpoint` happens before the redirect, so we still have the same `HttpContext`.
 
@@ -229,7 +229,7 @@ public override async Task AuthenticationValidated(AuthenticationValidatedContex
 }
 ```
 
-> See /src/MultiTenantSurveyApp/SurveyAuthenticationEvents.cs - This code snippet omits some logging and other details that aren't relevant to this discussion.
+> See (SurveyAuthenticationEvents.cs)[https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/MultiTenantSurveyApp/SurveyAuthenticationEvents.cs). This code snippet omits some logging and other details that aren't relevant to this discussion.
 
 This code does the following:
 
