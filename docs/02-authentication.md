@@ -6,7 +6,8 @@ This chapter describes how a multitenant application can authenticate users from
 - [Registering the application with AAD](#registering-the-application-with-aad)
 - [Configuring the OpenID Connect middleware](#configuring-the-openid-connect-middleware)
 - [Authentication events](#authentication-events)
-- [Understanding the OpenID Connect middleware](#understanding-the-openid-connect-middleware)
+- [Initiating the authentication flow](#initiating-the-authentication-flow)
+- [Notes on the OpenID Connect middleware](#notes-on-the-openid-connect-middleware)
 
 ## Overview
 
@@ -50,16 +51,15 @@ In your startup class, add the OpenID Connect middleware:
 app.UseOpenIdConnectAuthentication(options =>
 {
     options.AutomaticAuthentication = true;
-    options.ClientId = <<clientID>>;
+    options.ClientId = [callback path];
+    options.ClientSecret = [client secret];
     options.Authority = "https://login.microsoftonline.com/common/";
-    options.CallbackPath = <<clientID>>;
+    options.CallbackPath = [callback path];
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.TokenValidationParameters = new TokenValidationParameters()
     {
         ValidateIssuer = false
     };
-
-    options.Events = <<event callbacks>>;
 });
 ```
 
@@ -68,7 +68,7 @@ app.UseOpenIdConnectAuthentication(options =>
 Set the following middleware options:
 
 - **ClientId**. The application's client ID, which you got when you registered the application in Azure AD.
--	**Authority**. For a multitenant application, set this to `https://login.microsoftonline.com/common/`. This is the URL for the Azure AD common endpoint, which enables users from any Azure AD tenant to sign in.
+-	**Authority**. For a multitenant application, set this to `https://login.microsoftonline.com/common/`. This is the URL for the Azure AD common endpoint, which enables users from any Azure AD tenant to sign in. For more information about the common endpoint, see [this blog post](http://www.cloudidentity.com/blog/2014/08/26/the-common-endpoint-walks-like-a-tenant-talks-like-a-tenant-but-is-not-a-tenant/).
 - In **TokenValidationParameters**, set **ValidateIssuer** to false. That means the app will be responsible for validating the issuer value in the ID token. (The middleware still validates the token itself.) For more information about validating the issuer, see [Issuer validation](03-working-with-claims.md#issuer-validation).
 - **CallbackPath**. Set this equal to the path in the Reply URL that you registered in Azure AD. For example, if the reply URL is `http://contoso.com/aadsignin`, **CallbackPath** should be `aadsignin`.
 - **SignInScheme**. Set this to `CookieAuthenticationDefaults.AuthenticationScheme`. This setting means that after the user is authenticated, the user claims are stored locally in a cookie. This cookie is how the user stays logged in during the browser session.
@@ -87,7 +87,7 @@ app.UseCookieAuthentication(options =>
 
 ## Authentication events
 
-The Open ID Connect middleware raises a series of events during authentication, which your app can hook into.
+The OpenID Connect middleware raises a series of events during authentication, which your app can hook into.
 
 Event | Description
 ------|------------
@@ -108,13 +108,13 @@ Inline with lambdas:
 app.UseOpenIdConnectAuthentication(options =>
 {
     // Other options not shown.
+
     options.Events = new OpenIdConnectEvents
     {
-        OnTicketReceived = (x) =>
+        OnTicketReceived = (context) =>
         {
-
-
-        // Handle event
+             // Handle event
+             return Task.FromResult(0);
         },
         // other events
     }
@@ -129,6 +129,7 @@ public class SurveyAuthenticationEvents : OpenIdConnectEvents
     public override Task TicketReceived(TicketReceivedContext context)
     {
         // Handle event
+        return base.TicketReceived(context);
     }
     // other events
 }
@@ -137,39 +138,16 @@ public class SurveyAuthenticationEvents : OpenIdConnectEvents
 app.UseOpenIdConnectAuthentication(options =>
 {
     // Other options not shown.
+
     options.Events = new SurveyAuthenticationEvents();
 });
 ```
 
 The second approach is recommended if your event callbacks have any substantial logic, so they don't clutter your startup class. Our reference implementation uses this approach; see [SurveyAuthenticationEvents.cs](https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/MultiTenantSurveyApp/Security/SurveyAuthenticationEvents.cs).
 
-## Understanding the OpenID Connect middleware
+## Initiating the authentication flow
 
-This section contain background information about the OpenID Connect middleware. The middleware hides most of these details, but it can be useful to understand what's actually happening.
-
-**Open ID Connect Endpoints.** Azure AD supports [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html), wherein the identity provider (IDP) returns a JSON metadata document from a well-known endpoint. The metadata document contains information such as:
-
--	The URL of the authorization endpoint. This is where the app redirects to authenticate the user.
--	The URL of the "end session" endpoint, where the app goes to log out the user.
--	The URL to get the signing keys, which the client uses to validate the OIDC tokens that it gets from the IDP.
-
-By default, the OIDC middleware knows how to fetch this metadata. You just set the **Authority** property, and the middleware constructs the URL for the metadata.
-
-Every AAD tenant has its own metadata endpoint, which you would use for single-tenant sign on. In addition, AAD defines a "Common" endpoint, which enables a multitenant app to sign in users from any AAD tenant. The Common endpoint has its own ODIC metadata document. The URL of the Common endpoint is `https://login.microsoftonline.com/common/oauth2/authorize`. For more information, see [this blog post](http://www.cloudidentity.com/blog/2014/08/26/the-common-endpoint-walks-like-a-tenant-talks-like-a-tenant-but-is-not-a-tenant/).
-
-**Authentication Flow**. By default, the OIDC middleware uses hybrid flow with form post response mode.
-
--	_Hybrid flow_ means the client can get an ID token and an authorization code in the same round-trip to the authorization server.
--	_Form post reponse mode_ means the authorization server uses an HTTP POST request to send the ID token and authorization code to the app. The values are form-urlencoded (content type = "application/x-www-form-urlencoded").
-
-When the OIDC middleware redirects to the authorization endpoint, the redirect URL includes all of the query string parameters needed by OIDC. Among these are:
-
--	client_id. This value is set in the **ClientId** option
--	scope = "openid profile", which means it's an OIDC request and we want the user's profile.
--	response_type  = "code id_token".  This specifies hybrid flow.
--	response_mode = "form_post". This specifies form post response.
-
-**Sign-in Action**. To trigger the authentication flow in MVC 6, return a **ChallengeResult** from the contoller:
+To start the authentication flow in MVC 6, return a **ChallengeResult** from the contoller:
 
 ```
 [AllowAnonymous]
@@ -183,10 +161,48 @@ public IActionResult SignIn()
         });
 }
 ```
-
 This causes the middleware to return a 302 (Found) response that redirects to the authentication endpoint.
 
-**Authentication Ticket**. If authentication succeeds, the OIDC middleware creates an authentication ticket, which contains a claims principal that holds the user's claims. You can access the ticket inside the **AuthenticationValidated** or **TicketReceived** event.
+## Notes on the OpenID Connect middleware
+
+The OpenID Connect middleware provided in ASP.NET 5 hides most of the protocol details. This section contains some notes about the implementation, that may be useful for understanding the protocol flow. Also see [Appendix: Overview of OAuth 2 and OpenID Connect](appendixes/about-oauth2-oidc.md).
+
+### OpenID connect endpoints
+
+Azure AD supports [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html), wherein the identity provider (IDP) returns a JSON metadata document from a [well-known endpoint](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig). The metadata document contains information such as:
+
+-	The URL of the authorization endpoint. This is where the app redirects to authenticate the user.
+-	The URL of the "end session" endpoint, where the app goes to log out the user.
+-	The URL to get the signing keys, which the client uses to validate the OIDC tokens that it gets from the IDP.
+
+By default, the OIDC middleware knows how to fetch this metadata. Set the **Authority** option in the middleware, and the middleware constructs the URL for the metadata. (You can override the metadata URL by setting the **MetadataAddress** option.)
+
+### Authentication flow
+
+By default, the OIDC middleware uses hybrid flow with form post response mode.
+
+-	_Hybrid flow_ means the client can get an ID token and an authorization code in the same round-trip to the authorization server.
+-	_Form post reponse mode_ means the authorization server uses an HTTP POST request to send the ID token and authorization code to the app. The values are form-urlencoded (content type = "application/x-www-form-urlencoded").
+
+When the OIDC middleware redirects to the authorization endpoint, the redirect URL includes all of the query string parameters needed by OIDC. For hybrid flow:
+
+-	client_id. This value is set in the **ClientId** option
+-	scope = "openid profile", which means it's an OIDC request and we want the user's profile.
+-	response_type  = "code id_token". This specifies hybrid flow.
+-	response_mode = "form_post". This specifies form post response.
+
+To specify a different flow, set the **ResponseType** property on the options. For example:
+
+    app.UseOpenIdConnectAuthentication(options =>
+    {
+        options.ResponseType = "code"; // Authorization code flow
+
+        // Other options
+    }
+
+### Authentication ticket
+
+If authentication succeeds, the OIDC middleware creates an authentication ticket, which contains a claims principal that holds the user's claims. You can access the ticket inside the **AuthenticationValidated** or **TicketReceived** event.
 
 > Note: Until the entire authentication flow is completed, `HttpContext.User` still holds an anonymous principal,  _not_ the authenticated user.
 After the **TicketReceived** event, the OIDC middleware calls the cookie middleware to persist the authentication ticket. At that point, the app redirects again. That's when the cookie middleware deserializes the ticket and sets `HttpContext.User` to the authenticated user.
