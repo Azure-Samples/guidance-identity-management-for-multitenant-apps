@@ -35,7 +35,7 @@ public class Startup
             // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
             builder.AddUserSecrets();
         }
-        //Uncomment the block of code below if your database connection string is in KeyVault and you want migrations to run using the connection string in KeyVault
+        //Uncomment the block of code below to use a connection string from KeyVault for migrations
 //#if DNX451
 //        InitializeLogging(loggerFactory);
 //        var config = builder.Build();

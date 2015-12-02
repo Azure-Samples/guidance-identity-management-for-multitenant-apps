@@ -51,7 +51,8 @@ namespace MultiTenantSurveyApp
             }
 
             builder.AddEnvironmentVariables();
-            //Uncomment the block of code below if you have setup secrets in KeyVault and want to load your secrets from it
+            //Uncomment the block of code below if you want to load secrets from KeyVault
+            //It is recommended to use certs for all authentication when using KeyVault
 //#if DNX451
 //            InitializeLogging(loggerFactory);
 //            _configuration = builder.Build();
@@ -133,8 +134,8 @@ namespace MultiTenantSurveyApp
 
             services.AddSingleton<HttpClientService>();
             // Use this for client certificate support
-            //services.AddSingleton<ICredentialService, CertificateCredentialService>();
-            services.AddSingleton<ICredentialService, ClientCredentialService>();
+           // services.AddSingleton<ICredentialService, CertificateCredentialService>();
+           services.AddSingleton<ICredentialService, ClientCredentialService>();
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<SignInManager, SignInManager>();
