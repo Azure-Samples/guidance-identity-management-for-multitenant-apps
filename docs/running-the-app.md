@@ -125,10 +125,8 @@ The Surveys application uses Redis to cache OAuth 2 access tokens. To create the
               "AzureAd": {
                 "ClientId": "[Surveys application client ID]",
                 "ClientSecret": "[Surveys application client secret]",
-                "AADInstance": "https://login.microsoftonline.com/",
                 "PostLogoutRedirectUri": "https://localhost:44300/",
                 "WebApiResourceId": "[App ID URI of your Survey.WebAPI application]",
-                "GraphResourceId": "https://graph.windows.net/",
                 "TenantId": "[Your tenant ID]"
               },
             "Redis": {
@@ -152,8 +150,7 @@ The Surveys application uses Redis to cache OAuth 2 access tokens. To create the
 
           {
               "AzureAd": {
-                "WebApiResourceId": "[App ID URI of your Survey.WebAPI application]",
-                "CertificateThumbprint": ""
+                "WebApiResourceId": "[App ID URI of your Survey.WebAPI application]"
               },
             "Redis": {
                 "Endpoint": "[Redis cache endpoint]",
