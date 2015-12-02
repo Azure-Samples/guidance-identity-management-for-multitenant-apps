@@ -64,7 +64,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         {
             if (User.GetUserKey() != userId)
             {
-                return new HttpUnauthorizedResult();
+                return new HttpStatusCodeResult(403);
             }
 
             var surveys = new UserSurveysDTO();
@@ -83,6 +83,11 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         [HttpGet("tenants/{tenantId}/surveys")]
         public async Task<IActionResult> GetSurveysForTenant(string tenantId)
         {
+            if (User.GetTenantIdValue() != tenantId)
+            {
+                return new HttpStatusCodeResult(403);
+            }
+
             var surveys = new TenantSurveysDTO();
             surveys.Published = (await _surveyStore.GetPublishedSurveysByTenantAsync(tenantId)).Select(DataMapping._surveyToSummaryDto);
             surveys.UnPublished = (await _surveyStore.GetUnPublishedSurveysByTenantAsync(tenantId)).Select(DataMapping._surveyToSummaryDto);
