@@ -46,7 +46,7 @@ namespace MultiTenantSurveyApp.Security
                 await _httpContext.Authentication.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme,
                     new AuthenticationProperties { RedirectUri = redirectUrl });
 
-                await _accessTokenService.ClearCacheAsync(userObjectIdentifier);
+                await _accessTokenService.ClearCacheAsync(_httpContext.User);
 
                 _logger.SignoutCompleted(userObjectIdentifier, issuer);
             }
