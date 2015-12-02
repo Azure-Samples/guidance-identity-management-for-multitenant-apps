@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
@@ -49,7 +50,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             // The AuthorizationService uses the policies in the MultiTenantSurveyApp.Security project
             if (await _authorizationService.AuthorizeAsync(User, survey, Operations.Read) == false)
             {
-                return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
             return new ObjectResult(DataMapping._surveyToDto(survey));
         }
@@ -64,7 +65,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         {
             if (User.GetUserKey() != userId)
             {
-                return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
             var surveys = new UserSurveysDTO();
@@ -85,7 +86,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
         {
             if (User.GetTenantIdValue() != tenantId)
             {
-                return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
             var surveys = new TenantSurveysDTO();
@@ -190,7 +191,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             // Validate that the current user has Update permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Update))
             {
-                return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
             // Apply update
@@ -218,7 +219,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             // Validate that the current user has Delete permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Delete))
             {
-                return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
             await _surveyStore.DeleteSurveyAsync(survey);
@@ -253,7 +254,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             // Validate that the current user has Update permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Update))
             {
-                return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
             await _contributorRequestStore.AddRequestAsync(item);
@@ -309,7 +310,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             // Validate that the current user has Publish permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Publish))
             {
-                return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
             var published = await _surveyStore.PublishSurveyAsync(id);
@@ -334,7 +335,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             // Validate that the current user has UnPublish permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.UnPublish))
             {
-                return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
             var unpublished = await _surveyStore.UnPublishSurveyAsync(id);

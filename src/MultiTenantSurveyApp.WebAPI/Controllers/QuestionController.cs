@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
@@ -82,7 +83,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             // The AuthorizationService uses the policies in the MultiTenantSurveyApp.Security project
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Update))
             {
-                return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
 
@@ -122,7 +123,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
 
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Update))
             {
-                return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
 
@@ -160,7 +161,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
 
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Update))
             {
-                return new HttpStatusCodeResult(403);
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
             await _questionStore.DeleteQuestionAsync(question);
