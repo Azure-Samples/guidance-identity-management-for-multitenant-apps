@@ -13,7 +13,7 @@ namespace MultiTenantSurveyApp.Configuration.Secrets
     {
         public static void ConfigurationLoadSuccessful(this ILogger logger, string clientId)
         {
-            logger.LogInformation("Configuration loaded successfully for Client: {0)", clientId);
+            logger.LogInformation("Configuration loaded successfully for Client: {0}", clientId);
         }
         public static void ConfigurationLoadFailed(this ILogger logger, string clientId, Exception exp)
         {
