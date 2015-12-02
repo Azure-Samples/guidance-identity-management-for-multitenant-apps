@@ -264,7 +264,7 @@ namespace MultiTenantSurveyApp.Security
                     // [mattjoh] now what is done with the user?
 
                     // We are good, so cache our token for Web Api now.
-                    await accessTokenService.CacheAccessTokenAsync(
+                    await accessTokenService.RequestAccessTokenAsync(
                         principal,
                         context.ProtocolMessage.Code,
                         context.AuthenticationTicket.Properties.Items[OpenIdConnectDefaults.RedirectUriForCodePropertiesKey],
@@ -277,7 +277,7 @@ namespace MultiTenantSurveyApp.Security
                 // If an exception is thrown within this event, the user is never set on the OWIN middleware,
                 // so there is no need to sign out.  However, the access token could have been put into the
                 // cache so we need to clean it up.
-                await accessTokenService.ClearCacheAsync(principal.GetObjectIdentifierValue());
+                await accessTokenService.ClearCacheAsync(principal);
                 throw;
             }
         }

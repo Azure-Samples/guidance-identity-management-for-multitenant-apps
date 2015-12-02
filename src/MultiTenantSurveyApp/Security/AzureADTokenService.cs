@@ -80,7 +80,7 @@ namespace MultiTenantSurveyApp.Security
                 await _tokenCacheService.GetCacheAsync(claimsPrincipal.GetObjectIdentifierValue(), _adOptions.ClientId));
         }
 
-        public async Task<AuthenticationResult> CacheAccessTokenAsync(
+        public async Task<AuthenticationResult> RequestAccessTokenAsync(
             ClaimsPrincipal claimsPrincipal,
             string authorizationCode,
             string redirectUri,
@@ -128,9 +128,14 @@ namespace MultiTenantSurveyApp.Security
             }
         }
 
-        public async Task ClearCacheAsync(string userObjectId)
+        public async Task ClearCacheAsync(ClaimsPrincipal claimsPrincipal)
         {
-            await _tokenCacheService.ClearCacheAsync(userObjectId, _adOptions.ClientId);
+            if (claimsPrincipal == null)
+            {
+                throw new ArgumentNullException(nameof(claimsPrincipal));
+            }
+
+            await _tokenCacheService.ClearCacheAsync(claimsPrincipal.GetObjectIdentifierValue(), _adOptions.ClientId);
         }
     }
 }

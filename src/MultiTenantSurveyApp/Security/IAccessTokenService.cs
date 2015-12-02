@@ -10,11 +10,11 @@ namespace MultiTenantSurveyApp.Security
     public interface IAccessTokenService
     {
         Task<string> GetTokenForWebApiAsync(ClaimsPrincipal user);
-        Task<AuthenticationResult> CacheAccessTokenAsync(
+        Task<AuthenticationResult> RequestAccessTokenAsync(
             ClaimsPrincipal claimsPrincipal,
             string authorizationCode,
             string redirectUri,
             string resource);
-        Task ClearCacheAsync(string userObjectId);
+        Task ClearCacheAsync(ClaimsPrincipal claimPrincipal);
     }
 }
