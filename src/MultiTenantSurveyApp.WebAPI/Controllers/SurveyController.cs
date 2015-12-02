@@ -124,7 +124,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             // Validate that the current user has Read permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Read))
             {
-                return new HttpUnauthorizedResult();
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
             return new ObjectResult(new ContributorsDTO()
