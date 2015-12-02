@@ -143,9 +143,6 @@ namespace MultiTenantSurveyApp.WebApi
                 {
                     //Instead of validating against a fixed set of known issuers, we perform custom multi-tenant validation logic
                     ValidateIssuer = false,
-
-                    //Save token for later use
-                    SaveSigninToken = true
                 };
                 options.Events = new SurveysJwtBearerEvents(loggerFactory.CreateLogger<SurveysJwtBearerEvents>());
             });
