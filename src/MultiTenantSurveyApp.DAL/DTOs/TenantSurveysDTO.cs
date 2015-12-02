@@ -7,7 +7,7 @@ namespace MultiTenantSurveyApp.DAL.DTOs
 {
     public class TenantSurveysDTO
     {
-        public IEnumerable<SurveySummaryDTO> Published { get; set; }
-        public IEnumerable<SurveySummaryDTO> UnPublished  { get; set; }
+        public ICollection<SurveySummaryDTO> Published { get; set; }
+        public ICollection<SurveySummaryDTO> UnPublished  { get; set; }
     }
 }

@@ -69,9 +69,9 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             }
 
             var surveys = new UserSurveysDTO();
-            surveys.Published = (await _surveyStore.GetPublishedSurveysByOwnerAsync(userId)).Select(DataMapping._surveyToSummaryDto);
-            surveys.Own = (await _surveyStore.GetSurveysByOwnerAsync(userId)).Select(DataMapping._surveyToSummaryDto);
-            surveys.Contribute = (await _surveyStore.GetSurveysByContributorAsync(userId)).Select(DataMapping._surveyToSummaryDto);
+            surveys.Published = (await _surveyStore.GetPublishedSurveysByOwnerAsync(userId)).Select(DataMapping._surveyToSummaryDto).ToArray();
+            surveys.Own = (await _surveyStore.GetSurveysByOwnerAsync(userId)).Select(DataMapping._surveyToSummaryDto).ToArray();
+            surveys.Contribute = (await _surveyStore.GetSurveysByContributorAsync(userId)).Select(DataMapping._surveyToSummaryDto).ToArray();
 
             return new ObjectResult(surveys);
         }
@@ -90,8 +90,8 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             }
 
             var surveys = new TenantSurveysDTO();
-            surveys.Published = (await _surveyStore.GetPublishedSurveysByTenantAsync(tenantId)).Select(DataMapping._surveyToSummaryDto);
-            surveys.UnPublished = (await _surveyStore.GetUnPublishedSurveysByTenantAsync(tenantId)).Select(DataMapping._surveyToSummaryDto);
+            surveys.Published = (await _surveyStore.GetPublishedSurveysByTenantAsync(tenantId)).Select(DataMapping._surveyToSummaryDto).ToArray();
+            surveys.UnPublished = (await _surveyStore.GetUnPublishedSurveysByTenantAsync(tenantId)).Select(DataMapping._surveyToSummaryDto).ToArray();
             return new ObjectResult(surveys);
         }
 
@@ -130,7 +130,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             return new ObjectResult(new ContributorsDTO()
             {
                 SurveyId = id,
-                Contributors = survey.Contributors.Select(x => x.User)
+                Contributors = survey.Contributors.Select(x => x.User).ToArray()
             });
         }
 

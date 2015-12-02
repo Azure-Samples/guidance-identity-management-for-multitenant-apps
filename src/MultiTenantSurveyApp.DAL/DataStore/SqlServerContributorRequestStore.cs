@@ -24,7 +24,7 @@ namespace MultiTenantSurveyApp.DAL.DataStore
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<ContributorRequest>> GetRequestsForUserAsync(string emailAddress)
+        public async Task<ICollection<ContributorRequest>> GetRequestsForUserAsync(string emailAddress)
         {
             //TODO: check if this is optimal
             return await dbContext.ContributorRequests.Where(c => Equals(c.EmailAddress.ToLowerInvariant(), emailAddress.ToLowerInvariant()))
