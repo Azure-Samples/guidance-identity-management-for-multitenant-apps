@@ -10,7 +10,7 @@ namespace MultiTenantSurveyApp.DAL.DataStore
     public interface IContributorRequestStore
     {
         Task AddRequestAsync(ContributorRequest contributorRequest);
-        Task<IEnumerable<ContributorRequest>> GetRequestsForUserAsync(string emailAddress);
+        Task<ICollection<ContributorRequest>> GetRequestsForUserAsync(string emailAddress);
         Task RemoveRequestAsync(ContributorRequest contributorRequest);
     }
 }

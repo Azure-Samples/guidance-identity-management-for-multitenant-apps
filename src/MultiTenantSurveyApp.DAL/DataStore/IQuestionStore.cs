@@ -9,7 +9,6 @@ namespace MultiTenantSurveyApp.DAL.DataStore
 {
     public interface IQuestionStore
     {
-        IEnumerable<Question> GetQuestionsForSurvey(int surveyId);
         Task<Question> GetQuestionAsync(int id);
         Task<Question> AddQuestionAsync(Question question);
         Task<Question> UpdateQuestionAsync(Question question);

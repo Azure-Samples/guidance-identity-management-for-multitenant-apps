@@ -30,7 +30,7 @@ namespace MultiTenantSurveyApp.DAL.DTOs
 
             if (x.Questions != null)
             {
-                surveyDto.Questions = x.Questions.Select(QuestionToDto);
+                surveyDto.Questions = x.Questions.Select(QuestionToDto).ToArray();
             }
             else
             {

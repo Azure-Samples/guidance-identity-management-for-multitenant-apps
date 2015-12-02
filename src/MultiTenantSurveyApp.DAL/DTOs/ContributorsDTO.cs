@@ -9,6 +9,6 @@ namespace MultiTenantSurveyApp.DAL.DTOs
     public class ContributorsDTO
     {
         public int SurveyId { get; set; }
-        public IEnumerable<User> Contributors { get; set; }
+        public ICollection<User> Contributors { get; set; }
     }
 }
