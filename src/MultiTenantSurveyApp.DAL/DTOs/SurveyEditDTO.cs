@@ -13,6 +13,6 @@ namespace MultiTenantSurveyApp.DAL.DTOs
         [Required]
         [Display(Name = "Title")]
         public string Title { get; set; }
-        public IEnumerable<QuestionDTO> Questions { get; set; }
+        public ICollection<QuestionDTO> Questions { get; set; }
     }
 }

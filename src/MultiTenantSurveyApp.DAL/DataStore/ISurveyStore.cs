@@ -3,25 +3,24 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MultiTenantSurveyApp.Common;
 using MultiTenantSurveyApp.DAL.DataModels;
 
 namespace MultiTenantSurveyApp.DAL.DataStore
 {
     public interface ISurveyStore
     {
-        Task<IEnumerable<Survey>> GetAllSurveysAsync();
-        Task<IEnumerable<Survey>> GetSurveysByOwnerAsync(int userId);
-        Task<IEnumerable<Survey>> GetSurveysByContributorAsync(int userId);
-//        Task<IEnumerable<Survey>> GetSurveysByTenantAsync(string tenantId);
+        Task<ICollection<Survey>> GetSurveysByOwnerAsync(int userId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize);
+        Task<ICollection<Survey>> GetSurveysByContributorAsync(int userId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize);
         Task<Survey> GetSurveyAsync(int id);
         Task<Survey> UpdateSurveyAsync(Survey survey);
         Task<Survey> AddSurveyAsync(Survey survey);
         Task<Survey> DeleteSurveyAsync(Survey survey);
-        Task<IEnumerable<Survey>> GetPublishedSurveysAsync();
-        Task<IEnumerable<Survey>> GetPublishedSurveysByOwnerAsync(int userId);
+        Task<ICollection<Survey>> GetPublishedSurveysAsync(int pageIndex = 0, int pageSize = Constants.DefaultPageSize);
+        Task<ICollection<Survey>> GetPublishedSurveysByOwnerAsync(int userId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize);
         Task<Survey> PublishSurveyAsync(int id);
         Task<Survey> UnPublishSurveyAsync(int id);
-        Task<IEnumerable<Survey>> GetPublishedSurveysByTenantAsync(string tenantId);
-        Task<IEnumerable<Survey>> GetUnPublishedSurveysByTenantAsync(string tenantId);
+        Task<ICollection<Survey>> GetPublishedSurveysByTenantAsync(string tenantId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize);
+        Task<ICollection<Survey>> GetUnPublishedSurveysByTenantAsync(string tenantId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize);
     }
 }

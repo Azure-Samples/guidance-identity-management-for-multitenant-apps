@@ -15,7 +15,7 @@ namespace MultiTenantSurveyApp.DAL.DTOs
         [Display(Name = "Title")]
         public string Title { get; set; }
         public bool Published{ get; set; }
-        public IEnumerable<QuestionDTO> Questions { get; set; }
+        public ICollection<QuestionDTO> Questions { get; set; }
 
         [Display(Name = "Existing Title")]
         public string ExistingTitle { get; set; }
