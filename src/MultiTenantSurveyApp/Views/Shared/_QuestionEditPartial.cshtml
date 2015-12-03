@@ -14,16 +14,16 @@
 <div class="form-group">
     <label asp-for="Type"></label>
     <select asp-for="Type" class="form-control" placeholder="Type">
-        <option value="0">SimpleText</option>
-        <option value="1">MultipleChoice</option>
-        <option value="2">FiveStars</option>
+        <option value="0">Simple Text</option>
+        <option value="1">Multiple Choice</option>
+        <option value="2">Five Stars</option>
     </select>
     <span asp-validation-for="Type" class="text-danger"></span>
 </div>
 
 <div class="form-group">
     <label asp-for="PossibleAnswers"></label>
-    <textarea asp-for="PossibleAnswers" class="form-control" rows="5" placeholder="PossibleAnswers"></textarea>
+    <textarea asp-for="PossibleAnswers" class="form-control" rows="5" placeholder="Possible Answers"></textarea>
     <span asp-validation-for="PossibleAnswers" class="text-danger"></span>
 </div>
 <div class="row">
