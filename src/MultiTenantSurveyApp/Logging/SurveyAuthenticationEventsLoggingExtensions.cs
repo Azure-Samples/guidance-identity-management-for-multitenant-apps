@@ -45,5 +45,10 @@ namespace MultiTenantSurveyApp.Logging
         {
             logger.LogError("Authentication failed", exp);
         }
+
+        public static void SignUpRequestValidationFailed(this ILogger logger, string message, string userId, string issuer)
+        {
+            logger.LogError("SignUp request validation failed for User: {0} of Issuer: {1}. Error message {2}", userId, issuer, message);
+        }
     }
 }
