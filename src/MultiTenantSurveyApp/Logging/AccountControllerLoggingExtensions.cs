@@ -27,5 +27,10 @@ namespace MultiTenantSurveyApp.Logging
         {
             logger.LogError("signout failed");
         }
+
+        public static void SignUpFailed(this ILogger logger, string message, Exception exp)
+        {
+            logger.LogError(message, exp);
+        }
     }
 }
