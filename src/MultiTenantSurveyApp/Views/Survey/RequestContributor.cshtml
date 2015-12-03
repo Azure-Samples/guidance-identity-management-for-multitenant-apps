@@ -5,9 +5,12 @@
 
 <h2>@ViewBag.Title</h2>
 
-<div class="alert alert-success" role="alert">
-    <p>@ViewBag.Message</p>
-</div>
+@if (!String.IsNullOrEmpty(ViewBag.Message))
+{ 
+    <div class="alert alert-success" role="alert">
+        <p>@ViewBag.Message</p>
+    </div>
+}
 
 <form asp-action="RequestContributor" method="post">
     <h3>

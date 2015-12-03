@@ -646,7 +646,7 @@ namespace MultiTenantSurveyApp.Controllers
                 {
                     if (!result.Item.Published)
                     {
-                        ModelState.AddModelError(string.Empty, $"The survey is already un-published");
+                        ModelState.AddModelError(string.Empty, $"The survey is already unpublished");
                         return View("UnPublishResult", result.Item);
                     }
                     else
@@ -692,7 +692,7 @@ namespace MultiTenantSurveyApp.Controllers
                 {
                     if (!surveyResult.Item.Published)
                     {
-                        ModelState.AddModelError(string.Empty, $"The survey is already un-published");
+                        ModelState.AddModelError(string.Empty, $"The survey is already unpublished");
                         return View("UnPublishResult", surveyResult.Item);
                     }
                     else
@@ -700,12 +700,12 @@ namespace MultiTenantSurveyApp.Controllers
                         var unpublishResult = await _surveyService.UnPublishSurveyAsync(model.Id);
                         if (unpublishResult.Succeeded)
                         {
-                            ViewBag.Message = "The following survey has been un-published.";
+                            ViewBag.Message = "The following survey has been unpublished.";
                             return View("UnPublishResult", unpublishResult.Item);
                         }
                         else
                         {
-                            ModelState.AddModelError(string.Empty, $"Unable to unpublish survey. (HTTP {unpublishResult.StatusCode})");
+                            ModelState.AddModelError(string.Empty, $"Cannot unpublish survey. (HTTP {unpublishResult.StatusCode})");
                             switch (unpublishResult.StatusCode)
                             {
                                 case (int)HttpStatusCode.Unauthorized:
