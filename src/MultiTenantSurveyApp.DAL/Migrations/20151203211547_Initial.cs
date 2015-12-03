@@ -128,7 +128,8 @@ namespace MultiTenantSurveyApp.DAL.Migrations
             migrationBuilder.CreateIndex(
                 name: "IssuerValueIndex",
                 table: "Tenant",
-                column: "IssuerValue");
+                column: "IssuerValue",
+                unique: true);
             migrationBuilder.CreateIndex(
                 name: "UserObjectIdIndex",
                 table: "User",

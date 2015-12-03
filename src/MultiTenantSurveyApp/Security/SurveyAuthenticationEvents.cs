@@ -96,38 +96,6 @@ namespace MultiTenantSurveyApp.Security
             }
         }
 
-        // [masimms] What does this method do?
-        private async Task<Tenant> ValidateSignUpRequestAsync(AuthenticationTicket authenticationTicket, TenantManager tenantManager)
-        {
-            if (authenticationTicket == null)
-            {
-                throw new ArgumentNullException(nameof(authenticationTicket));
-            }
-
-            // Get our CSRF token to verify access
-            // [masimms] Link to details on CSRF 
-            string csrfToken;
-            if ((!authenticationTicket.Properties.Items.TryGetValue("csrf_token", out csrfToken)) || (string.IsNullOrWhiteSpace(csrfToken)))
-            {
-                _logger.SignUpRequestValidationFailed("Missing csrf_token", 
-                    authenticationTicket.Principal.GetObjectIdentifierValue(), 
-                    authenticationTicket.Principal.GetIssuerValue());
-                throw new AuthenticationException("Missing csrf_token");
-            }
-
-            // See if we made this request.  If tenant is null, we did not initiate the request flow - throw an error
-            var tenant = await tenantManager.FindByIssuerValueAsync(csrfToken);
-            if (tenant == null)
-            {
-                _logger.SignUpRequestValidationFailed("Invalid CSRF token.", 
-                    authenticationTicket.Principal.GetObjectIdentifierValue(), 
-                    authenticationTicket.Principal.GetIssuerValue());
-                throw new AuthenticationException("Invalid CSRF token.");
-            }
-
-            return tenant;
-        }
-
         private async Task<Tenant> SignUpTenantAsync(BaseControlContext context, TenantManager tenantManager)
         {
             if (context == null)
@@ -140,19 +108,21 @@ namespace MultiTenantSurveyApp.Security
                 throw new ArgumentNullException(nameof(tenantManager));
             }
 
-            var tenant = await ValidateSignUpRequestAsync(context.AuthenticationTicket, tenantManager);
+            var principal = context.AuthenticationTicket.Principal;
+            var issuerValue = principal.GetIssuerValue();
+            var tenant = new Tenant
+            {
+                IssuerValue = issuerValue,
+                Created = DateTimeOffset.UtcNow
+            };
+
             try
             {
-                var principal = context.AuthenticationTicket.Principal;
-                tenant.IssuerValue = principal.GetIssuerValue();
-                await tenantManager.UpdateTenantAsync(tenant);
+                await tenantManager.CreateAsync(tenant);
             }
-            catch
+            catch(Exception ex)
             {
-                // Something happened when we were setting up our tenant, so we need to clean up the database.
-                // [masimms] What happens if there is an exception in this flow?  Is there a higher order handler?
-                await tenantManager.DeleteTenantAsync(tenant);
-
+                _logger.SignUpTenantFailed(principal.GetObjectIdentifierValue(), issuerValue, ex);
                 throw;
             }
 

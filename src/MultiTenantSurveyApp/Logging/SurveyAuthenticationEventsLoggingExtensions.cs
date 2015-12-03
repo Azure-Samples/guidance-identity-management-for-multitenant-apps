@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 namespace MultiTenantSurveyApp.Logging
 {
@@ -46,9 +47,9 @@ namespace MultiTenantSurveyApp.Logging
             logger.LogError("Authentication failed", exp);
         }
 
-        public static void SignUpRequestValidationFailed(this ILogger logger, string message, string userId, string issuer)
+        public static void SignUpTenantFailed(this ILogger logger, string userId, string issuer, Exception exp)
         {
-            logger.LogError("SignUp request validation failed for User: {0} of Issuer: {1}. Error message {2}", userId, issuer, message);
+            logger.LogError(string.Format(CultureInfo.InvariantCulture, "Tenant SignUp request failed for User: {0} of Issuer: {1}", userId, issuer), exp);
         }
     }
 }

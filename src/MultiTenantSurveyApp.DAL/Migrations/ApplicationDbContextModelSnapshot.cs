@@ -92,6 +92,7 @@ namespace MultiTenantSurveyApp.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("IssuerValue")
+                        .IsUnique()
                         .HasAnnotation("Relational:Name", "IssuerValueIndex");
 
                     b.HasAnnotation("Relational:TableName", "Tenant");

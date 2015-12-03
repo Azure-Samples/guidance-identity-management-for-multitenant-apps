@@ -8,7 +8,7 @@ using MultiTenantSurveyApp.DAL.DataModels;
 namespace MultiTenantSurveyApp.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20151120213552_Initial")]
+    [Migration("20151203211547_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,6 +93,7 @@ namespace MultiTenantSurveyApp.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("IssuerValue")
+                        .IsUnique()
                         .HasAnnotation("Relational:Name", "IssuerValueIndex");
 
                     b.HasAnnotation("Relational:TableName", "Tenant");

@@ -59,42 +59,16 @@ namespace MultiTenantSurveyApp.Controllers
         }
 
         /// <summary>
-        /// Generates a cross site request forgery token used to verify the sign up request.
-        /// </summary>
-        /// <returns>A temporary <see cref="MultiTenantSurveyApp.DAL.DataModels.Tenant"/> containing the CSRF token.</returns>
-        private static Tenant GenerateCsrfTenant()
-        {
-            // We need to generate a state that we can pass along so we know the request came from us
-            return new Tenant
-            {
-                IssuerValue = Guid.NewGuid().ToString(),
-                Created = DateTimeOffset.UtcNow
-            };
-        }
-
-        /// <summary>
         /// Starts the tenant registration flow.
         /// </summary>
         /// <returns>A <see cref="Microsoft.AspNet.Mvc.ChallengeResult"/> to authenticate a user with AAD and OpenIdConnect.</returns>
         [AllowAnonymous]
-        public async Task<IActionResult> SignUp()
+        public IActionResult SignUp()
         {
-            var tenant = GenerateCsrfTenant();
-            try
-            {
-                await _tenantManager.CreateAsync(tenant);
-            }
-            catch(Exception ex)
-            {
-                _logger.SignUpFailed("Unable to write temporary tenant to database", ex);
-                ViewBag.Message = "Unable to sign-up tenant at this time!";
-                return View("~/Views/Shared/Error.cshtml");
-            }
-
             // Workaround for https://github.com/aspnet/Security/issues/546
             HttpContext.Items.Add("signup", "true");
 
-            var state = new Dictionary<string, string> { { "signup", "true" }, { "csrf_token", tenant.IssuerValue } };
+            var state = new Dictionary<string, string> { { "signup", "true" }};
             return new ChallengeResult(
                 OpenIdConnectDefaults.AuthenticationScheme,
                 new AuthenticationProperties(state)
