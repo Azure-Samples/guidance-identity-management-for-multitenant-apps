@@ -6,7 +6,7 @@ Application roles are used to assign permissions to users. In the Surveys applic
 - Creator. Can create new surveys.
 - Reader. Can read any surveys that belong to that tenant.
 
-You can see that roles ultimately get translated into permissions, during [authorization](06-authorization.md). But the first question is how to assign and manage roles. We identified three main options:
+You can see that roles ultimately get translated into permissions, during [authorization](07-authorization.md). But the first question is how to assign and manage roles. We identified three main options:
 
 -	[Azure AD App Roles](#azure-ad-app-roles)
 -	[Azure AD security groups](#azure-ad-security-groups)

@@ -63,45 +63,32 @@ public IActionResult SignIn()
 
 Now compare the `SignUp` action:
 
-```
-[AllowAnonymous]
-public async Task<IActionResult> SignUp()
-{
-  var tenant = GenerateCsrfTenant();
-  try
-  {
-      await _tenantManager.CreateAsync(tenant);
-  }
-  catch
-  {
-      // Handle error
-  }
+    [AllowAnonymous]
+    public IActionResult SignUp()
+    {
+        // Workaround for https://github.com/aspnet/Security/issues/546
+        HttpContext.Items.Add("signup", "true");
 
-  // Workaround for https://github.com/aspnet/Security/issues/546
-  HttpContext.Items.Add("signup", "true");
+        var state = new Dictionary<string, string> { { "signup", "true" }};
+        return new ChallengeResult(
+            OpenIdConnectDefaults.AuthenticationScheme,
+            new AuthenticationProperties(state)
+            {
+                RedirectUri = Url.Action(nameof(SignUpCallback), "Account")
+            });
+    }
 
-  var state = new Dictionary<string, string> { { "signup", "true" }, { "csrf_token", tenant.IssuerValue } };
-  return new ChallengeResult(
-      OpenIdConnectDefaults.AuthenticationScheme,
-      new AuthenticationProperties(state)
-      {
-          RedirectUri = Url.Action(nameof(SignUpCallback), "Account")
-      });
-}
-```
+> This code includes a workaround for a known bug in ASP.NET 5 RC1. See the [Admin Consent](#adding-the-admin-consent-prompt) section for more information.
 
-> This code includes a workaround for a known bug in ASP.NET 5 RC1. See the [Admin Consent](#admin-consent) section for more information.
+Like `SignIn`, the `SignUp` action also returns a `ChallengeResult`. But this time, we add a piece of state information to the `AuthenticationProperties` in the `ChallengeResult`:
 
-Like `SignIn`, the `SignUp` action also returns a `ChallengeResult`. But this time, we add two pieces of state information to the `AuthenticationProperties` in the `ChallengeResult`:
-
--	_signup_: A Boolean flag, indicating that the user has started the sign-up process.
--	_csrf_token_: A random GUID to guard against cross-site request forgery (CSRF) attacks. We'll see how that's used in the section [Registering a tenant](#registering-a-tenant). Note that the CSRF token is also stored in the application database, in the call to `_tenantManager.CreateAsync`.
+-	signup: A Boolean flag, indicating that the user has started the sign-up process.
 
 The state information in `AuthenticationProperties` gets added to the OpenID Connect [state](http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest) parameter, which round trips during the authentication flow.
 
 ![State parameter](media/sign-up/state-parameter.png)
 
-After the user authenticates in Azure AD and gets redirected back to the application, the authentication ticket contains the state. We are using this fact to make sure the "signup" and "csrf_token" values persist through the entire authentication flow.
+After the user authenticates in Azure AD and gets redirected back to the application, the authentication ticket contains the state. We are using this fact to make sure the "signup" value persists acrross the entire authentication flow.
 
 ## Adding the admin consent prompt
 
@@ -182,54 +169,52 @@ The Surveys application stores some information about each tenant and user in th
 
 In the Tenant table, IssuerValue is the value of the issuer claim for the tenant. For Azure AD, this is `https://sts.windows.net/<tentantID>` and gives a unique value per tenant.
 
-When a new tenant signs up, the Surveys application writes a tenant record to the database. This happens inside the `AuthenticationValidated` event. (Don't do it before this event, because the ID token won't be validated yet, so you can't trust the claim values. See [Authentication](02-authentication.md)).
+When a new tenant signs up, the Surveys application writes a tenant record to the database. This happens inside the `AuthenticationValidated` event. (Don't do it before this event, because the ID token won't be validated yet, so you can't trust the claim values. See [Authentication](03-authentication.md)).
 
 Here is the relevant code from the Surveys application:
 
-```
-public override async Task AuthenticationValidated(AuthenticationValidatedContext context)
-{
-    var principal = context.AuthenticationTicket.Principal;
-    var accessTokenService = context.HttpContext.RequestServices.GetService<IAccessTokenService>();
-    try
+    public override async Task AuthenticationValidated(AuthenticationValidatedContext context)
     {
-        var userId = principal.GetObjectIdentifierValue();
-        var tenantManager = context.HttpContext.RequestServices.GetService<TenantManager>();
-        var userManager = context.HttpContext.RequestServices.GetService<UserManager>();
-        var issuerValue = principal.GetIssuerValue();
-
-        // Normalize the claims first.
-        NormalizeClaims(principal);
-        var tenant = await tenantManager.FindByIssuerValueAsync(issuerValue);
-
-        if (context.IsSigningUp())
+        var principal = context.AuthenticationTicket.Principal;
+        try
         {
-            if (tenant == null)
+            var userId = principal.GetObjectIdentifierValue();
+            var tenantManager = context.HttpContext.RequestServices.GetService<TenantManager>();
+            var userManager = context.HttpContext.RequestServices.GetService<UserManager>();
+            var issuerValue = principal.GetIssuerValue();
+
+            // Normalize the claims first.
+            NormalizeClaims(principal);
+            var tenant = await tenantManager.FindByIssuerValueAsync(issuerValue);
+
+            if (context.IsSigningUp())
             {
-                tenant = await SignUpTenantAsync(context, tenantManager);
+                if (tenant == null)
+                {
+                    tenant = await SignUpTenantAsync(context, tenantManager);
+                }
+
+                // In this case, we need to go ahead and set up the user signing us up.
+                await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant);
+            }
+            else
+            {
+                if (tenant == null)
+                {
+                    throw new SecurityTokenValidationException($"Tenant {issuerValue} is not registered");
+                }
+
+                await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant);
             }
 
-            // In this case, we need to go ahead and set up the user signing us up.
-            await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant);
         }
-        else
+        catch
         {
-            if (tenant == null)
-            {
-                throw new SecurityTokenValidationException($"Tenant {issuerValue} is not registered");
-            }
-
-            await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant);
+            // Handle error (not shown)
         }
     }
-    catch
-    {
-         // Handle error
-    }
-}
-```
 
-> See (SurveyAuthenticationEvents.cs)[https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/MultiTenantSurveyApp/SurveyAuthenticationEvents.cs). This code snippet omits some logging and other details that aren't relevant to this discussion.
+> See [SurveyAuthenticationEvents.cs](https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/MultiTenantSurveyApp/SurveyAuthenticationEvents.cs). This code snippet omits some logging and other details that aren't relevant to this discussion.
 
 This code does the following:
 
@@ -243,67 +228,29 @@ This code does the following:
 
 Here is the `SignUpTenantAsync` method that adds the tenant to the database.
 
-```
-private async Task<Tenant> SignUpTenantAsync(BaseControlContext context, TenantManager tenantManager)
-{
-    if (context == null)
+    private async Task<Tenant> SignUpTenantAsync(BaseControlContext context, TenantManager tenantManager)
     {
-        throw new ArgumentNullException(nameof(context));
-    }
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
 
-    if (tenantManager == null)
-    {
-        throw new ArgumentNullException(nameof(tenantManager));
-    }
+        if (tenantManager == null)
+        {
+            throw new ArgumentNullException(nameof(tenantManager));
+        }
 
-    var tenant = await ValidateSignUpRequestAsync(context.AuthenticationTicket, tenantManager);
-    try
-    {
         var principal = context.AuthenticationTicket.Principal;
-        tenant.IssuerValue = principal.GetIssuerValue();
-        await tenantManager.UpdateTenantAsync(tenant);
+        var issuerValue = principal.GetIssuerValue();
+        var tenant = new Tenant
+        {
+            IssuerValue = issuerValue,
+            Created = DateTimeOffset.UtcNow
+        };
+
+        await tenantManager.CreateAsync(tenant);
+        return tenant;
     }
-    catch
-    {
-        // Something happened when we were setting up our tenant, so we need to clean up the database.
-        // [masimms] What happens if there is an exception in this flow?  Is there a higher order handler?
-        await tenantManager.DeleteTenantAsync(tenant);
-
-        throw;
-    }
-
-    return tenant;
-}
-```
-
-The method validates the signup request (`ValidateSignUpRequestAsync`) and then writes the issuer value into the database. The `ValidateSignupRequestAsync` method validates the CSRF token in the authentication state:
-
-```
-private async Task<Tenant> ValidateSignUpRequestAsync(AuthenticationTicket authenticationTicket, TenantManager tenantManager)
-{
-    if (authenticationTicket == null)
-    {
-        throw new ArgumentNullException(nameof(authenticationTicket));
-    }
-
-    string csrfToken;
-    if ((!authenticationTicket.Properties.Items.TryGetValue("csrf_token", out csrfToken)) || (string.IsNullOrWhiteSpace(csrfToken)))
-    {
-        throw new InvalidOperationException("Missing csrf_token");
-    }
-
-    // See if we made this request.  If tenant is null, we did not initiate the request flow - throw an error
-    var tenant = await tenantManager.FindByIssuerValueAsync(csrfToken);
-    if (tenant == null)
-    {
-        throw new InvalidOperationException("Invalid CSRF token.");
-    }
-
-    return tenant;
-}
-```
-
-The CSRF token prevents cross-site request forgeries.  Remember that we store this value in the database before starting the authentication flow. By checking the CSRF token against the value in the database, we ensure that the request originated from the application.
 
 > Note: If you try to sign up the tenant that is hosting the app, Azure AD returns a generic error. To avoid this, you can seed the database with the SaaS provider's tenant.
 

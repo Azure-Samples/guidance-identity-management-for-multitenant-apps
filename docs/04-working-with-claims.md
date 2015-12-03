@@ -41,7 +41,7 @@ This table lists the claim types as they appear in the ID token. In ASP.NET 5, t
 
 ## Claims transformations
 
-During the authentication flow, you might want to modify the claims that you get from the IDP. In ASP.NET 5, you can perform claims transformation inside of the **AuthenticationValidated** event from the OpenID Connect middleware. (See [Authentication events](02-authentication.md#authentication-events).)
+During the authentication flow, you might want to modify the claims that you get from the IDP. In ASP.NET 5, you can perform claims transformation inside of the **AuthenticationValidated** event from the OpenID Connect middleware. (See [Authentication events](03-authentication.md#authentication-events).)
 
 Any claims that you add during **AuthenticationValidated** are stored in the session authentication cookie. They don't get pushed back to Azure AD.
 
@@ -75,7 +75,7 @@ For a single-tenant application, you can just check that the issuer is your own 
 -	Whenever a user signs in, look up the issuer in the database. If the issuer isn't found, it means that tenant hasn't signed up. You can redirect them to a sign up page.
 -  You could also blacklist certain tenants; for example, for customers that didn't pay their subscription.
 
-For a more detailed discussion, see [Sign-up and tenant onboarding](04-tenant-signup.md).
+For a more detailed discussion, see [Sign-up and tenant onboarding](05-tenant-signup.md).
 
 ## Using claims for authorization
 
@@ -99,4 +99,4 @@ Here are some basic patterns for checking claims.
 
         IEnumerable<Claim> groups = User.FindAll("groups");
 
-For more details about using claims in authorization, see [Authorization](06-authorization.md).
+For more details about using claims in authorization, see [Authorization](07-authorization.md).
