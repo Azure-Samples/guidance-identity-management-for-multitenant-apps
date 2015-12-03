@@ -6,6 +6,10 @@ using Microsoft.AspNet.Authorization;
 
 namespace MultiTenantSurveyApp.Security.Policy
 {
+    /// <summary>
+    /// This basic <see cref="IAuthorizationRequirement"/> functions as an <see cref="IAuthorizationHandler"/> that
+    /// validates that the signed in user has a SurveyAdmin role claim.
+    /// </summary>
     public class SurveyAdminRequirement : AuthorizationHandler<SurveyAdminRequirement>, IAuthorizationRequirement
     {
         protected override void Handle(AuthorizationContext context, SurveyAdminRequirement requirement)

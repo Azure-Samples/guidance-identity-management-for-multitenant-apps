@@ -14,6 +14,17 @@ namespace MultiTenantSurveyApp.Common
 {
     public static class HttpClientExtensions
     {
+        /// <summary>
+        /// This extension method for <see cref="HttpClient"/> provides a convenient overload that accepts 
+        /// a <see cref="string"/> accessToken to be used as Bearer authentication.
+        /// </summary>
+        /// <param name="httpClient">The <see cref="HttpClient"/> instance</param>
+        /// <param name="method">The <see cref="HttpMethod"/></param>
+        /// <param name="path">The path to the requested target</param>
+        /// <param name="requestBody">The body of the request</param>
+        /// <param name="accessToken">The access token to be used as Bearer authentication</param>
+        /// <param name="ct">A <see cref="CancellationToken"/></param>
+        /// <returns></returns>
         public static async Task<HttpResponseMessage> SendRequestWithBearerTokenAsync(this HttpClient httpClient, HttpMethod method, string path, object requestBody, string accessToken, CancellationToken ct)
         {
             var request = new HttpRequestMessage(method, path);

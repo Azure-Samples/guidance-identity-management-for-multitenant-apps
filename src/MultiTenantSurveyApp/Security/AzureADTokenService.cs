@@ -15,7 +15,7 @@ using MultiTenantSurveyApp.Logging;
 namespace MultiTenantSurveyApp.Security
 {
     /// <summary>
-    /// 
+    /// This service helps with the acquisition of access tokens from Azure Active Directory.
     /// </summary>
     public class AzureADTokenService : IAccessTokenService
     {
@@ -37,6 +37,14 @@ namespace MultiTenantSurveyApp.Security
             _logger = logger;
         }
 
+        /// <summary>
+        /// This method retrieves the access token for the WebAPI resource that has previously
+        /// been retrieved and cached. This method will fail if an access token for the WebAPI 
+        /// resource has not been retrieved and cached. You can use the RequestAccessTokenAsync
+        /// method to retrieve and cache access tokens.
+        /// </summary>
+        /// <param name="user">The <see cref="ClaimsPrincipal"/> for the user to whom the access token belongs.</param>
+        /// <returns>A string access token wrapped in a <see cref="Task"/></returns>
         public async Task<string> GetTokenForWebApiAsync(ClaimsPrincipal user)
         {
             return await GetAccessTokenForResourceAsync(_adOptions.WebApiResourceId, user);
@@ -80,6 +88,15 @@ namespace MultiTenantSurveyApp.Security
                 await _tokenCacheService.GetCacheAsync(claimsPrincipal.GetObjectIdentifierValue(), _adOptions.ClientId));
         }
 
+        /// <summary>
+        /// This method acquires an access token using an authorization code and ADAL. The access token is then cached
+        /// in a <see cref="TokenCache"/> to be used later (by calls to GetTokenForWebApiAsync).
+        /// </summary>
+        /// <param name="claimsPrincipal">A <see cref="ClaimsPrincipal"/> for the signed in user</param>
+        /// <param name="authorizationCode">a string authorization code obtained when the user signed in</param>
+        /// <param name="redirectUri">The Uri of the application requesting the access token</param>
+        /// <param name="resource">The resouce identifier of the target resource</param>
+        /// <returns></returns>
         public async Task<AuthenticationResult> RequestAccessTokenAsync(
             ClaimsPrincipal claimsPrincipal,
             string authorizationCode,
@@ -128,6 +145,11 @@ namespace MultiTenantSurveyApp.Security
             }
         }
 
+        /// <summary>
+        /// This method clears the user's <see cref="TokenCache"/>.
+        /// </summary>
+        /// <param name="claimsPrincipal">The <see cref="ClaimsPrincipal"/> for the user</param>
+        /// <returns></returns>
         public async Task ClearCacheAsync(ClaimsPrincipal claimsPrincipal)
         {
             if (claimsPrincipal == null)

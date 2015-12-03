@@ -12,6 +12,14 @@ using MultiTenantSurveyApp.DAL.DataModels;
 
 namespace MultiTenantSurveyApp.Security.Policy
 {
+    /// <summary>
+    /// This <see cref="IAuthorizationHandler"/> validates that the signed in user is authorized
+    /// to perform a specific action defined in <see cref="Operations"/>, on a specific instance of <see cref="Survey"/>.
+    /// 
+    /// To create a survey, you must be in the SurveyCreator role.
+    /// To update a survey, you must be the owner or a contributor.
+    /// To delete, publish, or unpublish a survey, you must be the owner.
+    /// </summary>
     public class SurveyAuthorizationHandler : AuthorizationHandler<OperationAuthorizationRequirement, Survey>
     {
         static readonly Dictionary<OperationAuthorizationRequirement, Func<List<UserPermissionType>, bool>> ValidateUserPermissions
