@@ -48,7 +48,8 @@ namespace MultiTenantSurveyApp.DAL.DataModels
                 b.HasMany(typeof(User)).WithOne()
                     .HasForeignKey("TenantId");
                 b.HasIndex(t => t.IssuerValue)
-                    .HasName("IssuerValueIndex");
+                    .HasName("IssuerValueIndex")
+                    .IsUnique();
             });
 
             modelBuilder.Entity<SurveyContributor>(b =>
