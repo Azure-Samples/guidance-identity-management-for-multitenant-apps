@@ -5,6 +5,6 @@ namespace MultiTenantSurveyApp.DAL.DTOs
 {
     public class UserDTO
     {
-        public int UserId { get; set; }
+        public string Email { get; set; }
     }
 }

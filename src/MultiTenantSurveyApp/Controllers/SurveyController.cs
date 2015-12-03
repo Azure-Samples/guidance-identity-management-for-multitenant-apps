@@ -443,7 +443,6 @@ namespace MultiTenantSurveyApp.Controllers
                 var result = await _surveyService.GetSurveyContributorsAsync(id);
                 if (result.Succeeded)
                 {
-                    ViewBag.SurveyId = id;
                     return View(result.Item);
                 }
 
