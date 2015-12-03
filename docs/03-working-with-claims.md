@@ -60,7 +60,8 @@ For example, Azure AD sends a "upn" claim that contains the user's email. Other 
 
 - Adding **default claim values** for claims that aren't present &mdash; for example, assigning a user to a default role. In some cases this can simplify authorization logic.
 - Adding **custom claim types**, to represent application-specific information about the user. For example, you might store some information about the user in a database. You could create a custom claim for that information, adding it to the authentication ticket. The advantage of this approach is that the claim gets stored in the user cookie, so you only need to get it from the database once per login session.
-After the authentication flow is complete, the claims are available in the `HttpContext.User`. At this point you should generally treat them as a read-only collection - i.e., use them only to make authorization decisions.
+
+After the authentication flow is complete, the claims are available in the `HttpContext.User`. At that point, you should treat them as a read-only collection &mdash; e.g., use them to make authorization decisions.
 
 ## Issuer validation
 In OpenID Connect, the issuer claim ("iss") identifies the IDP that issued the ID token. Part of the OIDC authentication flow is to verify that the issuer claim matches the actual issuer. The OIDC middleware handles this for you.
