@@ -364,7 +364,7 @@ namespace MultiTenantSurveyApp.Controllers
 
                 if (result.StatusCode == (int)HttpStatusCode.NotFound)
                 {
-                    ModelState.AddModelError(string.Empty, $"The survey can not be found, It may already been deleted");
+                    ModelState.AddModelError(string.Empty, $"The survey can not be found, It may have already been deleted");
                     ViewBag.Message = $"The survey can not be found, It may have already been deleted";
                     return View("~/Views/Shared/Error.cshtml");
                 }

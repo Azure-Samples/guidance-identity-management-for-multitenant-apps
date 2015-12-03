@@ -109,16 +109,20 @@ namespace MultiTenantSurveyApp.Security
             string csrfToken;
             if ((!authenticationTicket.Properties.Items.TryGetValue("csrf_token", out csrfToken)) || (string.IsNullOrWhiteSpace(csrfToken)))
             {
-                // TODO Fix error handling
-                throw new InvalidOperationException("Missing csrf_token");
+                _logger.SignUpRequestValidationFailed("Missing csrf_token", 
+                    authenticationTicket.Principal.GetObjectIdentifierValue(), 
+                    authenticationTicket.Principal.GetIssuerValue());
+                throw new AuthenticationException("Missing csrf_token");
             }
 
             // See if we made this request.  If tenant is null, we did not initiate the request flow - throw an error
             var tenant = await tenantManager.FindByIssuerValueAsync(csrfToken);
             if (tenant == null)
             {
-                // TODO - Fix Error handling
-                throw new InvalidOperationException("Invalid CSRF token.");
+                _logger.SignUpRequestValidationFailed("Invalid CSRF token.", 
+                    authenticationTicket.Principal.GetObjectIdentifierValue(), 
+                    authenticationTicket.Principal.GetIssuerValue());
+                throw new AuthenticationException("Invalid CSRF token.");
             }
 
             return tenant;

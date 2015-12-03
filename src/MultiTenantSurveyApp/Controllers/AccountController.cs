@@ -10,6 +10,8 @@ using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Mvc;
 using MultiTenantSurveyApp.DAL.DataModels;
 using MultiTenantSurveyApp.Security;
+using Microsoft.Extensions.Logging;
+using MultiTenantSurveyApp.Logging;
 
 namespace MultiTenantSurveyApp.Controllers
 {
@@ -22,11 +24,13 @@ namespace MultiTenantSurveyApp.Controllers
     {
         private readonly TenantManager _tenantManager;
         private readonly SignInManager _signInManager;
+        private ILogger _logger;
 
-        public AccountController(TenantManager tenantManager, SignInManager signInManager)
+        public AccountController(TenantManager tenantManager, SignInManager signInManager, ILogger<AccountController> logger)
         {
             _tenantManager = tenantManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
 
         /// <summary>
@@ -80,12 +84,11 @@ namespace MultiTenantSurveyApp.Controllers
             {
                 await _tenantManager.CreateAsync(tenant);
             }
-            catch
+            catch(Exception ex)
             {
-                // TODO - Handle a failure to write to the database
-                // [masimms] Yes, this a great todo.  At the very least, log the exception.
-                // TODO: Ask Product Group
-                throw new InvalidOperationException("Unable to write temporary tenant to database");
+                _logger.SignUpFailed("Unable to write temporary tenant to database", ex);
+                ViewBag.Message = "Unable to sign-up tenant at this time!";
+                return View("~/Views/Shared/Error.cshtml");
             }
 
             // Workaround for https://github.com/aspnet/Security/issues/546
