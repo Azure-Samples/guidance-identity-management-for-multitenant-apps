@@ -8,11 +8,11 @@
 <ul class="list-group">
     @foreach (var contributor in Model.Contributors)
     {
-        <li class="list-group-item">@contributor.ObjectId</li>
+        <li class="list-group-item">@contributor.Email</li>
     }
 </ul>
 <div class="row pull-right">
-    <a asp-action="RequestContributor" asp-route-id="@ViewBag.SurveyId" class="btn btn-default">Add Contributors</a>
+    <a asp-action="RequestContributor" asp-route-id="@Model.SurveyId" class="btn btn-default">Add Contributors</a>
     <a onclick="window.history.back()" class="btn btn-default">Back</a>
 </div>
 

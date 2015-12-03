@@ -130,7 +130,7 @@ namespace MultiTenantSurveyApp.WebAPI.Controllers
             return new ObjectResult(new ContributorsDTO()
             {
                 SurveyId = id,
-                Contributors = survey.Contributors.Select(x => x.User).ToArray()
+                Contributors = survey.Contributors.Select(x => new UserDTO { Email = x.User.Email }).ToArray()
             });
         }
 
