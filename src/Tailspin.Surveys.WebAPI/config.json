@@ -1,0 +1,5 @@
+﻿{
+  "Data": {
+      "SurveysConnectionString": "Server=(localdb)\\MSSQLLocalDB;Database=Tailspin.SurveysDB;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
+}
