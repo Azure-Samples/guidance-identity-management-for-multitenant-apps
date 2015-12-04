@@ -10,6 +10,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Abstractions;
 using Microsoft.AspNet.Routing;
 using Moq;
+using Tailspin.Surveys.Data.DataModels;
 using Tailspin.Surveys.Data.DataStore;
 using Tailspin.Surveys.Data.DTOs;
 using Tailspin.Surveys.Security;
@@ -36,6 +37,13 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public async Task GetSurveysForUser_ReturnsSurveys()
         {
+            _surveyStore.Setup(s => s.GetPublishedSurveysByOwnerAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new List<Survey>());
+            _surveyStore.Setup(s => s.GetSurveysByOwnerAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new List<Survey>());
+            _surveyStore.Setup(s => s.GetSurveysByContributorAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new List<Survey>());
+
             _target.ActionContext = CreateActionContextWithUserPrincipal("12345", "testTenantId");
             var result = await _target.GetSurveysForUser(12345);
 
@@ -56,6 +64,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public async Task GetSurveysForTenant_ReturnsSurveys()
         {
+            _surveyStore.Setup(s => s.GetPublishedSurveysByTenantAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new List<Survey>());
+            _surveyStore.Setup(s => s.GetUnPublishedSurveysByTenantAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new List<Survey>());
+
             _target.ActionContext = CreateActionContextWithUserPrincipal("12345", "testTenantId");
             var result = await _target.GetSurveysForTenant("testTenantId");
 
