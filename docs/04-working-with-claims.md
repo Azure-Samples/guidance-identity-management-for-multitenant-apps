@@ -24,7 +24,7 @@ Claim type in ID token |	Description
 -----------------------|--------------
 aud | Who the token was issued for. This will be the application's client ID. Generally, you shouldn't need to worry about this claim, because the middleware automatically validates it. Example:  `"91464657-d17a-4327-91f3-2ed99386406f"`
 groups	 | A list of AAD groups of which the user the user is a member. Example: `["93e8f556-8661-4955-87b6-890bc043c30f", "fc781505-18ef-4a31-a7d5-7d931d7b857e"]`
-iss	 | The [issuer](http://openid.net/specs/openid-connect-core-1_0.html#IDToken) of the OIDC token. Example: "https://sts.windows.net/b9bd2162-77ac-4fb2-8254-5c36e9c0a9c4/"
+iss	 | The [issuer](http://openid.net/specs/openid-connect-core-1_0.html#IDToken) of the OIDC token. Example: `https://sts.windows.net/b9bd2162-77ac-4fb2-8254-5c36e9c0a9c4/`
 name	| The user's display name. Example: `"Alice A."`
 oid	| The object identifier for the user in AAD. This value is the immutable and non-reusable identifier of the user. Use this value, not email, as a unique identifier for users; email addresses can change. If you use the Azure AD Graph API in your app, object ID is that value used to query profile information. Example: `"59f9d2dc-995a-4ddf-915e-b3bb314a7fa4"`
 roles	| A list of app roles for the user.	Example: `["SurveyCreator"]`

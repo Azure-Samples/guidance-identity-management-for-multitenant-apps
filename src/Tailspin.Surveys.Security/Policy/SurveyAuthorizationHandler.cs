@@ -67,7 +67,7 @@ namespace Tailspin.Surveys.Security.Policy
 
             if (resource.TenantId == userTenantId)
             {
-
+                // Admin can do anything, as long as the resource belongs to the admin's tenant.
                 if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin))
                 {
                     context.Succeed(operation);
@@ -92,15 +92,14 @@ namespace Tailspin.Surveys.Security.Policy
             {
                 permissions.Add(UserPermissionType.Contributor);
             }
-            var permissionValues = permissions.Select(p => p.ToString());
             if (ValidateUserPermissions[operation](permissions))
             {
-                _logger.ValidatePermissionsSucceeded(user, userTenantId, operation.Name, permissionValues);
+                _logger.ValidatePermissionsSucceeded(user, userTenantId, operation.Name, permissions.Select(p => p.ToString()));
                 context.Succeed(operation);
             }
             else
             {
-                _logger.ValidatePermissionsFailed(user, userTenantId, operation.Name, permissionValues);
+                _logger.ValidatePermissionsFailed(user, userTenantId, operation.Name, permissions.Select(p => p.ToString()));
                 context.Fail();
             }
         }
