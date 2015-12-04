@@ -17,7 +17,7 @@ In the Surveys application, we defined these roles:
 
 Roles apply to _users_ of the application. In the Surveys application, a user is either an administrator, creator, or reader.
 
-For a discussion of how to define and manage roles, see [Application roles](05-application-roles.md).
+For a discussion of how to define and manage roles, see [Application roles](06-application-roles.md).
 
 Regardless of how you manage the roles, your authorization code will look similar. ASP.NET 5 introduces an abstraction called _authorization policies_. With this feature, you define authorization policies in code, and then apply those policies to controller actions. The policy is decoupled from the controller.
 

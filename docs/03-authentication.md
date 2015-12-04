@@ -69,7 +69,7 @@ Set the following middleware options:
 
 - **ClientId**. The application's client ID, which you got when you registered the application in Azure AD.
 -	**Authority**. For a multitenant application, set this to `https://login.microsoftonline.com/common/`. This is the URL for the Azure AD common endpoint, which enables users from any Azure AD tenant to sign in. For more information about the common endpoint, see [this blog post](http://www.cloudidentity.com/blog/2014/08/26/the-common-endpoint-walks-like-a-tenant-talks-like-a-tenant-but-is-not-a-tenant/).
-- In **TokenValidationParameters**, set **ValidateIssuer** to false. That means the app will be responsible for validating the issuer value in the ID token. (The middleware still validates the token itself.) For more information about validating the issuer, see [Issuer validation](03-working-with-claims.md#issuer-validation).
+- In **TokenValidationParameters**, set **ValidateIssuer** to false. That means the app will be responsible for validating the issuer value in the ID token. (The middleware still validates the token itself.) For more information about validating the issuer, see [Issuer validation](04-working-with-claims.md#issuer-validation).
 - **CallbackPath**. Set this equal to the path in the Reply URL that you registered in Azure AD. For example, if the reply URL is `http://contoso.com/aadsignin`, **CallbackPath** should be `aadsignin`.
 - **SignInScheme**. Set this to `CookieAuthenticationDefaults.AuthenticationScheme`. This setting means that after the user is authenticated, the user claims are stored locally in a cookie. This cookie is how the user stays logged in during the browser session.
 - **Events.** Event callbacks; see [Authentication events](#authentication-events).
@@ -91,11 +91,11 @@ The OpenID Connect middleware raises a series of events during authentication, w
 
 Event | Description
 ------|------------
-RedirectToAuthenticationEndpoint |	Called right before the middleware redirects to the authentication endpoint. You can use this event to modify the redirect URL; for example, to add request parameters. See [Adding the admin consent prompt](04-tenant-signup.md#adding-the-admin-consent-prompt).
+RedirectToAuthenticationEndpoint |	Called right before the middleware redirects to the authentication endpoint. You can use this event to modify the redirect URL; for example, to add request parameters. See [Adding the admin consent prompt](05-tenant-signup.md#adding-the-admin-consent-prompt).
 AuthorizationResponseReceived	|	Called when the middleware receives the authentication response from the identity provider (IDP), but before the middleware validates the response.  
 AuthorizationCodeReceived	|	Called with the authorization code.
 TokenResponseReceived	|	Called after the middleware gets an access token from the IDP. Applies only to authorization code flow.
-AuthenticationValidated	|	Called after the middleware validates the ID token. At this point, the authentication ticket is valid and has a valid set of claims. You can use this event to perform additional validation on the claims, or to transform claims. See [Working with claims](03-working-with-claims.md).
+AuthenticationValidated	|	Called after the middleware validates the ID token. At this point, the authentication ticket is valid and has a valid set of claims. You can use this event to perform additional validation on the claims, or to transform claims. See [Working with claims](04-working-with-claims.md).
 UserInformationReceived	|	Called if the middleware gets the user profile from the user info endpoint. Applies only to authorization code flow, and only when `GetClaimsFromUserInfoEndpoint = true` in the middleware options.
 TicketReceived |	Called when authentication is completed. After this event is handled, the user is signed into the app.
 AuthenticationFailed	|	Called if authentication fails. Use this event to handle authentication failures &mdash; for example, by redirecting to an error page.
