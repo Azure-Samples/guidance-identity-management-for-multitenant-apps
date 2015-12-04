@@ -1,9 +1,0 @@
-{
-  "AppSettings": {
-    "SiteTitle": "MultiTenantSurveyApp",
-    "WebApiUrl" :  "https://localhost:44301"
-  },
-  "Data": {
-      "SurveysConnectionString": "Server=(localdb)\\MSSQLLocalDB;Database=MultiTenantSurveyAppDB;Trusted_Connection=True;MultipleActiveResultSets=true"
-  }
-}

@@ -1,0 +1,49 @@
+{
+  "webroot": "wwwroot",
+    "userSecretsId": "aspnet5-Tailspin.Surveys.WebAPI-54d0173b-2aba-481b-a341-6fa806cfad29",
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
+    "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
+    "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Diagnostics": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Diagnostics.Entity": "7.0.0-rc1-final",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
+    "Tailspin.Surveys.Data": "1.0.0-*",
+    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+    "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.5.208051316-alpha",
+    "Tailspin.Surveys.Common": "1.0.0-*",
+    "Tailspin.Surveys.Security": "1.0.0-*"
+  },
+
+  "commands": {
+    "web": "Microsoft.AspNet.Server.Kestrel",
+    "ef": "EntityFramework.Commands"
+  },
+
+  "frameworks": {
+    "dnx451": {
+      "dependencies": {
+        "Tailspin.Surveys.Configuration.KeyVault": "1.0.0-*"
+      }
+    },
+    "dnxcore50": { }
+  },
+
+  "exclude": [
+    "wwwroot",
+    "node_modules",
+    "bower_components"
+  ],
+  "publishExclude": [
+    "node_modules",
+    "bower_components",
+    "**.xproj",
+    "**.user",
+    "**.vspscc"
+  ]
+}
