@@ -43,25 +43,26 @@ In the **Configure** page:
 
 This section describes how to configure the ASP.NET 5 OIDC middleware for multitenant authentication.
 
-> See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/MultiTenantSurveyApp/Startup.cs).
-
 In your startup class, add the OpenID Connect middleware:
 
-```
-app.UseOpenIdConnectAuthentication(options =>
-{
-    options.AutomaticAuthentication = true;
-    options.ClientId = [callback path];
-    options.ClientSecret = [client secret];
-    options.Authority = "https://login.microsoftonline.com/common/";
-    options.CallbackPath = [callback path];
-    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.TokenValidationParameters = new TokenValidationParameters()
+    app.UseOpenIdConnectAuthentication(options =>
     {
-        ValidateIssuer = false
-    };
-});
-```
+        options.AutomaticAuthenticate = true;
+        options.AutomaticChallenge = true;
+        options.ClientId = [client ID];
+        options.Authority = "https://login.microsoftonline.com/common/";
+        options.CallbackPath = [callback path];
+        options.PostLogoutRedirectUri = [application URI];
+        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false
+        };
+        options.Events = [event callbacks];
+    });
+
+> See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Startup.cs).
+
 
 > For more information about the startup class, see [Application Startup](https://docs.asp.net/en/latest/fundamentals/startup.html) in the ASP.NET 5 documentation.
 
@@ -71,6 +72,7 @@ Set the following middleware options:
 -	**Authority**. For a multitenant application, set this to `https://login.microsoftonline.com/common/`. This is the URL for the Azure AD common endpoint, which enables users from any Azure AD tenant to sign in. For more information about the common endpoint, see [this blog post](http://www.cloudidentity.com/blog/2014/08/26/the-common-endpoint-walks-like-a-tenant-talks-like-a-tenant-but-is-not-a-tenant/).
 - In **TokenValidationParameters**, set **ValidateIssuer** to false. That means the app will be responsible for validating the issuer value in the ID token. (The middleware still validates the token itself.) For more information about validating the issuer, see [Issuer validation](04-working-with-claims.md#issuer-validation).
 - **CallbackPath**. Set this equal to the path in the Reply URL that you registered in Azure AD. For example, if the reply URL is `http://contoso.com/aadsignin`, **CallbackPath** should be `aadsignin`.
+- **PostLogoutRedirectUri**. Specify the redirct URL to use after signing out.
 - **SignInScheme**. Set this to `CookieAuthenticationDefaults.AuthenticationScheme`. This setting means that after the user is authenticated, the user claims are stored locally in a cookie. This cookie is how the user stays logged in during the browser session.
 - **Events.** Event callbacks; see [Authentication events](#authentication-events).
 
@@ -143,7 +145,7 @@ app.UseOpenIdConnectAuthentication(options =>
 });
 ```
 
-The second approach is recommended if your event callbacks have any substantial logic, so they don't clutter your startup class. Our reference implementation uses this approach; see [SurveyAuthenticationEvents.cs](https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/MultiTenantSurveyApp/Security/SurveyAuthenticationEvents.cs).
+The second approach is recommended if your event callbacks have any substantial logic, so they don't clutter your startup class. Our reference implementation uses this approach; see [SurveyAuthenticationEvents.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs).
 
 ## Initiating the authentication flow
 

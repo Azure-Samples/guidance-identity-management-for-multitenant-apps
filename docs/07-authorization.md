@@ -41,27 +41,30 @@ public class SurveyCreatorRequirement : AuthorizationHandler<SurveyCreatorRequir
 }
 ```
 
-> See [SurveyCreatorRequirement.cs](https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/MultiTenantSurveyApp.Security/Policy/SurveyCreatorRequirement.cs)
+> See [SurveyCreatorRequirement.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Security/Policy/SurveyCreatorRequirement.cs)
 
 This class defines the requirement for a user to create a new survey. The user must be in the SurveyAdmin or SurveyCreator role.
 
 In your startup class, define a named policy that includes one or more requirements. (If there are multiple requirements, the user must meet _each_ requirement to be authorized.) The following code defines two policies:
 
-```
-services.AddAuthorization(options =>
-{
-    options.AddPolicy(PolicyNames.RequireSurveyCreator, policy =>
+    services.AddAuthorization(options =>
     {
-        policy.AddRequirements(new SurveyCreatorRequirement());
-    });
-    options.AddPolicy(PolicyNames.RequireSurveyAdmin, policy =>
-    {
-        policy.AddRequirements(new SurveyAdminRequirement());
-    });
-});
-```
+        options.AddPolicy(PolicyNames.RequireSurveyCreator,
+            policy =>
+            {
+                policy.AddRequirements(new SurveyCreatorRequirement());
+                policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+            });
 
-> See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/MultiTenantSurveyApp/Startup.cs)
+        options.AddPolicy(PolicyNames.RequireSurveyAdmin,
+            policy =>
+            {
+                policy.AddRequirements(new SurveyAdminRequirement());
+                policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+            });
+    });
+
+> See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Startup.cs)
 
 Finally, to authorize an action in an MVC controller, set the policy in the Authorize attribute:
 
@@ -148,40 +151,52 @@ The application also defines a set of possible operations on surveys:
 
 The following code creates a list of permissions, given a particular user and survey. Notice that this code looks at both the user's app roles, and the owner/contributor fields in the survey.
 
-```
-var permissions = new List<UserPermissionType>();
-if (resource.TenantId == userTenantId)
-{
-    // The survey belongs to this user's tenant.
-    if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin))
+    protected override void Handle(AuthorizationContext context, OperationAuthorizationRequirement operation, Survey resource)
     {
-        // SurveyAdmin can do anything with this survey, so short circuit.
-        context.Succeed(operation);
-        return;
-    }
-    // Otherwise add the role permission.
-    if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyCreator))
-    {
-        permissions.Add(UserPermissionType.Creator);
-    }
-    else
-    {
-        permissions.Add(UserPermissionType.Reader);
-    }
-    // Check if the user is the resource owner.
-    if (resource.OwnerId == userId)
-    {
-        permissions.Add(UserPermissionType.Owner);
-    }
-}
-// Check if the user is a contributor. Contributors can be from other tenants.
-if (resource.Contributors != null && resource.Contributors.Any(x => x.UserId == userId))
-{
-    permissions.Add(UserPermissionType.Contributor);
-}
-```
+        var permissions = new List<UserPermissionType>();
+        string userTenantId = context.User.GetTenantIdValue();
+        int userId = ClaimsPrincipalExtensions.GetUserKey(context.User);
+        string user = context.User.GetUserName();
 
-> See [Surveyauthorizationhandler.cs.](https://github.com/mspnp/multitenant-saas-guidance/tree/master/src/Multitenantsurveyapp.Security/Policy/Surveyauthorizationhandler.cs).
+        if (resource.TenantId == userTenantId)
+        {
+            // Admin can do anything, as long as the resource belongs to the admin's tenant.
+            if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin))
+            {
+                context.Succeed(operation);
+                return;
+            }
+
+            if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyCreator))
+            {
+                permissions.Add(UserPermissionType.Creator);
+            }
+            else
+            {
+                permissions.Add(UserPermissionType.Reader);
+            }
+
+            if (resource.OwnerId == userId)
+            {
+                permissions.Add(UserPermissionType.Owner);
+            }
+        }
+        if (resource.Contributors != null && resource.Contributors.Any(x => x.UserId == userId))
+        {
+            permissions.Add(UserPermissionType.Contributor);
+        }
+        if (ValidateUserPermissions[operation](permissions))
+        {
+            context.Succeed(operation);
+        }
+        else
+        {
+            context.Fail();
+        }
+    }
+
+
+> See [Surveyauthorizationhandler.cs.](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Security/Policy/SurveyAuthorizationHandler.cs).
 
 In a multi-tenant application, you must ensure that permissions don't "leak" to other tenant's data. In the Surveys app, the Contributor permission is allowed across tenants. (You can assign a user in another tenant as a contriubutor.) The other permission types are restricted to resources that belong to that user's tenant, so the code checks the tenant ID before granting those permission types. (The `TenantId` field as assigned when the survey is created.)
 

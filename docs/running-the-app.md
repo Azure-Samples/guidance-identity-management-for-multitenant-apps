@@ -115,9 +115,9 @@ The Surveys application uses Redis to cache OAuth 2 access tokens. To create the
 
 ## Set user secrets
 
-1.	Open the MultiTenantSurveyApp solution in Visual Studio.
+1.	Open the Tailspin.Surveys solution in Visual Studio.
 
-2.	In Solution Explorer, right-click the MultiTenantSurveyApp project and select **Manage User Secrets**.
+2.	In Solution Explorer, right-click the Tailspin.Surveys.Web project and select **Manage User Secrets**.
 
 3.	In the secrets.json file, paste in the following:
 
@@ -146,7 +146,7 @@ The Surveys application uses Redis to cache OAuth 2 access tokens. To create the
 
 4.	Save the updated secrets.json file.
 
-5.	Repeat these steps for the MultiTenantSurveyApp.WebAPI project, but paste the following into secrets.json:
+5.	Repeat these steps for the Tailspin.Surveys.WebAPI project, but paste the following into secrets.json:
 
           {
               "AzureAd": {
@@ -166,7 +166,7 @@ In this step, you will use Entity Framework 7 to create a local SQL database, us
 
 1.	Open a command window
 
-2.	Navigate to the MultiTenantSurveyApp.DAL project.
+2.	Navigate to the Tailspin.Surveys.Data project.
 
 3.	Run the following command:
 
@@ -174,13 +174,13 @@ In this step, you will use Entity Framework 7 to create a local SQL database, us
 
 ## Run the application
 
-To run the application, start both the MultiTenantSurveyApp.WebAPI and MultiTenantSurveyApp projects.
+To run the application, start both the Tailspin.Surveys.Web and Tailspin.Surveys.WebAPI projects.
 
 Note: You can set Visual Studio to run both projects automatically on F5, as follows:
 
 1.	In Solution Explorer, right-click the solution and click **Set Startup Projects**.
 2.	Select **Multiple startup projects**.
-3.	Set **Action** = **Start** for the MultiTenantSurveyApp and MultiTenantSurveyApp.WebAPI projects.
+3.	Set **Action** = **Start** for the Tailspin.Surveys.Web and Tailspin.Surveys.WebAPI projects.
 
 ## Sign up a new tenant
 
