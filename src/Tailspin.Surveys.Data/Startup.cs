@@ -26,7 +26,7 @@ public class Startup
     {
         var builder = new ConfigurationBuilder()
             .SetBasePath(appEnv.ApplicationBasePath)
-            .AddJsonFile("../Tailspin.Surveys.Web/config.json"); // path to your original configuration in Web project
+            .AddJsonFile("../Tailspin.Surveys.Web/appsettings.json"); // path to your original configuration in Web project
         if (env.IsDevelopment())
         {
             // This reads the configuration keys from the secret store.

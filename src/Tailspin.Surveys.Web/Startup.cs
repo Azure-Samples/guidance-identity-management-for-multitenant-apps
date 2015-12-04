@@ -36,8 +36,8 @@ namespace Tailspin.Surveys.Web
             // Setup configuration sources.
             var builder = new ConfigurationBuilder()
                 .SetBasePath(appEnv.ApplicationBasePath)
-                .AddJsonFile("config.json")
-                .AddJsonFile($"config.{env.EnvironmentName}.json", optional: true);
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
             if (env.IsDevelopment())
             {

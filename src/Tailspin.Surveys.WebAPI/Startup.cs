@@ -36,7 +36,7 @@ namespace Tailspin.Surveys.WebApi
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(appEnv.ApplicationBasePath)
-                .AddJsonFile("config.json");
+                .AddJsonFile("appsettings.json");
 
             if (env.IsDevelopment())
             {
