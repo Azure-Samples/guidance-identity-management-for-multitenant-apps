@@ -112,7 +112,7 @@ namespace Tailspin.Surveys.Web
             // you may need to to re-create Tailspin.SurveyDB to use SqlServerSurveyStore, here are the steps:
             // delete Tailspin.SurveyDB
             // start command prompt 
-            // cd \MultiTenantSaaSGuidance\Source\Tailspin.Survey\src\Tailspin.Survey
+            // cd \src\Tailspin.Surveys.Data
             // dnvm use 1.0.0-rc1-final
             // dnx ef database update
 
