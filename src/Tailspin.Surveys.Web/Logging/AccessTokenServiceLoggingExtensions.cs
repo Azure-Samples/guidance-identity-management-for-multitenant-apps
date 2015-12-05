@@ -5,8 +5,7 @@ using System;
 using Microsoft.Extensions.Logging;
 
 /// <summary>
-/// ILogger extensions for events which occur in the AccessTokenService
-/// These events are logged when ADAL is made use of to access tokens
+/// ILogger extensions for events that occur in the AccessTokenService
 /// </summary>
 namespace Tailspin.Surveys.Web.Logging
 {

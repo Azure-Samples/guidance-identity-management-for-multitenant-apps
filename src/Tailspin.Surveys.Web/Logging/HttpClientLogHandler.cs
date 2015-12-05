@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Logging;
 using Tailspin.Surveys.Security;
+using System.Threading;
 
 namespace Tailspin.Surveys.Web.Logging
 {
@@ -27,16 +28,17 @@ namespace Tailspin.Surveys.Web.Logging
         }
 
         /// <summary>
-        /// Overrides the SendAsync method of the DelegatingHandler for the purpose of logging REST call success or failure events along with timing information and status codes
-        ///         /// </summary>
+        /// Overrides the SendAsync method of the DelegatingHandler for the purpose of logging REST call success or failure events 
+        /// along with timing information and status codes
+        /// </summary>
         /// <param name="request"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Get the user Id and tenant Id from signed-in user's ClaimsPrincipal
-            var userId = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.ObjectId) ?? "Anonymous";
-            var tenantId = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.TenantId) ?? "-";
+            var userId = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.ObjectId);
+            var tenantId = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.TenantId);
 
             var method = request.Method?.Method;
             var uri = request.RequestUri.AbsoluteUri;
