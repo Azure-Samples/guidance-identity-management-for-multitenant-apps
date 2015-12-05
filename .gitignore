@@ -1,8 +1,8 @@
 ﻿#please don't put the ignore folder in the first line. it will not be processed.
 /.vs
 /artifacts
-/src/MultiTenantSurveyApp/node_modules
-/src/MultiTenantSurveyApp/wwwroot/lib
+/src/Tailspin.Surveys.Web/node_modules
+/src/Tailspin.Surveys.Web/wwwroot/lib
 
 *.user
 *.publishproj
