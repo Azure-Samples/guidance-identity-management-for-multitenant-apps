@@ -4,7 +4,9 @@
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Authentication.OpenIdConnect;
 using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Logging;
 using Tailspin.Surveys.Data.DataModels;
@@ -12,7 +14,6 @@ using Tailspin.Surveys.Data.DTOs;
 using Tailspin.Surveys.Security.Policy;
 using Tailspin.Surveys.Web.Logging;
 using Tailspin.Surveys.Web.Models;
-using Tailspin.Surveys.Web.Security;
 using Tailspin.Surveys.Web.Services;
 
 namespace Tailspin.Surveys.Web.Controllers
@@ -26,17 +27,14 @@ namespace Tailspin.Surveys.Web.Controllers
     {
         private readonly ISurveyService _surveyService;
         private readonly ILogger _logger;
-        private readonly SignInManager _signInManager;
         private readonly IAuthorizationService _authorizationService;
 
         public SurveyController(ISurveyService surveyService,
                                 ILogger<SurveyController> logger,
-                                SignInManager signInManager,
                                 IAuthorizationService authorizationService)
         {
             _surveyService = surveyService;
             _logger = logger;
-            _signInManager = signInManager;
             _authorizationService = authorizationService;
         }
 
@@ -75,7 +73,7 @@ namespace Tailspin.Surveys.Web.Controllers
                 if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
                 {
                     //this should happen if the bearer token validation fails. We wont sign the user out for 403 - since user may have access to some resources and not others
-                    return await SignOut();
+                    return ReAuthenticateUser();
                 }
 
                 ViewBag.Message = "Unexpected Error";
@@ -108,7 +106,7 @@ namespace Tailspin.Surveys.Web.Controllers
 
                 if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
                 {
-                    return await SignOut();
+                    return ReAuthenticateUser();
                 }
 
                 ViewBag.Message = "Unexpected Error";
@@ -160,7 +158,7 @@ namespace Tailspin.Surveys.Web.Controllers
                         switch (result.StatusCode)
                         {
                             case (int)HttpStatusCode.Unauthorized:
-                                return await SignOut();
+                                return ReAuthenticateUser();
                             case (int)HttpStatusCode.Forbidden:
                                 ViewBag.Forbidden = true;
                                 return View(survey);
@@ -197,17 +195,8 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View(result.Item);
                 }
 
-                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    return await SignOut();
-                }
-
-                if (result.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    ModelState.AddModelError(string.Empty, "The survey can not be found");
-                    ViewBag.Message = "The survey can not be found";
-                    return View("~/Views/Shared/Error.cshtml");
-                }
+                var errorResult = CheckStatusCode(result);
+                if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
             }
@@ -239,17 +228,8 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View(result.Item);
                 }
 
-                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    return await SignOut();
-                }
-
-                if (result.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    ModelState.AddModelError(string.Empty, "The survey can not be found");
-                    ViewBag.Message = "The survey can not be found";
-                    return View("~/Views/Shared/Error.cshtml");
-                }
+                var errorResult = CheckStatusCode(result);
+                if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
             }
@@ -277,19 +257,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View(model);
                 }
 
-                if (result.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    ModelState.AddModelError(string.Empty, $"The survey can not be found.");
-                    ViewBag.Message = $"The survey can not be found";
-                    return View("~/Views/Shared/Error.cshtml");
-                }
+                var errorResult = CheckStatusCode(result);
+                if (errorResult != null) return errorResult;
 
-                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    return await SignOut();
-                }
-
-                ViewBag.Message = result.StatusCode;
+                ViewBag.Message = "Unexpected Error";
             }
             catch
             {
@@ -323,7 +294,7 @@ namespace Tailspin.Surveys.Web.Controllers
                         switch (result.StatusCode)
                         {
                             case (int)HttpStatusCode.Unauthorized:
-                                return await SignOut();
+                                return ReAuthenticateUser();
                             case (int)HttpStatusCode.Forbidden:
                                 ViewBag.Forbidden = true;
                                 return View(model);
@@ -360,19 +331,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View(result.Item);
                 }
 
-                if (result.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    ModelState.AddModelError(string.Empty, $"The survey can not be found, It may have already been deleted");
-                    ViewBag.Message = $"The survey can not be found, It may have already been deleted";
-                    return View("~/Views/Shared/Error.cshtml");
-                }
+                var errorResult = CheckStatusCode(result);
+                if (errorResult != null) return errorResult;
 
-                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    return await SignOut();
-                }
-
-                ViewBag.Message = result.StatusCode;
+                ViewBag.Message = "Unexpected Error";
             }
             catch
             {
@@ -407,7 +369,7 @@ namespace Tailspin.Surveys.Web.Controllers
                         switch (result.StatusCode)
                         {
                             case (int)HttpStatusCode.Unauthorized:
-                                return await SignOut();
+                                return ReAuthenticateUser();
                             case (int)HttpStatusCode.Forbidden:
                                 ViewBag.Forbidden = true;
                                 break;
@@ -444,17 +406,8 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View(result.Item);
                 }
 
-                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    return await SignOut();
-                }
-
-                if (result.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    ModelState.AddModelError(string.Empty, "The survey can not be found");
-                    ViewBag.Message = "The survey can not be found";
-                    return View("~/Views/Shared/Error.cshtml");
-                }
+                var errorResult = CheckStatusCode(result);
+                if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
             }
@@ -481,17 +434,8 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View();
                 }
 
-                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    return await SignOut();
-                }
-
-                if (result.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    ModelState.AddModelError(string.Empty, "The survey can not be found");
-                    ViewBag.Message = "The survey can not be found";
-                    return View("~/Views/Shared/Error.cshtml");
-                }
+                var errorResult = CheckStatusCode(result);
+                if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
             }
@@ -567,19 +511,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     }
                 }
 
-                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    return await SignOut();
-                }
+                var errorResult = CheckStatusCode(result);
+                if (errorResult != null) return errorResult;
 
-                if (result.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    ModelState.AddModelError(string.Empty, "The survey can not be found");
-                    ViewBag.Message = "The survey can not be found";
-                    return View("~/Views/Shared/Error.cshtml");
-                }
-
-                ViewBag.Message = result.StatusCode;
+                ViewBag.Message = "Unexpected Error";
             }
             catch
             {
@@ -621,7 +556,7 @@ namespace Tailspin.Surveys.Web.Controllers
                             switch (publishResult.StatusCode)
                             {
                                 case (int)HttpStatusCode.Unauthorized:
-                                    return await SignOut();
+                                    return ReAuthenticateUser();
                                 case (int)HttpStatusCode.Forbidden:
                                     ViewBag.Forbidden = true;
                                     break;
@@ -661,17 +596,8 @@ namespace Tailspin.Surveys.Web.Controllers
                     }
                 }
 
-                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    return await SignOut();
-                }
-
-                if (result.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    ModelState.AddModelError(string.Empty, "The survey can not be found");
-                    ViewBag.Message = "The survey can not be found";
-                    return View("~/Views/Shared/Error.cshtml");
-                }
+                var errorResult = CheckStatusCode(result);
+                if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
             }
@@ -680,6 +606,28 @@ namespace Tailspin.Surveys.Web.Controllers
                 ViewBag.Message = "Unexpected Error";
             }
             return View("~/Views/Shared/Error.cshtml");
+        }
+
+        private IActionResult CheckStatusCode(ApiResult result)
+        {
+            if (result.StatusCode == (int) HttpStatusCode.Unauthorized)
+            {
+                return ReAuthenticateUser();
+            }
+
+            if (result.StatusCode == (int) HttpStatusCode.Forbidden)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
+
+            if (result.StatusCode == (int) HttpStatusCode.NotFound)
+            {
+                ModelState.AddModelError(string.Empty, "The survey can not be found");
+                ViewBag.Message = "The survey can not be found";
+                return View("~/Views/Shared/Error.cshtml");
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -715,7 +663,7 @@ namespace Tailspin.Surveys.Web.Controllers
                             switch (unpublishResult.StatusCode)
                             {
                                 case (int)HttpStatusCode.Unauthorized:
-                                    return await SignOut();
+                                    return ReAuthenticateUser();
                                 case (int)HttpStatusCode.Forbidden:
                                     ViewBag.Forbidden = true;
                                     break;
@@ -732,10 +680,13 @@ namespace Tailspin.Surveys.Web.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
-        private async Task<IActionResult> SignOut()
+        private IActionResult ReAuthenticateUser()
         {
-            return await _signInManager.SignOutAsync(
-                Url.Action("SignOutCallback", "Account", values: null, protocol: Request.Scheme));
+            return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme,
+                new AuthenticationProperties
+                {
+                    RedirectUri = Url.Action("SignInCallback", "Account")
+                });
         }
     }
 }
