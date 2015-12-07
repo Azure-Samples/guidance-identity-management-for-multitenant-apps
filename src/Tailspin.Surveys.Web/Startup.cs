@@ -186,7 +186,7 @@ namespace Tailspin.Surveys.Web
                 //options.RedirectUri = configOptions.AzureAd.PostLogoutRedirectUri;
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.TokenValidationParameters = new TokenValidationParameters { ValidateIssuer = false };
-                options.Events = new SurveyAuthenticationEvents(configOptions.AzureAd, loggerFactory.CreateLogger<SurveyAuthenticationEvents>());
+                options.Events = new SurveyAuthenticationEvents(configOptions.AzureAd, loggerFactory);
             });
 
             // Add MVC to the request pipeline.
