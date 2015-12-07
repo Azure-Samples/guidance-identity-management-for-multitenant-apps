@@ -29,7 +29,8 @@
     "Microsoft.AspNet.Mvc.ViewFeatures": "6.0.0-rc1-final",
     "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.5.208051316-alpha",
     "Tailspin.Surveys.Common": "1.0.0-*",
-    "Tailspin.Surveys.Security": "1.0.0-*"
+    "Tailspin.Surveys.Security": "1.0.0-*",
+    "Tailspin.Surveys.TokenStorage": "1.0.0-*"
   },
 
   "commands": {
@@ -41,7 +42,7 @@
       "dnx451": {
         "dependencies": {
           "Tailspin.Surveys.Configuration.KeyVault": "1.0.0-*",
-          "Tailspin.Surveys.TokenStorage": "1.0.0-*"
+          "Tailspin.Surveys.TokenStorage.Redis": "1.0.0-*"
         }
       },
         "dnxcore50": { }

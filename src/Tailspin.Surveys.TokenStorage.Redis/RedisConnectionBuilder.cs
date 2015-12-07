@@ -5,15 +5,25 @@ using System.Net;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
-namespace Tailspin.Surveys.TokenStorage
+namespace Tailspin.Surveys.TokenStorage.Redis
 {
+    /// <summary>
+    /// Builder class used to configure an instance of <see cref="StackExchange.Redis.ConfigurationOptions"/>.
+    /// </summary>
     public class RedisConnectionBuilder
     {
+        /// <summary>
+        /// Initializes a new instance of <see cref="Tailspin.Surveys.TokenStorage.Redis.RedisConnectionBuilder"/>/
+        /// </summary>
         public RedisConnectionBuilder()
             : this(new ConfigurationOptions())
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="Tailspin.Surveys.TokenStorage.Redis.RedisConnectionBuilder"/>/
+        /// </summary>
+        /// <param name="options">A <see cref="StackExchange.Redis.ConfigurationOptions"/> instance used to configure this instance.</param>
         public RedisConnectionBuilder(ConfigurationOptions options)
         {
             if (options == null)
