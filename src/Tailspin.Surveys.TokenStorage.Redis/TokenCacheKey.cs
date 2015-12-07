@@ -4,7 +4,7 @@
 using Tailspin.Surveys.Common;
 using System;
 
-namespace Tailspin.Surveys.TokenStorage
+namespace Tailspin.Surveys.TokenStorage.Redis
 {
     /// <summary>
     /// Key to be used for RedisTokenCache. 

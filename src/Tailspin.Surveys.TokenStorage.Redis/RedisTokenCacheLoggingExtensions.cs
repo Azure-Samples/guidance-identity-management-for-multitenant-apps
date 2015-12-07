@@ -4,7 +4,7 @@
 using System;
 using Microsoft.Extensions.Logging;
 
-namespace Tailspin.Surveys.TokenStorage
+namespace Tailspin.Surveys.TokenStorage.Redis
 {
     /// <summary>
     /// ILogger extensions for events which occur in the RedisTokenCache

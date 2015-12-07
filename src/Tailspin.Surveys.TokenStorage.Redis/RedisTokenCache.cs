@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using StackExchange.Redis;
 using Tailspin.Surveys.Common;
 
-namespace Tailspin.Surveys.TokenStorage
+namespace Tailspin.Surveys.TokenStorage.Redis
 {
     /// <summary>
     /// Sample implementation of a token cache which persists tokens specific to a user to Redis to be used in multi-tenanted scenarios
@@ -30,14 +30,14 @@ namespace Tailspin.Surveys.TokenStorage
         /// </summary>
         /// <param name="connection">An instance of <see cref="StackExchange.Redis.IConnectionMultiplexer"/> to use for a connection to Redis.</param>
         /// <param name="key">An instance of <see cref="Tailspin.Surveys.TokenStorage.TokenCacheKey"/> containing the key for the new cache.</param>
-        /// <param name="logger">An instance of <see cref="Microsoft.Extensions.Logging.ILogger"/> to use for logging.</param>
+        /// <param name="loggerFactory">An instance of <see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> to use for creating loggers.</param>
         /// <returns>An initialized instance of <see cref="Tailspin.Surveys.TokenStorage.TokenCacheKey"/>.</returns>
-        public async static Task<RedisTokenCache> CreateCacheAsync(IConnectionMultiplexer connection, TokenCacheKey key, ILogger logger)
+        public async static Task<RedisTokenCache> CreateCacheAsync(IConnectionMultiplexer connection, TokenCacheKey key, ILoggerFactory loggerFactory)
         {
-            Guard.ArgumentNotNull(connection, "IConnectionMultiplexer");
-            Guard.ArgumentNotNull(key, "key");
-            Guard.ArgumentNotNull(logger, "logger");
-            var cache = new RedisTokenCache(connection, key, logger);
+            Guard.ArgumentNotNull(connection, nameof(connection));
+            Guard.ArgumentNotNull(key, nameof(key));
+            Guard.ArgumentNotNull(loggerFactory, nameof(loggerFactory));
+            var cache = new RedisTokenCache(connection, key, loggerFactory);
             await cache.InitializeAsync()
                 .ConfigureAwait(false);
             return cache;
@@ -48,28 +48,17 @@ namespace Tailspin.Surveys.TokenStorage
         /// </summary>
         /// <param name="connection">An instance of <see cref="StackExchange.Redis.IConnectionMultiplexer"/> to use for a connection to Redis.</param>
         /// <param name="key">An instance of <see cref="Tailspin.Surveys.TokenStorage.TokenCacheKey"/> containing the key for this instance of cache.</param>
-        /// <param name="logger">An instance of <see cref="Microsoft.Extensions.Logging.ILogger"/> to use for logging.</param>
-        private RedisTokenCache(IConnectionMultiplexer connection, TokenCacheKey key, ILogger logger)
+        /// <param name="loggerFactory">An instance of <see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> to use for creating loggers.</param>
+        private RedisTokenCache(IConnectionMultiplexer connection, TokenCacheKey key, ILoggerFactory loggerFactory)
             : base()
         {
-            if (connection == null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (key == null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
-
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
+            Guard.ArgumentNotNull(connection, nameof(connection));
+            Guard.ArgumentNotNull(key, nameof(key));
+            Guard.ArgumentNotNull(loggerFactory, nameof(loggerFactory));
 
             _cache = connection.GetDatabase();
             _key = key;
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger<RedisTokenCache>();
             AfterAccess = AfterAccessNotification;
         }
 

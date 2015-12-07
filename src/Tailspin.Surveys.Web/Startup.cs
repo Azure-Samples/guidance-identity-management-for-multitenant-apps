@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 
 #if DNX451
 using Tailspin.Surveys.Configuration.Secrets;
+using Tailspin.Surveys.TokenStorage.Redis;
 #endif
 
 namespace Tailspin.Surveys.Web
@@ -123,9 +124,15 @@ namespace Tailspin.Surveys.Web
                     .UsePassword(configOptions.Redis.Password)
                     .UseSsl();
             });
+
+            services.AddTokenStorage()
+                .AddTokenCacheService<RedisTokenCacheService>();
+#else
+            services.AddTokenStorage();
 #endif
 
-            services.AddScoped<ITokenCacheService, TokenCacheService>();
+            //services.AddScoped<ITokenCacheService, TokenCacheService>();
+
             services.AddScoped<IAccessTokenService, AzureADTokenService>();
 
             services.AddSingleton<HttpClientService>();
