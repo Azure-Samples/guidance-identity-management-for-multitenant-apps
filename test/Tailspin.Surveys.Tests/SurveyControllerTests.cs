@@ -6,23 +6,19 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Internal;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Abstractions;
 using Microsoft.AspNet.Routing;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
 using Moq;
 using Xunit;
 using Tailspin.Surveys.Data.DataModels;
 using Tailspin.Surveys.Data.DTOs;
 using Tailspin.Surveys.Security;
-using Tailspin.Surveys.Web.Configuration;
 using Tailspin.Surveys.Web.Controllers;
 using Tailspin.Surveys.Web.Models;
-using Tailspin.Surveys.Web.Security;
 using Tailspin.Surveys.Web.Services;
 
 namespace MultiTentantSurveyAppTests
@@ -31,7 +27,6 @@ namespace MultiTentantSurveyAppTests
     {
         private Mock<ISurveyService> _surveyService;
         private Mock<ILogger<SurveyController>> _logger;
-        private Mock<IAccessTokenService> _accessTokenService;
         private Mock<IAuthorizationService> _authorizationService;
         private SurveyController _target;
 
@@ -39,26 +34,14 @@ namespace MultiTentantSurveyAppTests
         {
             _surveyService = new Mock<ISurveyService>();
             _logger = new Mock<ILogger<SurveyController>>();
-            _accessTokenService = new Mock<IAccessTokenService>();
             _authorizationService = new Mock<IAuthorizationService>();
-            var configOptions = new Mock<IOptions<ConfigurationOptions>>();
 
             var services = new ServiceCollection();
             services.AddEntityFramework()
                 .AddInMemoryDatabase()
                 .AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase());
 
-            // IHttpContextAccessor is required for UserManager 
-            var httpContext = new DefaultHttpContext();
-            IHttpContextAccessor httpContextAccessor =
-                new HttpContextAccessor()
-                {
-                    HttpContext = httpContext,
-                };
-            var logger = new Mock<ILogger<SignInManager>>();
-
-            var signInManager = new SignInManager(httpContextAccessor, _accessTokenService.Object, logger.Object);
-            _target = new SurveyController(_surveyService.Object, _logger.Object, signInManager, _authorizationService.Object);
+            _target = new SurveyController(_surveyService.Object, _logger.Object, _authorizationService.Object);
         }
 
         [Fact]

@@ -10,5 +10,6 @@ namespace Tailspin.Surveys.Data.DTOs
     {
         public int SurveyId { get; set; }
         public ICollection<UserDTO> Contributors { get; set; }
+        public ICollection<ContributorRequest> Requests { get; set; }
     }
 }

@@ -18,35 +18,30 @@ using Tailspin.Surveys.Web.Logging;
 namespace Tailspin.Surveys.Web.Security
 {
     /// <summary>
-    /// [masimms] What does this class do?
+    /// 
     /// </summary>
     public class SurveyAuthenticationEvents : OpenIdConnectEvents
     {
         private readonly AzureAdOptions _adOptions;
         private readonly ILogger _logger;
 
-        public SurveyAuthenticationEvents(AzureAdOptions adOptions, ILogger logger)
+        /// <summary>
+        /// Initializes a new instance of <see cref="Tailspin.Surveys.Web.Security.SurveyAuthenticationEvents"/>.
+        /// </summary>
+        /// <param name="adOptions">Application settings related to Azure Active Directory.</param>
+        /// <param name="loggerFactory"><see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> used to create type-specific <see cref="Microsoft.Extensions.Logging.ILogger"/> instances.</param>
+        public SurveyAuthenticationEvents(AzureAdOptions adOptions, ILoggerFactory loggerFactory)
         {
             _adOptions = adOptions;
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger<SurveyAuthenticationEvents>();
         }
 
-        // [masimms-andrew] Add a short blurb on how these methods are for making it easier to 
-        // debug the flow.  That is really great insight.
-
-        // ReSharper disable RedundantOverridenMember
-        public override Task MessageReceived(MessageReceivedContext context)
-        {
-            return base.MessageReceived(context);
-        }
-
-        public override Task RedirectToEndSessionEndpoint(RedirectContext context)
-        {
-            return base.RedirectToEndSessionEndpoint(context);
-        }
-        // ReSharper restore RedundantOverridenMember
-
-        // [masimms] What is "special" here (why is this not default behavior)
+        /// <summary>
+        /// Called prior to the OIDC middleware redirecting to the authentication endpoint.  In the event we are signing up a tenant, we need to
+        /// put the "admin_consent" value for the prompt query string parameter.  AAD uses this to show the admin consent flow.
+        /// </summary>
+        /// <param name="context">The <see cref="Microsoft.AspNet.Authentication.OpenIdConnect.RedirectContext"/> for this event.</param>
+        /// <returns>A completed <see cref="System.Threading.Tasks.Task"/></returns>
         public override Task RedirectToAuthenticationEndpoint(RedirectContext context)
         {
             if (context.IsSigningUp())
@@ -58,7 +53,10 @@ namespace Tailspin.Surveys.Web.Security
             return Task.FromResult(0);
         }
 
-        // [masimms] What does this method do?
+        /// <summary>
+        /// Transforms the claims from AAD to well-known claims.
+        /// </summary>
+        /// <param name="principal">The current <see cref="System.Security.Claims.ClaimsPrincipal"/></param>
         private static void NormalizeClaims(ClaimsPrincipal principal)
         {
             if (principal == null)
@@ -195,7 +193,12 @@ namespace Tailspin.Surveys.Web.Security
             principal.Identities.First().AddClaim(new Claim(SurveyClaimTypes.SurveyUserIdClaimType, user.Id.ToString()));
         }
 
-        // [masimms] What does this method do?
+        /// <summary>
+        /// Method that is called by the OIDC middleware after the authentication data has been validated.  This is where most of the sign up
+        /// and sign in work is done.
+        /// </summary>
+        /// <param name="context">An OIDC-supplied <see cref="Microsoft.AspNet.Authentication.OpenIdConnect.AuthenticationValidatedContext"/> containing the current authentication information.</param>
+        /// <returns>a completed <see cref="System.Threading.Tasks.Task"/></returns>
         public override async Task AuthenticationValidated(AuthenticationValidatedContext context)
         {
             var principal = context.AuthenticationTicket.Principal;
@@ -212,8 +215,6 @@ namespace Tailspin.Surveys.Web.Security
                 NormalizeClaims(principal);
                 var tenant = await tenantManager.FindByIssuerValueAsync(issuerValue);
 
-                // Validate the process flow
-                // [masimms] Which process?
                 if (context.IsSigningUp())
                 {
                     // Originally, we were checking to see if the tenant was non-null, however, this would not allow
@@ -236,7 +237,6 @@ namespace Tailspin.Surveys.Web.Security
                     }
 
                     await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant);
-                    // [mattjoh] now what is done with the user?
 
                     // We are good, so cache our token for Web Api now.
                     await accessTokenService.RequestAccessTokenAsync(
@@ -257,10 +257,59 @@ namespace Tailspin.Surveys.Web.Security
             }
         }
 
+        /// <summary>
+        /// Called by the OIDC middleware when authentication fails.
+        /// </summary>
+        /// <param name="context">An OIDC-middleware supplied <see cref="Microsoft.AspNet.Authentication.OpenIdConnect.AuthenticationFailedContext"/> containing information about the failed authentication.</param>
+        /// <returns>A completed <see cref="System.Threading.Tasks.Task"/></returns>
         public override Task AuthenticationFailed(AuthenticationFailedContext context)
         {
             _logger.AuthenticationFailed(context.Exception);
             return Task.FromResult(0);
         }
+
+        // These method are overridden to make it easier to debug the OIDC auth flow.
+
+        // ReSharper disable RedundantOverridenMember
+        public override Task AuthorizationCodeReceived(AuthorizationCodeReceivedContext context)
+        {
+            return base.AuthorizationCodeReceived(context);
+        }
+
+        public override Task AuthorizationResponseReceived(AuthorizationResponseReceivedContext context)
+        {
+            return base.AuthorizationResponseReceived(context);
+        }
+
+        public override Task TicketReceived(TicketReceivedContext context)
+        {
+            return base.TicketReceived(context);
+        }
+
+        public override Task TokenResponseReceived(TokenResponseReceivedContext context)
+        {
+            return base.TokenResponseReceived(context);
+        }
+
+        public override Task UserInformationReceived(UserInformationReceivedContext context)
+        {
+            return base.UserInformationReceived(context);
+        }
+
+        public override Task RemoteError(ErrorContext context)
+        {
+            return base.RemoteError(context);
+        }
+
+        public override Task MessageReceived(MessageReceivedContext context)
+        {
+            return base.MessageReceived(context);
+        }
+
+        public override Task RedirectToEndSessionEndpoint(RedirectContext context)
+        {
+            return base.RedirectToEndSessionEndpoint(context);
+        }
+        // ReSharper restore RedundantOverridenMember
     }
 }

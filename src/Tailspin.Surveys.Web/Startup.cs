@@ -180,6 +180,11 @@ namespace Tailspin.Surveys.Web
                 options.AutomaticAuthenticate = true;
                 options.AutomaticChallenge = true;
                 options.AccessDeniedPath = "/Home/Forbidden";
+                options.CookieSecure = CookieSecureOption.Always;
+
+                // The default setting for cookie expiration is 14 days. SlidingExpiration is set to true by default
+                options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                options.SlidingExpiration = true;
             });
 
             // Add OpenIdConnect middleware so you can login using Azure AD.
@@ -193,7 +198,7 @@ namespace Tailspin.Surveys.Web
                 //options.RedirectUri = configOptions.AzureAd.PostLogoutRedirectUri;
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.TokenValidationParameters = new TokenValidationParameters { ValidateIssuer = false };
-                options.Events = new SurveyAuthenticationEvents(configOptions.AzureAd, loggerFactory.CreateLogger<SurveyAuthenticationEvents>());
+                options.Events = new SurveyAuthenticationEvents(configOptions.AzureAd, loggerFactory);
             });
 
             // Add MVC to the request pipeline.

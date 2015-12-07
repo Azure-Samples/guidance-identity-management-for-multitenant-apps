@@ -130,7 +130,8 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             return new ObjectResult(new ContributorsDTO()
             {
                 SurveyId = id,
-                Contributors = survey.Contributors.Select(x => new UserDTO { Email = x.User.Email }).ToArray()
+                Contributors = survey.Contributors.Select(x => new UserDTO { Email = x.User.Email }).ToArray(),
+                Requests = survey.Requests.Where(r => r.SurveyId == id).ToArray()
             });
         }
 
