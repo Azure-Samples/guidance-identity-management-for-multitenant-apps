@@ -32,5 +32,7 @@ namespace Tailspin.Surveys.Data.DataModels
         public User Owner { get; set; }
         public virtual ICollection<SurveyContributor> Contributors { get; set; } 
         public virtual ICollection<Question> Questions { get; set; }
+        public virtual ICollection<ContributorRequest> Requests { get; set; }
+
     }
 }

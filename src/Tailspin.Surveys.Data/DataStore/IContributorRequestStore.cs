@@ -10,6 +10,7 @@ namespace Tailspin.Surveys.Data.DataStore
     public interface IContributorRequestStore
     {
         Task AddRequestAsync(ContributorRequest contributorRequest);
+        Task<ICollection<ContributorRequest>> GetRequestForSurveyAsync(int surveyId);
         Task<ICollection<ContributorRequest>> GetRequestsForUserAsync(string emailAddress);
         Task RemoveRequestAsync(ContributorRequest contributorRequest);
     }

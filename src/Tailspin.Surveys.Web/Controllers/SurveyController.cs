@@ -526,7 +526,16 @@ namespace Tailspin.Surveys.Web.Controllers
 
                 ViewBag.Message = $"Contribution Requested for {contributorRequestViewModel.EmailAddress}";
                 ViewBag.SurveyId = contributorRequestViewModel.SurveyId;
-                return View();
+                var result = await _surveyService.GetSurveyContributorsAsync(contributorRequestViewModel.SurveyId);
+                if (result.Succeeded)
+                {
+                    return View("ShowContributors",result.Item);
+                }
+                else
+                {
+                    ViewBag.Message = "Unexpected Error";
+                    return View("~/Views/Shared/Error.cshtml");
+                }
             }
             catch
             {
