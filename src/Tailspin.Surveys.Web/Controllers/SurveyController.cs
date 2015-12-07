@@ -54,9 +54,9 @@ namespace Tailspin.Surveys.Web.Controllers
 
                 var userId = User.GetUserKey();
                 var user = User.GetObjectIdentifierValue();
-                var tenantId = User.GetTenantIdValue();
+                var issuerValue = User.GetIssuerValue();
                 var actionName = ActionContext.ActionDescriptor.Name;
-                _logger.GetSurveysForUserOperationStarted(actionName, user, tenantId);
+                _logger.GetSurveysForUserOperationStarted(actionName, user, issuerValue);
 
                 // The SurveyService.GetSurveysForUserAsync returns a UserSurveysDTO that has properties for Published, Own, and Contribute
                 var result = await _surveyService.GetSurveysForUserAsync(userId);
@@ -64,11 +64,11 @@ namespace Tailspin.Surveys.Web.Controllers
                 {
                     // If the user is in the creator role, the view shows a "Create Survey" button.
                     ViewBag.IsUserCreator = await _authorizationService.AuthorizeAsync(User, PolicyNames.RequireSurveyCreator);
-                    _logger.GetSurveysForUserOperationSucceeded(actionName, user, tenantId);
+                    _logger.GetSurveysForUserOperationSucceeded(actionName, user, issuerValue);
                     return View(result.Item);
                 }
 
-                _logger.GetSurveysForUserOperationFailed(actionName, user, tenantId, result.StatusCode);
+                _logger.GetSurveysForUserOperationFailed(actionName, user, issuerValue, result.StatusCode);
 
                 if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
                 {

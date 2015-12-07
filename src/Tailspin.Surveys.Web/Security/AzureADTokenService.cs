@@ -54,25 +54,25 @@ namespace Tailspin.Surveys.Web.Security
         private async Task<string> GetAccessTokenForResourceAsync(string resource, ClaimsPrincipal user)
         {
             var userId = user.GetObjectIdentifierValue();
-            var tenantId = user.GetTenantIdValue();
+            var issuerValue = user.GetIssuerValue();
             var userName = user.Identity?.Name;
 
             try
             {
-                _logger.BearerTokenAcquisitionStarted(resource, userName, tenantId);
+                _logger.BearerTokenAcquisitionStarted(resource, userName, issuerValue);
                 var authContext = await CreateAuthenticationContext(user);
                 var result = await authContext.AcquireTokenSilentAsync(
                     resource,
                     await _credentialService.GetCredentialsAsync(),
                     new UserIdentifier(userId, UserIdentifierType.UniqueId));
 
-                _logger.BearerTokenAcquisitionSucceeded(resource, userName, tenantId);
+                _logger.BearerTokenAcquisitionSucceeded(resource, userName, issuerValue);
 
                 return result.AccessToken;
             }
             catch (AdalException ex)
             {
-                _logger.BearerTokenAcquisitionFailed(resource, userName, tenantId, ex);
+                _logger.BearerTokenAcquisitionFailed(resource, userName, issuerValue, ex);
                 throw new AuthenticationException($"AcquireTokenSilentAsync failed for user: {userId}", ex);
             }
         }

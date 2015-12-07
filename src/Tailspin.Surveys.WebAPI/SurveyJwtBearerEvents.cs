@@ -77,7 +77,7 @@ namespace Tailspin.Surveys.WebApi
             {
                 identity.AddClaim(new Claim(ClaimTypes.Email, email));
             }
-            _logger.TokenValidationSucceeded(principal.GetObjectIdentifierValue(), issuerValue, tenant.Id);
+            _logger.TokenValidationSucceeded(principal.GetObjectIdentifierValue(), issuerValue);
         }
     }
 }

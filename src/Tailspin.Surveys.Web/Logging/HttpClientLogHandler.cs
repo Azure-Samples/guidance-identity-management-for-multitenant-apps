@@ -36,9 +36,9 @@ namespace Tailspin.Surveys.Web.Logging
         /// <returns></returns>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            // Get the user Id and tenant Id from signed-in user's ClaimsPrincipal
+            // Get the user Id and issuer value from signed-in user's ClaimsPrincipal
             var userId = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.ObjectId);
-            var tenantId = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.TenantId);
+            var issuerValue = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.IssuerValue);
 
             var method = request.Method?.Method;
             var uri = request.RequestUri.AbsoluteUri;
@@ -49,11 +49,11 @@ namespace Tailspin.Surveys.Web.Logging
 
             if (response.IsSuccessStatusCode)
             {
-                _logger.RequestSucceeded(method, uri, requestStopwatch.Elapsed, userId, tenantId);
+                _logger.RequestSucceeded(method, uri, requestStopwatch.Elapsed, userId, issuerValue);
             }
             else
             {
-                _logger.RequestFailed(method, uri, requestStopwatch.Elapsed, response.ReasonPhrase, response.StatusCode.ToString(), userId, tenantId);
+                _logger.RequestFailed(method, uri, requestStopwatch.Elapsed, response.ReasonPhrase, response.StatusCode.ToString(), userId, issuerValue);
 
             }
             return response;

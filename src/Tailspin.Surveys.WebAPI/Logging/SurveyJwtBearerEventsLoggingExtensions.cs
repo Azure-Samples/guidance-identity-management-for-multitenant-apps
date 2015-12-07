@@ -27,9 +27,9 @@ namespace Tailspin.Surveys.WebAPI.Logging
         {
             logger.LogWarning("Tenant is not registered User: {0} Issuer: {1}", userId, issuer);
         }
-        public static void TokenValidationSucceeded(this ILogger logger, string userId, string issuer, int tenantId)
+        public static void TokenValidationSucceeded(this ILogger logger, string userId, string issuer)
         {
-            logger.LogInformation("Token validation succeeded: User: {0} Issuer: {1} TenantId: {2}", userId, issuer, tenantId);
+            logger.LogInformation("Token validation succeeded: User: {0} Issuer: {1}", userId, issuer);
         }
     }
 }

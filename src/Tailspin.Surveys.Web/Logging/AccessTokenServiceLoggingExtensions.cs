@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 /// <summary>
 /// ILogger extensions for events that occur in the AccessTokenService
@@ -11,17 +12,17 @@ namespace Tailspin.Surveys.Web.Logging
 {
     internal static class AccessTokenServiceLoggingExtensions
     {
-        public static void BearerTokenAcquisitionStarted(this ILogger logger, string resource, string user, string tenantId)
+        public static void BearerTokenAcquisitionStarted(this ILogger logger, string resource, string user, string issuer)
         {
-            logger.LogInformation("Started bearer token acquisition to call webapi: {0} for tenant: {1} user: {2}", resource, tenantId, user);
+            logger.LogInformation("Started bearer token acquisition to call webapi: {0} for issuer: {1} user: {2}", resource, issuer, user);
         }
-        public static void BearerTokenAcquisitionSucceeded(this ILogger logger, string resource, string user, string tenantId)
+        public static void BearerTokenAcquisitionSucceeded(this ILogger logger, string resource, string user, string issuer)
         {
-            logger.LogInformation("Succeededed bearer token acquisition to call webapi: {0} for tenant: {1} user: {2}", resource, tenantId, user);
+            logger.LogInformation("Succeededed bearer token acquisition to call webapi: {0} for issuer: {1} user: {2}", resource, issuer, user);
         }
-        public static void BearerTokenAcquisitionFailed(this ILogger logger, string resource, string user, string tenantId, Exception exp)
+        public static void BearerTokenAcquisitionFailed(this ILogger logger, string resource, string user, string issuer, Exception exp)
         {
-            logger.LogInformation("Succeededed bearer token acquisition to call webapi: {0} for tenant: {1} user: {2}", resource, tenantId, user);
+            logger.LogError(string.Format(CultureInfo.InvariantCulture, "Succeededed bearer token acquisition to call webapi: {0} for issuer: {1} user: {2}", resource, issuer, user), exp);
         }
     }
 }
