@@ -89,6 +89,7 @@ namespace Tailspin.Surveys.Data.DataStore
                 .Include(survey => survey.Contributors)
                 .ThenInclude(contrib => contrib.User)
                 .Include(survey => survey.Questions)
+                .Include(survey => survey.Requests)
                 .SingleOrDefaultAsync(s => s.Id == id);
         }
 
