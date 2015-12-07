@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 namespace Tailspin.Surveys.Web.Logging
 {
     /// <summary>
-    /// ILogger extensions for events which occur in the AccountController
+    /// ILogger extensions for events which occur in the SignInManager
     /// </summary>
-    internal static class AccountControllerLoggingExtensions
+    internal static class SignInManagerLoggingExtensions
     {
         public static void SignoutStarted(this ILogger logger, string user, string issuer)
         {
