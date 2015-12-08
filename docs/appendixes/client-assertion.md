@@ -47,18 +47,33 @@ This section shows how to configure the Tailspin Surveys application to use clie
 
 1. Run the PowerShell script located at [/Scripts/New-AADServicePrincipalCredentialCertificate.ps1](https://github.com/mspnp/multitenant-saas-guidance/blob/master/scripts/New-AADServicePrincipalCredentialCertificate.ps1). Run the script with admin privileges. For the `Subject` parameter, enter any name, such as "surveysapp". The script generates a self-signed certificate and stores it in the "Current User/Personal" certificate store.
 
-2. The output from the script is a JSON fragment. Add this to the Surveys application manifest, inside the `keyCredentials` property.
+2. The output from the script is a JSON fragment. Add this to the Surveys application manifest.
 
-        "keyCredentials": [
-            {
-              "type": "AsymmetricX509Cert",
-              "usage": "Verify",
-              "keyId": "29d4f7db-0539-455e-b708-....",
-              "customKeyIdentifier": "ZEPpP/+KJe2fVDBNaPNOTDoJMac=",
-              "value": "MIIDAjCCAeqgAwIBAgIQFxeRiU59eL.....
-            }
-          ],
-    > Note: Uness you are using Key Vault, only the web application needs the certificate.
+    1. Log into the Azure portal and navigate to your Azure AD directory.
+
+    2. Click **Applications**.
+
+    3. Select the Surveys application.
+
+    4.	Click **Manage Manifest** and select **Download Manifest**.
+
+    5.	Open the manifest JSON file in a text editor. Paste the output from the script into the `keyCredentials` property. It should look similar to the following:
+
+                "keyCredentials": [
+                    {
+                      "type": "AsymmetricX509Cert",
+                      "usage": "Verify",
+                      "keyId": "29d4f7db-0539-455e-b708-....",
+                      "customKeyIdentifier": "ZEPpP/+KJe2fVDBNaPNOTDoJMac=",
+                      "value": "MIIDAjCCAeqgAwIBAgIQFxeRiU59eL.....
+                    }
+                  ],
+
+        > Note: Uness you are using Key Vault, only the web application needs the certificate.
+
+    6.	Save your changes to the JSON file.
+
+    7.	Go back to the portal. Click **Manage Manifest** > **Upload Manifest** and upload the JSON file.
 
 3. Get the thumbprint of the certificate. You can use the MMC certificate snap-in (but see [this KB article](https://support.microsoft.com/en-us/kb/2023835)) or else run the following command:
 
