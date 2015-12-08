@@ -19,9 +19,6 @@ using AppConfiguration = Tailspin.Surveys.WebApi.Configuration;
 using Constants = Tailspin.Surveys.Common.Constants;
 using Microsoft.Extensions.PlatformAbstractions;
 using System;
-#if DNX451
-using Tailspin.Surveys.Configuration.Secrets;
-#endif
 
 namespace Tailspin.Surveys.WebApi
 {
@@ -34,6 +31,7 @@ namespace Tailspin.Surveys.WebApi
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv, ILoggerFactory loggerFactory)
         {
+            InitializeLogging(loggerFactory);
             var builder = new ConfigurationBuilder()
                 .SetBasePath(appEnv.ApplicationBasePath)
                 .AddJsonFile("appsettings.json");
@@ -45,17 +43,18 @@ namespace Tailspin.Surveys.WebApi
                 builder.AddUserSecrets();
             }
             builder.AddEnvironmentVariables();
-            //Uncomment the block of code below if you want to load secrets from KeyVault
-            //It is recommended to use certs for all authentication when using KeyVault
-            //#if DNX451
-            //            InitializeLogging(loggerFactory);
-            //            var config = builder.Build();
-            //            builder.AddKeyVaultSecrets(config["AzureAd:ClientId"],
-            //                config["KeyVault:Name"],
-            //                config["AzureAd:Asymmetric:CertificateThumbprint"],
-            //                Convert.ToBoolean(config["AzureAd:Asymmetric:ValidationRequired"]),
-            //                loggerFactory);
-            //#endif
+
+            // Uncomment the block of code below if you want to load secrets from KeyVault
+            // It is recommended to use certs for all authentication when using KeyVault
+//#if DNX451
+//            var config = builder.Build();
+//            builder.AddKeyVaultSecrets(config["AzureAd:ClientId"],
+//                config["KeyVault:Name"],
+//                config["AzureAd:Asymmetric:CertificateThumbprint"],
+//                Convert.ToBoolean(config["AzureAd:Asymmetric:ValidationRequired"]),
+//                loggerFactory);
+//#endif
+
             builder.Build().Bind(_configOptions);
         }
 
@@ -102,7 +101,6 @@ namespace Tailspin.Surveys.WebApi
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext dbContext, ILoggerFactory loggerFactory)
         {
-            InitializeLogging(loggerFactory);
             if (env.IsDevelopment())
             {
                 //app.UseBrowserLink();

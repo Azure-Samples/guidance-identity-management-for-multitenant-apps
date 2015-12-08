@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Tailspin.Surveys.Configuration.Secrets
+namespace Tailspin.Surveys.Configuration.KeyVault
 {
     /// <summary>
     /// ILogger extensions for events which occur inside the KeyVaultConfigurationProvider

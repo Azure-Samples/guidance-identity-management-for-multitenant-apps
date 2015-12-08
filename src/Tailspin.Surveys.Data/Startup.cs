@@ -15,15 +15,13 @@ using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.Logging;
 using Tailspin.Surveys.Data.Configuration;
 using Tailspin.Surveys.Data.DataModels;
-#if DNX451
-using Tailspin.Surveys.Configuration.Secrets;
-#endif
 
 public class Startup
 {
     private ConfigurationOptions _configOptions = new ConfigurationOptions();
     public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv, ILoggerFactory loggerFactory)
     {
+        InitializeLogging(loggerFactory);
         var builder = new ConfigurationBuilder()
             .SetBasePath(appEnv.ApplicationBasePath)
             .AddJsonFile("../Tailspin.Surveys.Web/appsettings.json"); // path to your original configuration in Web project
@@ -35,7 +33,6 @@ public class Startup
         }
         //Uncomment the block of code below to use a connection string from KeyVault for migrations
 //#if DNX451
-//        InitializeLogging(loggerFactory);
 //        var config = builder.Build();
 //        builder.AddKeyVaultSecrets(config["ClientId"],
 //            config["KeyVault:Name"],
