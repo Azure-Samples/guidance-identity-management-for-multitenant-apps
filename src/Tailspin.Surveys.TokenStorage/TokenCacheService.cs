@@ -8,12 +8,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Tailspin.Surveys.Common;
 
-//#if DNX451
-//using Microsoft.Extensions.DependencyInjection;
-//using Tailspin.Surveys.TokenStorage;
-//using StackExchange.Redis;
-//#endif
-
 namespace Tailspin.Surveys.TokenStorage
 {
     /// <summary>

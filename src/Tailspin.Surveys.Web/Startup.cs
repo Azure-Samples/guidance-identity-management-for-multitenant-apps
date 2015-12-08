@@ -21,11 +21,6 @@ using SurveyAppConfiguration = Tailspin.Surveys.Web.Configuration;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.Threading.Tasks;
 
-#if DNX451
-using Tailspin.Surveys.Configuration.Secrets;
-using Tailspin.Surveys.TokenStorage.Redis;
-#endif
-
 namespace Tailspin.Surveys.Web
 {
     public class Startup
@@ -34,6 +29,8 @@ namespace Tailspin.Surveys.Web
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv, ILoggerFactory loggerFactory)
         {
+            InitializeLogging(loggerFactory);
+
             // Setup configuration sources.
             var builder = new ConfigurationBuilder()
                 .SetBasePath(appEnv.ApplicationBasePath)
@@ -51,7 +48,6 @@ namespace Tailspin.Surveys.Web
             //Uncomment the block of code below if you want to load secrets from KeyVault
             //It is recommended to use certs for all authentication when using KeyVault
 //#if DNX451
-//            InitializeLogging(loggerFactory);
 //            _configuration = builder.Build();
 //            builder.AddKeyVaultSecrets(_configuration["AzureAd:ClientId"],
 //                _configuration["KeyVault:Name"],
@@ -126,16 +122,14 @@ namespace Tailspin.Surveys.Web
             });
 
             services.AddTokenStorage()
-                .AddTokenCacheService<RedisTokenCacheService>();
+                .UseRedisTokenStorageService();
 #else
             services.AddTokenStorage();
 #endif
 
-            //services.AddScoped<ITokenCacheService, TokenCacheService>();
-
             services.AddScoped<IAccessTokenService, AzureADTokenService>();
-
             services.AddSingleton<HttpClientService>();
+
             // Use this for client certificate support
            // services.AddSingleton<ICredentialService, CertificateCredentialService>();
            services.AddSingleton<ICredentialService, ClientCredentialService>();
@@ -148,7 +142,6 @@ namespace Tailspin.Surveys.Web
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             var configOptions = app.ApplicationServices.GetService<IOptions<SurveyAppConfiguration.ConfigurationOptions>>().Value;
-            InitializeLogging(loggerFactory);
             // Configure the HTTP request pipeline.
 
             // Add the following to the request pipeline only in development environment.
