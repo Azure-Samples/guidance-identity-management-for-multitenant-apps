@@ -94,11 +94,13 @@ namespace Tailspin.Surveys.Security.Policy
             }
             if (ValidateUserPermissions[operation](permissions))
             {
+                // TODO: Change the logging extension after the tenant id is updated from objectid to the value in DB
                 _logger.ValidatePermissionsSucceeded(user, userTenantId, operation.Name, permissions.Select(p => p.ToString()));
                 context.Succeed(operation);
             }
             else
             {
+                // TODO: Change the logging extension after the tenant id is updated from objectid to the value in DB
                 _logger.ValidatePermissionsFailed(user, userTenantId, operation.Name, permissions.Select(p => p.ToString()));
                 context.Fail();
             }

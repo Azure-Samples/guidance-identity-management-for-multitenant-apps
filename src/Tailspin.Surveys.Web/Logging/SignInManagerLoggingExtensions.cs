@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 namespace Tailspin.Surveys.Web.Logging
 {
@@ -13,15 +14,15 @@ namespace Tailspin.Surveys.Web.Logging
     {
         public static void SignoutStarted(this ILogger logger, string user, string issuer)
         {
-            logger.LogInformation("About to sign out user: {0} of tenant: {1}", user, issuer);
+            logger.LogInformation("About to sign out user: {0} of issuer: {1}", user, issuer);
         }
         public static void SignoutCompleted(this ILogger logger, string user, string issuer)
         {
-            logger.LogInformation("Signed out user: {0} of tenant: {1}", user, issuer);
+            logger.LogInformation("Signed out user: {0} of issuer: {1}", user, issuer);
         }
         public static void SignoutFailed(this ILogger logger, string user, string issuer, Exception exp)
         {
-            logger.LogError("signout failed for user: {0}  of tenant: {1} with error: {2}", user, issuer, exp);
+            logger.LogError(string.Format(CultureInfo.InvariantCulture, "Signout failed for user: {0}  of issuer: {1}", user, issuer), exp);
         }
     }
 }

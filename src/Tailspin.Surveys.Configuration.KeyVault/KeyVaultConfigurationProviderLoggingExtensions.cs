@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,11 +18,11 @@ namespace Tailspin.Surveys.Configuration.Secrets
         }
         public static void ConfigurationLoadFailed(this ILogger logger, string clientId, Exception exp)
         {
-            logger.LogCritical("Configuration load failed for Client: {0}, Exception: {1}", clientId, exp);
+            logger.LogCritical(string.Format(CultureInfo.InvariantCulture, "Configuration load failed for Client: {0}", clientId), exp);
         }
         public static void AuthenticationFailed(this ILogger logger, string clientId, Exception exp)
         {
-            logger.LogCritical("Client credential authentication failed for Client: {0}, Exception: {1}", clientId, exp);
+            logger.LogCritical(string.Format(CultureInfo.InvariantCulture, "Client credential authentication failed for Client: {0}", clientId), exp);
         }
 
 
