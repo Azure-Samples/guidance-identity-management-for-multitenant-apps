@@ -20,11 +20,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public void Handle_Read_PassesForOwner()
         {
-            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = "testtenant" };
+            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 12345 };
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "54321"),
-                new Claim(SurveyClaimTypes.TenantId, "testtenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -40,7 +40,7 @@ namespace MultiTentantSurveyAppTests
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "54321"),
-                new Claim(SurveyClaimTypes.TenantId, "testtenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
             var target = new TestableSurveyAuthorizationHandler();
@@ -51,11 +51,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public void Handle_Read_FailsForNonOwner()
         {
-            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = "othertenant"};
+            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 54321};
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
-                new Claim(SurveyClaimTypes.TenantId, "testtenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -67,11 +67,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public void Handle_Update_PassesForOwner()
         {
-            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = "testtenant" };
+            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 12345 };
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "54321"),
-                new Claim(SurveyClaimTypes.TenantId, "testtenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -87,7 +87,7 @@ namespace MultiTentantSurveyAppTests
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "54321"),
-                new Claim(SurveyClaimTypes.TenantId, "othertenant")
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "54321")
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
             var target = new TestableSurveyAuthorizationHandler();
@@ -98,11 +98,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public void Handle_Update_FailsForNonOwner()
         {
-            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = "testtenant" };
+            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 12345 };
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
-                new Claim(SurveyClaimTypes.TenantId, "testtenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -114,11 +114,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public void Handle_Delete_FailsForNonOwner()
         {
-            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = "testtenant" };
+            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 12345 };
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
-                new Claim(SurveyClaimTypes.TenantId, "testtenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -130,11 +130,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public void Handle_Delete_PassesForOwner()
         {
-            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = "testtenant" };
+            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 12345 };
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "54321"),
-                new Claim(SurveyClaimTypes.TenantId, "testtenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -146,11 +146,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public void Handle_Delete_PassesForAdmin()
         {
-            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = "testtenant" };
+            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 12345 };
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
-                new Claim(SurveyClaimTypes.TenantId, "testtenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
                 new Claim(ClaimTypes.Role, Roles.SurveyAdmin)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -162,11 +162,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public void Handle_Delete_FailsForAdminOfDifferentTenant()
         {
-            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = "testtenant" };
+            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 12345 };
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
-                new Claim(SurveyClaimTypes.TenantId, "othertenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "othertenant"),
                 new Claim(ClaimTypes.Role, Roles.SurveyAdmin)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -178,11 +178,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public void Handle_Delete_PassesForAdminUserWithOtherRoles()
         {
-            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = "testtenant" };
+            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 12345 };
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
-                new Claim(SurveyClaimTypes.TenantId, "testtenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
                 new Claim(ClaimTypes.Role, Roles.SurveyReader),
                 new Claim(ClaimTypes.Role, Roles.SurveyAdmin),
                 new Claim(ClaimTypes.Role, Roles.SurveyReader)
@@ -196,11 +196,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public void Handle_Create_PassesForCreatorWithOtherRoles()
         {
-            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = "testtenant" };
+            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 12345 };
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
-                new Claim(SurveyClaimTypes.TenantId, "testtenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
                 new Claim(ClaimTypes.Role, Roles.SurveyReader),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator),
                 new Claim(ClaimTypes.Role, Roles.SurveyReader)
@@ -214,11 +214,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public void Handle_Create_FailesForUserWithNoCreatorRoleAssignments()
         {
-            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = "testtenant" };
+            var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 12345 };
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
-                new Claim(SurveyClaimTypes.TenantId, "testtenant"),
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
                 new Claim(ClaimTypes.Role, Roles.SurveyReader),
                 new Claim(ClaimTypes.Role, Roles.SurveyReader)
             }));

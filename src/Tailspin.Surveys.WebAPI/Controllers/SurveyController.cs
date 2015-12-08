@@ -63,7 +63,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
         [HttpGet("users/{userId}/surveys")]
         public async Task<IActionResult> GetSurveysForUser(int userId)
         {
-            if (User.GetUserKey() != userId)
+            if (User.GetSurveyUserIdValue() != userId)
             {
                 return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
@@ -82,9 +82,9 @@ namespace Tailspin.Surveys.WebAPI.Controllers
         /// <param name="tenantId">The id of the <see cref="Tenant"/></param>
         /// <returns>An <see cref="ObjectResult"/> that contains a <see cref="TenantSurveysDTO"/> populated with Published and Unpublished surveys associated with a <see cref="Tenant"/></returns>
         [HttpGet("tenants/{tenantId}/surveys")]
-        public async Task<IActionResult> GetSurveysForTenant(string tenantId)
+        public async Task<IActionResult> GetSurveysForTenant(int tenantId)
         {
-            if (User.GetTenantIdValue() != tenantId)
+            if (User.GetSurveyTenantIdValue() != tenantId)
             {
                 return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
@@ -155,8 +155,8 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             }
 
             var survey = DataMapping._dtoToSurvey(item);
-            survey.OwnerId = User.GetUserKey();
-            survey.TenantId = User.GetTenantIdValue();
+            survey.OwnerId = User.GetSurveyUserIdValue();
+            survey.TenantId = User.GetSurveyTenantIdValue();
 
             await _surveyStore.AddSurveyAsync(survey);
 
@@ -279,7 +279,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             {
                 var survey = await _surveyStore.GetSurveyAsync(contributorRequest.SurveyId);
 
-                int contributorId = User.GetUserKey();
+                int contributorId = User.GetSurveyUserIdValue();
 
                 // Check for existing contributor assignment
                 if (!survey.Contributors.Any(x => x.UserId == contributorId))

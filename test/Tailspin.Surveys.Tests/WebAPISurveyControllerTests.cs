@@ -64,13 +64,13 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public async Task GetSurveysForTenant_ReturnsSurveys()
         {
-            _surveyStore.Setup(s => s.GetPublishedSurveysByTenantAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+            _surveyStore.Setup(s => s.GetPublishedSurveysByTenantAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(new List<Survey>());
-            _surveyStore.Setup(s => s.GetUnPublishedSurveysByTenantAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+            _surveyStore.Setup(s => s.GetUnPublishedSurveysByTenantAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(new List<Survey>());
 
-            _target.ActionContext = CreateActionContextWithUserPrincipal("12345", "testTenantId");
-            var result = await _target.GetSurveysForTenant("testTenantId");
+            _target.ActionContext = CreateActionContextWithUserPrincipal("12345", "12345");
+            var result = await _target.GetSurveysForTenant(12345);
 
             var objectResult = (ObjectResult)result;
             Assert.IsType<TenantSurveysDTO>(objectResult.Value);
@@ -79,8 +79,8 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public async Task GetSurveysForTenant_FailsIfNotInSameTenant()
         {
-            _target.ActionContext = CreateActionContextWithUserPrincipal("12345", "otherTenantId");
-            var result = await _target.GetSurveysForTenant("testTenantId");
+            _target.ActionContext = CreateActionContextWithUserPrincipal("12345", "54321");
+            var result = await _target.GetSurveysForTenant(12345);
 
             var statusCodeResult = (HttpStatusCodeResult)result;
             Assert.Equal(403, statusCodeResult.StatusCode);
@@ -94,7 +94,7 @@ namespace MultiTentantSurveyAppTests
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, userId),
-                new Claim(SurveyClaimTypes.TenantId, tenantId)
+                new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, tenantId)
 
             }));
             httpContext.SetupGet(c => c.User).Returns(principal);

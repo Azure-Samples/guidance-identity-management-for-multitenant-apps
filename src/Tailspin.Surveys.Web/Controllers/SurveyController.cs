@@ -52,7 +52,7 @@ namespace Tailspin.Surveys.Web.Controllers
                 // If there are any pending contributor requests that 
                 await _surveyService.ProcessPendingContributorRequestsAsync();
 
-                var userId = User.GetUserKey();
+                var userId = User.GetSurveyUserIdValue();
                 var user = User.GetObjectIdentifierValue();
                 var issuerValue = User.GetIssuerValue();
                 var actionName = ActionContext.ActionDescriptor.Name;
@@ -94,7 +94,7 @@ namespace Tailspin.Surveys.Web.Controllers
         {
             try
             {
-                var tenantId = User.GetTenantIdValue();
+                var tenantId = User.GetSurveyTenantIdValue();
                 var result = await _surveyService.GetSurveysForTenantAsync(tenantId);
 
                 if (result.Succeeded)

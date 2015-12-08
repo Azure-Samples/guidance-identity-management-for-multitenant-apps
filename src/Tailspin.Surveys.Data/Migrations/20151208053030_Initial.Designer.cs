@@ -8,7 +8,7 @@ using Tailspin.Surveys.Data.DataModels;
 namespace Tailspin.Surveys.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20151203211547_Initial")]
+    [Migration("20151208053030_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,12 +58,14 @@ namespace Tailspin.Surveys.Data.Migrations
 
                     b.Property<bool>("Published");
 
-                    b.Property<string>("TenantId");
+                    b.Property<int>("TenantId");
 
                     b.Property<string>("Title")
                         .IsRequired();
 
                     b.HasKey("Id");
+
+                    b.HasAnnotation("Relational:TableName", "Survey");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.SurveyContributor", b =>
@@ -130,6 +132,13 @@ namespace Tailspin.Surveys.Data.Migrations
                         .HasAnnotation("Relational:Name", "UserObjectIdIndex");
 
                     b.HasAnnotation("Relational:TableName", "User");
+                });
+
+            modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.ContributorRequest", b =>
+                {
+                    b.HasOne("Tailspin.Surveys.Data.DataModels.Survey")
+                        .WithMany()
+                        .HasForeignKey("SurveyId");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.Question", b =>

@@ -19,13 +19,16 @@ namespace Tailspin.Surveys.Data.DataStore
        public async Task<Question> GetQuestionAsync(int id)
         {
             return await _dbContext.Questions
-                .SingleOrDefaultAsync(q => q.Id == id);
+                .SingleOrDefaultAsync(q => q.Id == id)
+                .ConfigureAwait(false);
         }
 
         public async Task<Question> AddQuestionAsync(Question question)
         {
             _dbContext.Questions.Add(question);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext
+                .SaveChangesAsync()
+                .ConfigureAwait(false);
             return question;
         }
 
@@ -33,14 +36,18 @@ namespace Tailspin.Surveys.Data.DataStore
         {
             _dbContext.Questions.Attach(question);
             _dbContext.Entry(question).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
+            await _dbContext
+                .SaveChangesAsync()
+                .ConfigureAwait(false);
 
             return question;
         }
         public async Task<Question> DeleteQuestionAsync(Question question)
         {
             _dbContext.Questions.Remove(question);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext
+                .SaveChangesAsync()
+                .ConfigureAwait(false);
             return question;
         }
     }

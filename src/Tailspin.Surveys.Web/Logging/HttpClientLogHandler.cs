@@ -37,8 +37,8 @@ namespace Tailspin.Surveys.Web.Logging
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Get the user Id and issuer value from signed-in user's ClaimsPrincipal
-            var userId = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.ObjectId);
-            var issuerValue = _httpContextAccessor?.HttpContext.User.FindFirstValue(SurveyClaimTypes.IssuerValue);
+            var userId = _httpContextAccessor?.HttpContext.User.GetObjectIdentifierValue(false);
+            var issuerValue = _httpContextAccessor?.HttpContext.User.GetIssuerValue(false);
 
             var method = request.Method?.Method;
             var uri = request.RequestUri.AbsoluteUri;
