@@ -25,21 +25,36 @@ namespace System.Security.Claims
             return value;
         }
 
-        public static string GetIssuerValue(this ClaimsPrincipal principal)
+        public static string GetIssuerValue(this ClaimsPrincipal principal, bool throwIfNotFound = true)
         {
             // The "iss" claim is REQUIRED by OIDC, so we're going to throw an exception if we don't have the claim OR the value.
             // Per http://openid.net/specs/openid-connect-core-1_0.html#IDToken
-            return principal.FindFirstValue("iss", true);
+            return principal.FindFirstValue(SurveyClaimTypes.IssuerValue, throwIfNotFound);
         }
 
+        /// <summary>
+        /// Extension method on <see cref="System.Security.Claims.ClaimsPrincipal"/> which returns the AAD Tenant ID, if it exists.
+        /// </summary>
+        /// <param name="principal">A <see cref="System.Security.Claims.ClaimsPrincipal"/> representing the currently signed in ASP.NET user.</param>
+        /// <returns>The AAD Tenant ID if it exists, otherwise, an exception is thrown.</returns>
         public static string GetTenantIdValue(this ClaimsPrincipal principal)
         {
             return principal.FindFirstValue(SurveyClaimTypes.TenantId, true);
         }
 
-        public static string GetObjectIdentifierValue(this ClaimsPrincipal principal)
+        public static int GetSurveyUserIdValue(this ClaimsPrincipal principal)
         {
-            return principal.FindFirstValue(SurveyClaimTypes.ObjectId, true);
+            return (int)Convert.ChangeType(principal.FindFirstValue(SurveyClaimTypes.SurveyUserIdClaimType, true), typeof(int));
+        }
+
+        public static int GetSurveyTenantIdValue(this ClaimsPrincipal principal)
+        {
+            return (int)Convert.ChangeType(principal.FindFirstValue(SurveyClaimTypes.SurveyTenantIdClaimType, true), typeof(int));
+        }
+
+        public static string GetObjectIdentifierValue(this ClaimsPrincipal principal, bool throwIfNotFound = true)
+        {
+            return principal.FindFirstValue(SurveyClaimTypes.ObjectId, throwIfNotFound);
         }
 
         public static string GetDisplayNameValue(this ClaimsPrincipal principal)
@@ -50,11 +65,6 @@ namespace System.Security.Claims
         public static string GetEmailValue(this ClaimsPrincipal principal)
         {
             return principal.FindFirstValue(ClaimTypes.Email, true);
-        }
-
-        public static int GetUserKey(this ClaimsPrincipal principal)
-        {
-            return (int)Convert.ChangeType(principal.FindFirstValue(SurveyClaimTypes.SurveyUserIdClaimType, true), typeof(int));
         }
 
         public static string GetUserName(this ClaimsPrincipal principal)

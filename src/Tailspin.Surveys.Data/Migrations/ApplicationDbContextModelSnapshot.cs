@@ -24,11 +24,18 @@ namespace Tailspin.Surveys.Data.Migrations
                     b.Property<DateTimeOffset>("Created");
 
                     b.Property<string>("EmailAddress")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 256);
 
                     b.Property<int>("SurveyId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SurveyId", "EmailAddress")
+                        .IsUnique()
+                        .HasAnnotation("Relational:Name", "SurveyIdEmailAddressIndex");
+
+                    b.HasAnnotation("Relational:TableName", "ContributorRequest");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.Question", b =>
@@ -57,12 +64,14 @@ namespace Tailspin.Surveys.Data.Migrations
 
                     b.Property<bool>("Published");
 
-                    b.Property<string>("TenantId");
+                    b.Property<int>("TenantId");
 
                     b.Property<string>("Title")
                         .IsRequired();
 
                     b.HasKey("Id");
+
+                    b.HasAnnotation("Relational:TableName", "Survey");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.SurveyContributor", b =>
@@ -129,6 +138,13 @@ namespace Tailspin.Surveys.Data.Migrations
                         .HasAnnotation("Relational:Name", "UserObjectIdIndex");
 
                     b.HasAnnotation("Relational:TableName", "User");
+                });
+
+            modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.ContributorRequest", b =>
+                {
+                    b.HasOne("Tailspin.Surveys.Data.DataModels.Survey")
+                        .WithMany()
+                        .HasForeignKey("SurveyId");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.Question", b =>

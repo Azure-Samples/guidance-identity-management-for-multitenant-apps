@@ -10,20 +10,6 @@ namespace Tailspin.Surveys.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ContributorRequest",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Created = table.Column<DateTimeOffset>(nullable: false),
-                    EmailAddress = table.Column<string>(nullable: false),
-                    SurveyId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContributorRequest", x => x.Id);
-                });
-            migrationBuilder.CreateTable(
                 name: "Tenant",
                 columns: table => new
                 {
@@ -68,7 +54,7 @@ namespace Tailspin.Surveys.Data.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     OwnerId = table.Column<int>(nullable: false),
                     Published = table.Column<bool>(nullable: false),
-                    TenantId = table.Column<string>(nullable: true),
+                    TenantId = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
@@ -78,6 +64,26 @@ namespace Tailspin.Surveys.Data.Migrations
                         name: "FK_Survey_User_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+            migrationBuilder.CreateTable(
+                name: "ContributorRequest",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Created = table.Column<DateTimeOffset>(nullable: false),
+                    EmailAddress = table.Column<string>(nullable: false),
+                    SurveyId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContributorRequest", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContributorRequest_Survey_SurveyId",
+                        column: x => x.SurveyId,
+                        principalTable: "Survey",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -117,14 +123,19 @@ namespace Tailspin.Surveys.Data.Migrations
                         column: x => x.SurveyId,
                         principalTable: "Survey",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_SurveyContributor_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
+            migrationBuilder.CreateIndex(
+                name: "SurveyIdEmailAddressIndex",
+                table: "ContributorRequest",
+                columns: new[] { "SurveyId", "EmailAddress" },
+                unique: true);
             migrationBuilder.CreateIndex(
                 name: "IssuerValueIndex",
                 table: "Tenant",

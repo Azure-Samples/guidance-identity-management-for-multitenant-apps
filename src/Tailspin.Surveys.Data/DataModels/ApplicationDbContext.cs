@@ -55,12 +55,29 @@ namespace Tailspin.Surveys.Data.DataModels
             modelBuilder.Entity<SurveyContributor>(b =>
             {
                 b.HasKey(r => new { r.SurveyId, r.UserId });
-                b.HasOne(sc => sc.User)
+            });
+
+            modelBuilder.Entity<Survey>(b =>
+            {
+                b.ToTable("Survey");
+                b.HasKey(s => s.Id);
+                b.HasOne(s => s.Owner)
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict);
-                b.HasOne(sc => sc.Survey)
-                    .WithMany(s => s.Contributors)
-                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<ContributorRequest>(b =>
+            {
+                b.ToTable("ContributorRequest");
+                b.HasKey(cr => cr.Id);
+                b.HasIndex(cr => new { cr.SurveyId, cr.EmailAddress })
+                    .HasName("SurveyIdEmailAddressIndex")
+                    .IsUnique();
+                b.Property(cr => cr.EmailAddress)
+                    .IsRequired()
+                    .HasMaxLength(256);
+                b.Property(cr => cr.SurveyId)
+                    .IsRequired();
             });
         }
 

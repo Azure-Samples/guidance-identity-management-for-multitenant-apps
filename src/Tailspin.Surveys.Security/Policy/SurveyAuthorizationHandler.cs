@@ -61,11 +61,12 @@ namespace Tailspin.Surveys.Security.Policy
             // if user is owner of the survey
             //      Add OWNER to the permission set
             var permissions = new List<UserPermissionType>();
-            string userTenantId = context.User.GetTenantIdValue();
-            int userId = ClaimsPrincipalExtensions.GetUserKey(context.User);
+            int surveyTenantId = context.User.GetSurveyTenantIdValue();
+            int userId = context.User.GetSurveyUserIdValue();
+            string tenantId = context.User.GetTenantIdValue();
             string user = context.User.GetUserName();
 
-            if (resource.TenantId == userTenantId)
+            if (resource.TenantId == surveyTenantId)
             {
                 // Admin can do anything, as long as the resource belongs to the admin's tenant.
                 if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin))
@@ -94,14 +95,12 @@ namespace Tailspin.Surveys.Security.Policy
             }
             if (ValidateUserPermissions[operation](permissions))
             {
-                // TODO: Change the logging extension after the tenant id is updated from objectid to the value in DB
-                _logger.ValidatePermissionsSucceeded(user, userTenantId, operation.Name, permissions.Select(p => p.ToString()));
+                _logger.ValidatePermissionsSucceeded(user, tenantId, operation.Name, permissions.Select(p => p.ToString()));
                 context.Succeed(operation);
             }
             else
             {
-                // TODO: Change the logging extension after the tenant id is updated from objectid to the value in DB
-                _logger.ValidatePermissionsFailed(user, userTenantId, operation.Name, permissions.Select(p => p.ToString()));
+                _logger.ValidatePermissionsFailed(user, tenantId, operation.Name, permissions.Select(p => p.ToString()));
                 context.Fail();
             }
         }

@@ -189,8 +189,10 @@ namespace Tailspin.Surveys.Web.Security
                 }
             }
 
-            // Add in the survey id claim.
+            // Add in the survey user id claim.
             principal.Identities.First().AddClaim(new Claim(SurveyClaimTypes.SurveyUserIdClaimType, user.Id.ToString()));
+            // Add in the user's tenant id claim.
+            principal.Identities.First().AddClaim(new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, user.TenantId.ToString()));
         }
 
         /// <summary>

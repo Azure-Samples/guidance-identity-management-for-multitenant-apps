@@ -20,7 +20,7 @@ namespace Tailspin.Surveys.Data.DataStore
         Task<ICollection<Survey>> GetPublishedSurveysByOwnerAsync(int userId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize);
         Task<Survey> PublishSurveyAsync(int id);
         Task<Survey> UnPublishSurveyAsync(int id);
-        Task<ICollection<Survey>> GetPublishedSurveysByTenantAsync(string tenantId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize);
-        Task<ICollection<Survey>> GetUnPublishedSurveysByTenantAsync(string tenantId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize);
+        Task<ICollection<Survey>> GetPublishedSurveysByTenantAsync(int tenantId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize);
+        Task<ICollection<Survey>> GetUnPublishedSurveysByTenantAsync(int tenantId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize);
     }
 }

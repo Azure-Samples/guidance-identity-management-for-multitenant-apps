@@ -9,6 +9,7 @@ using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Tailspin.Surveys.Data.DataModels;
+using Tailspin.Surveys.Security;
 using Tailspin.Surveys.WebAPI.Logging;
 
 namespace Tailspin.Surveys.WebApi
@@ -69,7 +70,8 @@ namespace Tailspin.Surveys.WebApi
 
             // Adding new Claim for survey_userid
             var registeredUser = await userManager.FindByObjectIdentifier(principal.GetObjectIdentifierValue());
-            identity.AddClaim(new Claim("survey_userid", registeredUser.Id.ToString()));
+            identity.AddClaim(new Claim(SurveyClaimTypes.SurveyUserIdClaimType, registeredUser.Id.ToString()));
+            identity.AddClaim(new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, registeredUser.TenantId.ToString()));
 
             // Adding new Claim for Email
             var email = principal.FindFirst(ClaimTypes.Upn)?.Value;

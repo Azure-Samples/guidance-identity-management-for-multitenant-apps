@@ -24,7 +24,7 @@ namespace Tailspin.Surveys.Data.DataModels
 
         public int OwnerId { get; set; }
 
-        public string TenantId { get; set; }
+        public int TenantId { get; set; }
 
         public bool Published{ get; set; }
 

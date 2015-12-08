@@ -11,13 +11,13 @@ namespace Tailspin.Surveys.Security.Policy
     /// </summary>
     internal static class AuthorizationLoggingExtensions
     {
-        public static void ValidatePermissionsSucceeded(this ILogger logger, string user, string userTenantId, string operationName, IEnumerable<string> permissionValues)
+        public static void ValidatePermissionsSucceeded(this ILogger logger, string user, string tenantId, string operationName, IEnumerable<string> permissionValues)
         {
-            logger.LogInformation("User: {0} of Tenant: {1} authorized to perform Operation: {2} with Permissions: {3}", user, userTenantId, operationName, permissionValues);
+            logger.LogInformation($"User: {user} of Tenant: {tenantId} authorized to perform Operation: {operationName} with Permissions: {permissionValues}");
         }
-        public static void ValidatePermissionsFailed(this ILogger logger, string user, string userTenantId, string operationName, IEnumerable<string> permissionValues)
+        public static void ValidatePermissionsFailed(this ILogger logger, string user, string tenantId, string operationName, IEnumerable<string> permissionValues)
         {
-            logger.LogError("User: {0} of Tenant: {1} is NOT authorized to perform Operation: {2} with Permissions: {3}", user, userTenantId, operationName, permissionValues);
+            logger.LogError($"User: {user} of Tenant: {tenantId} is NOT authorized to perform Operation: {operationName} with Permissions: {permissionValues}");
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Tailspin.Surveys.Web.Services
     {
         Task<ApiResult<SurveyDTO>> GetSurveyAsync(int id);
         Task<ApiResult<UserSurveysDTO>> GetSurveysForUserAsync(int userId);
-        Task<ApiResult<TenantSurveysDTO>> GetSurveysForTenantAsync(string tenantId);
+        Task<ApiResult<TenantSurveysDTO>> GetSurveysForTenantAsync(int tenantId);
         Task<ApiResult<SurveyDTO>> CreateSurveyAsync(SurveyDTO survey);
         Task<ApiResult<SurveyDTO>> UpdateSurveyAsync(SurveyDTO survey);
         Task<ApiResult<SurveyDTO>> DeleteSurveyAsync(int id);
