@@ -65,6 +65,20 @@ namespace Tailspin.Surveys.Data.DataModels
                     .WithMany()
                     .OnDelete(DeleteBehavior.Restrict);
             });
+
+            modelBuilder.Entity<ContributorRequest>(b =>
+            {
+                b.ToTable("ContributerRequest");
+                b.HasKey(cr => cr.Id);
+                b.HasIndex(cr => new { cr.SurveyId, cr.EmailAddress })
+                    .HasName("SurveyIdEmailAddressIndex")
+                    .IsUnique();
+                b.Property(cr => cr.EmailAddress)
+                    .IsRequired()
+                    .HasMaxLength(256);
+                b.Property(cr => cr.SurveyId)
+                    .IsRequired();
+            });
         }
 
         public DbSet<Tenant> Tenants { get; set; }

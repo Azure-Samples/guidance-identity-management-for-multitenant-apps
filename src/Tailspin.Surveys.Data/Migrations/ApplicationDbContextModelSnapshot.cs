@@ -24,11 +24,18 @@ namespace Tailspin.Surveys.Data.Migrations
                     b.Property<DateTimeOffset>("Created");
 
                     b.Property<string>("EmailAddress")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 256);
 
                     b.Property<int>("SurveyId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SurveyId", "EmailAddress")
+                        .IsUnique()
+                        .HasAnnotation("Relational:Name", "SurveyIdEmailAddressIndex");
+
+                    b.HasAnnotation("Relational:TableName", "ContributerRequest");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.Question", b =>

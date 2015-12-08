@@ -68,7 +68,7 @@ namespace Tailspin.Surveys.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
             migrationBuilder.CreateTable(
-                name: "ContributorRequest",
+                name: "ContributerRequest",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -132,6 +132,11 @@ namespace Tailspin.Surveys.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
             migrationBuilder.CreateIndex(
+                name: "SurveyIdEmailAddressIndex",
+                table: "ContributerRequest",
+                columns: new[] { "SurveyId", "EmailAddress" },
+                unique: true);
+            migrationBuilder.CreateIndex(
                 name: "IssuerValueIndex",
                 table: "Tenant",
                 column: "IssuerValue",
@@ -144,7 +149,7 @@ namespace Tailspin.Surveys.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable("ContributorRequest");
+            migrationBuilder.DropTable("ContributerRequest");
             migrationBuilder.DropTable("Question");
             migrationBuilder.DropTable("SurveyContributor");
             migrationBuilder.DropTable("Survey");

@@ -8,7 +8,7 @@ using Tailspin.Surveys.Data.DataModels;
 namespace Tailspin.Surveys.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20151208053030_Initial")]
+    [Migration("20151208175103_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,11 +25,18 @@ namespace Tailspin.Surveys.Data.Migrations
                     b.Property<DateTimeOffset>("Created");
 
                     b.Property<string>("EmailAddress")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 256);
 
                     b.Property<int>("SurveyId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SurveyId", "EmailAddress")
+                        .IsUnique()
+                        .HasAnnotation("Relational:Name", "SurveyIdEmailAddressIndex");
+
+                    b.HasAnnotation("Relational:TableName", "ContributerRequest");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.Question", b =>
