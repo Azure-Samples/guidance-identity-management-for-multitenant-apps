@@ -29,3 +29,4 @@ The written guidance reflects what we learned in the process of building the app
 - Appendixes
     - [Authorization APIs in ASP.NET 5](docs/appendixes/aspnet5-authorization.md)
     - [Overview of OAuth 2 and OpenID Connect](docs/appendixes/about-oauth2-oidc.md)
+    - [Using client assertion to get access tokens from Azure AD](docs/appendixes/client-assertion.md)
