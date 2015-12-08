@@ -43,16 +43,18 @@ namespace Tailspin.Surveys.WebApi
                 builder.AddUserSecrets();
             }
             builder.AddEnvironmentVariables();
-            //Uncomment the block of code below if you want to load secrets from KeyVault
-            //It is recommended to use certs for all authentication when using KeyVault
-            //#if DNX451
-            //            var config = builder.Build();
-            //            builder.AddKeyVaultSecrets(config["AzureAd:ClientId"],
-            //                config["KeyVault:Name"],
-            //                config["AzureAd:Asymmetric:CertificateThumbprint"],
-            //                Convert.ToBoolean(config["AzureAd:Asymmetric:ValidationRequired"]),
-            //                loggerFactory);
-            //#endif
+
+            // Uncomment the block of code below if you want to load secrets from KeyVault
+            // It is recommended to use certs for all authentication when using KeyVault
+//#if DNX451
+//            var config = builder.Build();
+//            builder.AddKeyVaultSecrets(config["AzureAd:ClientId"],
+//                config["KeyVault:Name"],
+//                config["AzureAd:Asymmetric:CertificateThumbprint"],
+//                Convert.ToBoolean(config["AzureAd:Asymmetric:ValidationRequired"]),
+//                loggerFactory);
+//#endif
+
             builder.Build().Bind(_configOptions);
         }
 

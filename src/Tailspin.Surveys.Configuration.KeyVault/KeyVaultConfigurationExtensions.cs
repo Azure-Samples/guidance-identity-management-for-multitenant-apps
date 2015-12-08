@@ -4,8 +4,9 @@
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Tailspin.Surveys.Configuration.KeyVault;
 
-namespace Tailspin.Surveys.Configuration.Secrets
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class KeyVaultConfigurationExtensions
     {

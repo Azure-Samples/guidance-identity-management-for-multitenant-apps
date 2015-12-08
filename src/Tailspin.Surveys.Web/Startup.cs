@@ -45,8 +45,9 @@ namespace Tailspin.Surveys.Web
             }
 
             builder.AddEnvironmentVariables();
-            //Uncomment the block of code below if you want to load secrets from KeyVault
-            //It is recommended to use certs for all authentication when using KeyVault
+
+            // Uncomment the block of code below if you want to load secrets from KeyVault
+            // It is recommended to use certs for all authentication when using KeyVault
 //#if DNX451
 //            _configuration = builder.Build();
 //            builder.AddKeyVaultSecrets(_configuration["AzureAd:ClientId"],
@@ -55,6 +56,7 @@ namespace Tailspin.Surveys.Web
 //                Convert.ToBoolean(_configuration["AzureAd:Asymmetric:ValidationRequired"]),
 //                loggerFactory);
 //#endif
+
             _configuration = builder.Build();
         }
 
@@ -106,13 +108,8 @@ namespace Tailspin.Surveys.Web
 
             // Register application services.
 
-            // you may need to to re-create Tailspin.SurveyDB to use SqlServerSurveyStore, here are the steps:
-            // delete Tailspin.SurveyDB
-            // start command prompt 
-            // cd \src\Tailspin.Surveys.Data
-            // dnvm use 1.0.0-rc1-final
-            // dnx ef database update
-
+            // This will register the default token storage.
+            services.AddTokenStorage();
 #if DNX451
             services.AddRedisConnection(options =>
             {
@@ -121,10 +118,9 @@ namespace Tailspin.Surveys.Web
                     .UseSsl();
             });
 
+            // Replace the default token storage with a Redis-based version.
             services.AddTokenStorage()
                 .UseRedisTokenStorageService();
-#else
-            services.AddTokenStorage();
 #endif
 
             services.AddScoped<IAccessTokenService, AzureADTokenService>();

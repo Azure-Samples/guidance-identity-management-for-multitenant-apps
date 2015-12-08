@@ -12,7 +12,7 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Tailspin.Surveys.Common;
 using Microsoft.Extensions.Logging;
 
-namespace Tailspin.Surveys.Configuration.Secrets
+namespace Tailspin.Surveys.Configuration.KeyVault
 {
     /// <summary>
     /// Aspnet configuration provider to read secrets from key vault. This requires List and Get permissions on the vault
