@@ -38,7 +38,7 @@ namespace Tailspin.Surveys.Data.DataStore
         public async Task<ICollection<ContributorRequest>> GetRequestsForUserAsync(string emailAddress)
         {
             return await dbContext.ContributorRequests
-                .Where(c => c.EmailAddress.ToLower().Contains(emailAddress.ToLower()))
+                .Where(c => c.EmailAddress.ToLower() == emailAddress.ToLower())
                 .ToArrayAsync()
                 .ConfigureAwait(false);
         }
