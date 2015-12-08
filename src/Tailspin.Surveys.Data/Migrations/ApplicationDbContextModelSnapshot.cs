@@ -35,7 +35,7 @@ namespace Tailspin.Surveys.Data.Migrations
                         .IsUnique()
                         .HasAnnotation("Relational:Name", "SurveyIdEmailAddressIndex");
 
-                    b.HasAnnotation("Relational:TableName", "ContributerRequest");
+                    b.HasAnnotation("Relational:TableName", "ContributorRequest");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.Question", b =>

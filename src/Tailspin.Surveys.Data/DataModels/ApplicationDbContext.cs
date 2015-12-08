@@ -68,7 +68,7 @@ namespace Tailspin.Surveys.Data.DataModels
 
             modelBuilder.Entity<ContributorRequest>(b =>
             {
-                b.ToTable("ContributerRequest");
+                b.ToTable("ContributorRequest");
                 b.HasKey(cr => cr.Id);
                 b.HasIndex(cr => new { cr.SurveyId, cr.EmailAddress })
                     .HasName("SurveyIdEmailAddressIndex")
