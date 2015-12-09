@@ -22,7 +22,7 @@ namespace Tailspin.Surveys.Configuration.KeyVault
         }
         public static void AuthenticationFailed(this ILogger logger, string clientId, Exception exp)
         {
-            logger.LogCritical(string.Format(CultureInfo.InvariantCulture, "Client credential authentication failed for Client: {0}", clientId), exp);
+            logger.LogCritical(string.Format(CultureInfo.InvariantCulture, "Client credential authentication failed for Client: {0} with Exception: {1}", clientId), exp);
         }
 
 
