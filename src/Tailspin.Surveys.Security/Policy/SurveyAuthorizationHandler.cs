@@ -63,7 +63,6 @@ namespace Tailspin.Surveys.Security.Policy
             var permissions = new List<UserPermissionType>();
             int surveyTenantId = context.User.GetSurveyTenantIdValue();
             int userId = context.User.GetSurveyUserIdValue();
-            string tenantId = context.User.GetTenantIdValue();
             string user = context.User.GetUserName();
 
             if (resource.TenantId == surveyTenantId)
@@ -95,12 +94,12 @@ namespace Tailspin.Surveys.Security.Policy
             }
             if (ValidateUserPermissions[operation](permissions))
             {
-                _logger.ValidatePermissionsSucceeded(user, tenantId, operation.Name, permissions.Select(p => p.ToString()));
+                _logger.ValidatePermissionsSucceeded(user, context.User.GetTenantIdValue(), operation.Name, permissions.Select(p => p.ToString()));
                 context.Succeed(operation);
             }
             else
             {
-                _logger.ValidatePermissionsFailed(user, tenantId, operation.Name, permissions.Select(p => p.ToString()));
+                _logger.ValidatePermissionsFailed(user, context.User.GetTenantIdValue(), operation.Name, permissions.Select(p => p.ToString()));
                 context.Fail();
             }
         }
