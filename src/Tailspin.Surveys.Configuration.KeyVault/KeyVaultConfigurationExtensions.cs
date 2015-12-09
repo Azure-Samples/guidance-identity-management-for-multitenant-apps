@@ -24,8 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IConfigurationBuilder AddKeyVaultSecrets(this IConfigurationBuilder configurationBuilder, string appClientId, string vaultName, StoreName storeName, StoreLocation storeLocation, string certificateThumbprint, bool validateCertificate, ILoggerFactory loggerFactory)
         {
-            var logger = loggerFactory.CreateLogger<KeyVaultConfigurationProvider>();
-            configurationBuilder.Add(new KeyVaultConfigurationProvider(appClientId, vaultName, storeName, storeLocation, certificateThumbprint, validateCertificate, logger));
+            configurationBuilder.Add(new KeyVaultConfigurationProvider(appClientId, vaultName, storeName, storeLocation, certificateThumbprint, validateCertificate, loggerFactory));
             return configurationBuilder;
         }
 
@@ -40,8 +39,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IConfigurationBuilder AddKeyVaultSecrets(this IConfigurationBuilder configurationBuilder, string appClientId, string vaultName, string certificateThumbprint, bool validateCertificate, ILoggerFactory loggerFactory)
         {
-            var logger = loggerFactory.CreateLogger<KeyVaultConfigurationProvider>();
-            configurationBuilder.Add(new KeyVaultConfigurationProvider(appClientId, vaultName, certificateThumbprint, validateCertificate, logger));
+            configurationBuilder.Add(new KeyVaultConfigurationProvider(appClientId, vaultName, certificateThumbprint, validateCertificate, loggerFactory));
             return configurationBuilder;
         }
     }

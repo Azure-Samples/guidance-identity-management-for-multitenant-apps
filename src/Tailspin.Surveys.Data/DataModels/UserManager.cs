@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.Data.Entity;
+using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.Data.DataModels
 {
@@ -18,10 +19,7 @@ namespace Tailspin.Surveys.Data.DataModels
 
         public UserManager(ApplicationDbContext dbContext, IHttpContextAccessor contextAccessor)
         {
-            if (dbContext == null)
-            {
-                throw new ArgumentNullException(nameof(dbContext));
-            }
+            Guard.ArgumentNotNull(dbContext, nameof(dbContext));
 
             _dbContext = dbContext;
             _cancellationToken = contextAccessor?.HttpContext?.RequestAborted ?? CancellationToken.None;
@@ -30,40 +28,36 @@ namespace Tailspin.Surveys.Data.DataModels
         public virtual async Task CreateAsync(User user)
         {
             ThrowIfDisposed();
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
+            Guard.ArgumentNotNull(user, nameof(user));
 
             _dbContext.Add(user);
-            await _dbContext.SaveChangesAsync(_cancellationToken);
+            await _dbContext
+                .SaveChangesAsync(_cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public async Task UpdateAsync(User user)
         {
             ThrowIfDisposed();
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
+            Guard.ArgumentNotNull(user, nameof(user));
 
             _dbContext.Attach(user);
             user.ConcurrencyStamp = Guid.NewGuid().ToString();
             _dbContext.Update(user);
-            await _dbContext.SaveChangesAsync(_cancellationToken);
+            await _dbContext
+                .SaveChangesAsync(_cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public async Task<User> FindByObjectIdentifier(string objectIdentifier)
         {
             ThrowIfDisposed();
-            if (string.IsNullOrWhiteSpace(objectIdentifier))
-            {
-                throw new ArgumentException("objectIdentifier cannot be null, empty, or whitespace.");
-            }
+            Guard.ArgumentNotNullOrWhiteSpace(objectIdentifier, nameof(objectIdentifier));
 
             return await _dbContext.Users
                 .Where(u => u.ObjectId == objectIdentifier)
-                .SingleOrDefaultAsync(_cancellationToken);
+                .SingleOrDefaultAsync(_cancellationToken)
+                .ConfigureAwait(false);
         }
 
         private void ThrowIfDisposed()

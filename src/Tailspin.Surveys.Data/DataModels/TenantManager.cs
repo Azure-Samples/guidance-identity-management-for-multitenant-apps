@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.Data.Entity;
+using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.Data.DataModels
 {
@@ -18,11 +19,7 @@ namespace Tailspin.Surveys.Data.DataModels
 
         public TenantManager(ApplicationDbContext dbContext, IHttpContextAccessor contextAccessor)
         {
-            if (dbContext == null)
-            {
-                throw new ArgumentNullException(nameof(dbContext));
-            }
-
+            Guard.ArgumentNotNull(dbContext, nameof(dbContext));
             _dbContext = dbContext;
             _cancellationToken = contextAccessor?.HttpContext?.RequestAborted ?? CancellationToken.None;
         }
@@ -30,63 +27,46 @@ namespace Tailspin.Surveys.Data.DataModels
         public virtual async Task CreateAsync(Tenant tenant)
         {
             ThrowIfDisposed();
-            if (tenant == null)
-            {
-                throw new ArgumentNullException(nameof(tenant));
-            }
+            Guard.ArgumentNotNull(tenant, nameof(tenant));
 
             _dbContext.Add(tenant);
-            await _dbContext.SaveChangesAsync(_cancellationToken);
+            await _dbContext
+                .SaveChangesAsync(_cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public virtual async Task UpdateTenantAsync(Tenant tenant)
         {
             ThrowIfDisposed();
-            if (tenant == null)
-            {
-                throw new ArgumentNullException(nameof(tenant));
-            }
+            Guard.ArgumentNotNull(tenant, nameof(tenant));
 
             _dbContext.Attach(tenant);
             tenant.ConcurrencyStamp = Guid.NewGuid().ToString();
             _dbContext.Update(tenant);
-            await RemoveUnclaimedEntriesAsync();
-            await _dbContext.SaveChangesAsync(_cancellationToken);
+            await _dbContext
+                .SaveChangesAsync(_cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public virtual async Task DeleteTenantAsync(Tenant tenant)
         {
             ThrowIfDisposed();
-            if (tenant == null)
-            {
-                throw new ArgumentNullException(nameof(tenant));
-            }
+            Guard.ArgumentNotNull(tenant, nameof(tenant));
 
             _dbContext.Remove(tenant);
-            await _dbContext.SaveChangesAsync(_cancellationToken);
-        }
-
-        private async Task RemoveUnclaimedEntriesAsync()
-        {
-            // remove older, unclaimed entries
-            DateTimeOffset tenMinutesAgo = DateTimeOffset.UtcNow.Subtract(new TimeSpan(0, 10, 0)); // workaround for Linq to entities
-            var garbage = _dbContext.Tenants
-                .Where(t => (!t.IssuerValue.StartsWith("https") && (t.Created < tenMinutesAgo)));
-            await garbage.ForEachAsync(t => _dbContext.Remove(t), _cancellationToken);
+            await _dbContext
+                .SaveChangesAsync(_cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public virtual async Task<Tenant> FindByIssuerValueAsync(string issuerValue)
         {
             ThrowIfDisposed();
-            if (string.IsNullOrWhiteSpace(issuerValue))
-            {
-                throw new ArgumentException("issuerValue cannot be null, empty, or only whitespace.");
-            }
+            Guard.ArgumentNotNullOrWhiteSpace(issuerValue, nameof(issuerValue));
 
             return await _dbContext.Tenants
                 .SingleOrDefaultAsync(t => t.IssuerValue == issuerValue, _cancellationToken)
                 .ConfigureAwait(false);
-            //return await Store.FindByIssuerValueAsync(NormalizeKey(issuerValue), CancellationToken);
         }
 
         private void ThrowIfDisposed()

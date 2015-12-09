@@ -10,6 +10,7 @@ using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Tailspin.Surveys.Common;
 using Tailspin.Surveys.Common.Configuration;
 using Tailspin.Surveys.Data.DataModels;
 using Tailspin.Surveys.Security;
@@ -59,10 +60,7 @@ namespace Tailspin.Surveys.Web.Security
         /// <param name="principal">The current <see cref="System.Security.Claims.ClaimsPrincipal"/></param>
         private static void NormalizeClaims(ClaimsPrincipal principal)
         {
-            if (principal == null)
-            {
-                throw new ArgumentNullException(nameof(principal));
-            }
+            Guard.ArgumentNotNull(principal, nameof(principal));
 
             var identity = principal.Identities.First();
             if (!identity.IsAuthenticated)
@@ -80,32 +78,14 @@ namespace Tailspin.Surveys.Web.Security
             var name = principal.GetDisplayNameValue();
             if (!string.IsNullOrWhiteSpace(name))
             {
-                // It looks like AAD does something strange here, but it's actually the JwtSecurityTokenHandler making assumptions
-                // about the claims from AAD.  It takes the unique_name claim from AAD and maps it to a ClaimTypes.Name claim, which
-                // is the default type for a name claim for this identity.  If we don't remove the old one, there will be two name claims,
-                // so let's get rid of the first one.
-                // EDIT - We shouldn't do this yet, as it might muck with the identity stuff.
-                //var previousNameClaim = principal.FindFirst(ClaimTypes.Name);
-                //if (previousNameClaim != null)
-                //{
-                //    identity.RemoveClaim(previousNameClaim);
-                //}
-
                 identity.AddClaim(new Claim(identity.NameClaimType, name));
             }
         }
 
         private async Task<Tenant> SignUpTenantAsync(BaseControlContext context, TenantManager tenantManager)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (tenantManager == null)
-            {
-                throw new ArgumentNullException(nameof(tenantManager));
-            }
+            Guard.ArgumentNotNull(context, nameof(context));
+            Guard.ArgumentNotNull(tenantManager, nameof(tenantManager));
 
             var principal = context.AuthenticationTicket.Principal;
             var issuerValue = principal.GetIssuerValue();
@@ -117,7 +97,8 @@ namespace Tailspin.Surveys.Web.Security
 
             try
             {
-                await tenantManager.CreateAsync(tenant);
+                await tenantManager.CreateAsync(tenant)
+                    .ConfigureAwait(false);
             }
             catch(Exception ex)
             {
@@ -130,27 +111,17 @@ namespace Tailspin.Surveys.Web.Security
 
         private async Task CreateOrUpdateUserAsync(AuthenticationTicket authenticationTicket, UserManager userManager, Tenant tenant)
         {
-            if (authenticationTicket == null)
-            {
-                throw new ArgumentNullException(nameof(authenticationTicket));
-            }
-
-            if (userManager == null)
-            {
-                throw new ArgumentNullException(nameof(userManager));
-            }
-
-            if (tenant == null)
-            {
-                throw new ArgumentNullException(nameof(tenant));
-            }
+            Guard.ArgumentNotNull(authenticationTicket, nameof(authenticationTicket));
+            Guard.ArgumentNotNull(userManager, nameof(userManager));
+            Guard.ArgumentNotNull(tenant, nameof(tenant));
 
             var principal = authenticationTicket.Principal;
             string objectIdentifier = principal.GetObjectIdentifierValue();
             string displayName = principal.GetDisplayNameValue();
             string email = principal.GetEmailValue();
 
-            var user = await userManager.FindByObjectIdentifier(objectIdentifier);
+            var user = await userManager.FindByObjectIdentifier(objectIdentifier)
+                .ConfigureAwait(false);
             if (user == null)
             {
                 // The user isn't in our database, so add them.
@@ -163,7 +134,8 @@ namespace Tailspin.Surveys.Web.Security
                     Email = email
                 };
 
-                await userManager.CreateAsync(user);
+                await userManager.CreateAsync(user)
+                    .ConfigureAwait(false);
             }
             else
             {
@@ -185,7 +157,9 @@ namespace Tailspin.Surveys.Web.Security
 
                 if (shouldSaveUser)
                 {
-                    await userManager.UpdateAsync(user);
+                    await userManager
+                        .UpdateAsync(user)
+                        .ConfigureAwait(false);
                 }
             }
 
@@ -215,7 +189,8 @@ namespace Tailspin.Surveys.Web.Security
 
                 // Normalize the claims first.
                 NormalizeClaims(principal);
-                var tenant = await tenantManager.FindByIssuerValueAsync(issuerValue);
+                var tenant = await tenantManager.FindByIssuerValueAsync(issuerValue)
+                    .ConfigureAwait(false);
 
                 if (context.IsSigningUp())
                 {
@@ -224,11 +199,13 @@ namespace Tailspin.Surveys.Web.Security
                     // try to recreate the tenant.
                     if (tenant == null)
                     {
-                        tenant = await SignUpTenantAsync(context, tenantManager);
+                        tenant = await SignUpTenantAsync(context, tenantManager)
+                            .ConfigureAwait(false);
                     }
 
                     // In this case, we need to go ahead and set up the user signing us up.
-                    await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant);
+                    await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant)
+                        .ConfigureAwait(false);
                 }
                 else
                 {
@@ -238,14 +215,16 @@ namespace Tailspin.Surveys.Web.Security
                         throw new SecurityTokenValidationException($"Tenant {issuerValue} is not registered");
                     }
 
-                    await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant);
+                    await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant)
+                        .ConfigureAwait(false);
 
                     // We are good, so cache our token for Web Api now.
                     await accessTokenService.RequestAccessTokenAsync(
                         principal,
                         context.ProtocolMessage.Code,
                         context.AuthenticationTicket.Properties.Items[OpenIdConnectDefaults.RedirectUriForCodePropertiesKey],
-                        _adOptions.WebApiResourceId);
+                        _adOptions.WebApiResourceId)
+                        .ConfigureAwait(false);
                 }
 
             }
@@ -254,7 +233,8 @@ namespace Tailspin.Surveys.Web.Security
                 // If an exception is thrown within this event, the user is never set on the OWIN middleware,
                 // so there is no need to sign out.  However, the access token could have been put into the
                 // cache so we need to clean it up.
-                await accessTokenService.ClearCacheAsync(principal);
+                await accessTokenService.ClearCacheAsync(principal)
+                    .ConfigureAwait(false);
                 throw;
             }
         }

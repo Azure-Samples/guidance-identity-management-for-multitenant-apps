@@ -19,38 +19,20 @@ namespace Tailspin.Surveys.TokenStorage.Redis
         // use this for on behalf of tokens
         public TokenCacheKey(string uniqueUserId, string clientId)
         {
-            Guard.ArgumentNotNullOrEmpty("uniqueUserId", uniqueUserId);
-            Guard.ArgumentNotNullOrEmpty("clientId", clientId);
+            Guard.ArgumentNotNullOrWhiteSpace(uniqueUserId, nameof(uniqueUserId));
+            Guard.ArgumentNotNullOrWhiteSpace(clientId, nameof(clientId));
 
-            if (String.IsNullOrEmpty(uniqueUserId)) throw new ArgumentNullException("uniqueUserId");
-            if (String.IsNullOrEmpty(clientId)) throw new ArgumentNullException("clientId");
             _uniqueUserId = uniqueUserId;
             _clientId = clientId;
             _key = string.Format("UserId:{0}::ClientId:{1}", uniqueUserId, clientId);
 
         }
 
-        public string Key
-        {
-            get
-            {
-                return _key;
-            }
-        }
-        public string UniqueUserId
-        {
-            get
-            {
-                return _uniqueUserId;
-            }
-        }
-        public string ClientId
-        {
-            get
-            {
-                return _clientId;
-            }
-        }
+        public string Key { get { return _key; } }
+
+        public string UniqueUserId { get { return _uniqueUserId; } }
+
+        public string ClientId { get { return _clientId; } }
 
         public override string ToString()
         {

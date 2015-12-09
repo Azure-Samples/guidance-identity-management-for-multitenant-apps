@@ -22,7 +22,7 @@ namespace Tailspin.Surveys.Common
         /// <returns>X509Certificate2</returns>
         public static X509Certificate2 FindCertificateByThumbprint(StoreName storeName, StoreLocation storeLocation, string thumbprint, bool validationRequired)
         {
-            Guard.ArgumentNotNullOrEmpty("thumbprint", "thumbprint");
+            Guard.ArgumentNotNullOrWhiteSpace(thumbprint, nameof(thumbprint));
 
             var store = new X509Store(storeName, storeLocation);
             try
@@ -67,7 +67,7 @@ namespace Tailspin.Surveys.Common
         /// <returns></returns>
         public static byte[] ExportCertificateWithPrivateKey(X509Certificate2 cert, out string password)
         {
-            Guard.ArgumentNotNull(cert, "cert");
+            Guard.ArgumentNotNull(cert, nameof(cert));
             password = Convert.ToBase64String(Encoding.Unicode.GetBytes(Guid.NewGuid().ToString("N")));
             return cert.Export(X509ContentType.Pkcs12, password);
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using StackExchange.Redis;
+using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.TokenStorage.Redis
 {
@@ -26,10 +27,7 @@ namespace Tailspin.Surveys.TokenStorage.Redis
         /// <param name="options">A <see cref="StackExchange.Redis.ConfigurationOptions"/> instance used to configure this instance.</param>
         public RedisConnectionBuilder(ConfigurationOptions options)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            Guard.ArgumentNotNull(options, nameof(options));
 
             Options = options;
         }
@@ -38,10 +36,7 @@ namespace Tailspin.Surveys.TokenStorage.Redis
 
         public RedisConnectionBuilder AddEndpoint(string hostAndPort)
         {
-            if (string.IsNullOrWhiteSpace(hostAndPort))
-            {
-                throw new ArgumentException("hostAndPort cannot be null, empty, or only whitespace.");
-            }
+            Guard.ArgumentNotNullOrWhiteSpace(hostAndPort, nameof(hostAndPort));
 
             Options.EndPoints.Add(hostAndPort);
             return this;
@@ -49,10 +44,7 @@ namespace Tailspin.Surveys.TokenStorage.Redis
 
         public RedisConnectionBuilder UsePassword(string password)
         {
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                throw new ArgumentException("password cannot be null, empty, or only whitespace.");
-            }
+            Guard.ArgumentNotNullOrWhiteSpace(password, nameof(password));
 
             Options.Password = password;
             return this;

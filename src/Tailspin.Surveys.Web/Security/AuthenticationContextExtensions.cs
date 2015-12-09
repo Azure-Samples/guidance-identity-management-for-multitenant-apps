@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.Web.Security
 {
@@ -25,17 +26,9 @@ namespace Tailspin.Surveys.Web.Security
             AdalCredential credentials,
             string resource)
         {
-            if (authenticationContext == null)
-            {
-                throw new ArgumentNullException(nameof(authenticationContext));
-            }
+            Guard.ArgumentNotNull(authenticationContext, nameof(authenticationContext));
+            Guard.ArgumentNotNull(credentials, nameof(credentials));
 
-            if (credentials == null)
-            {
-                throw new ArgumentNullException(nameof(credentials));
-            }
-
-            // Work around the design in ADAL
             switch (credentials.CredentialType)
             {
                 case AdalCredentialType.ClientAssertionCertificate:
@@ -64,17 +57,9 @@ namespace Tailspin.Surveys.Web.Security
             AdalCredential credentials,
             UserIdentifier userId)
         {
-            if (authenticationContext == null)
-            {
-                throw new ArgumentNullException(nameof(authenticationContext));
-            }
+            Guard.ArgumentNotNull(authenticationContext, nameof(authenticationContext));
+            Guard.ArgumentNotNull(credentials, nameof(credentials));
 
-            if (credentials == null)
-            {
-                throw new ArgumentNullException(nameof(credentials));
-            }
-
-            // Work around the design in ADAL
             switch (credentials.CredentialType)
             {
                 case AdalCredentialType.ClientAssertionCertificate:

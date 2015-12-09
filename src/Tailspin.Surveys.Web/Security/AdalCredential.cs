@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.Web.Security
 {
@@ -17,10 +18,7 @@ namespace Tailspin.Surveys.Web.Security
         /// <param name="clientCredential">A <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.ClientCredential"/> instance to store in this credential.</param>
         public AdalCredential(ClientCredential clientCredential)
         {
-            if (clientCredential == null)
-            {
-                throw new ArgumentNullException(nameof(clientCredential));
-            }
+            Guard.ArgumentNotNull(clientCredential, nameof(clientCredential));
 
             ClientCredential = clientCredential;
             CredentialType = AdalCredentialType.ClientCredential;
@@ -32,10 +30,7 @@ namespace Tailspin.Surveys.Web.Security
         /// <param name="clientAssertionCertificate">A <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.ClientAssertionCertificate"/> instance containing an X509 certificate that identifies the client.</param>
         public AdalCredential(ClientAssertionCertificate clientAssertionCertificate)
         {
-            if (clientAssertionCertificate == null)
-            {
-                throw new ArgumentNullException(nameof(clientAssertionCertificate));
-            }
+            Guard.ArgumentNotNull(clientAssertionCertificate, nameof(clientAssertionCertificate));
 
             ClientAssertionCertificate = clientAssertionCertificate;
             CredentialType = AdalCredentialType.ClientAssertionCertificate;

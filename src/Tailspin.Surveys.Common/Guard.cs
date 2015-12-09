@@ -31,16 +31,11 @@ namespace Tailspin.Surveys.Common
         /// <exception cref="ArgumentException">The string is empty.</exception>
         /// <param name="argumentValue">The argument value to test.</param>
         /// <param name="argumentName">The name of the argument to test.</param>
-        public static void ArgumentNotNullOrEmpty(string argumentValue, string argumentName)
+        public static void ArgumentNotNullOrWhiteSpace(string argumentValue, string argumentName)
         {
-            if (argumentValue == null)
+            if (string.IsNullOrWhiteSpace(argumentValue))
             {
-                throw new ArgumentNullException(argumentName);
-            }
-
-            if (argumentValue.Length == 0)
-            {
-                throw new ArgumentException("Argument is empty", argumentName);
+                throw new ArgumentException($"{argumentName} cannot be null, empty, or only whitespace.");
             }
         }
     }

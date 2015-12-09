@@ -12,16 +12,16 @@ namespace Tailspin.Surveys.Data.DataStore
 {
     public class SqlServerContributorRequestStore : IContributorRequestStore
     {
-        private ApplicationDbContext dbContext { get; set; }
+        private ApplicationDbContext _dbContext { get; set; }
 
         public SqlServerContributorRequestStore(ApplicationDbContext dbContext)
         {
-            this.dbContext = dbContext;
+            _dbContext = dbContext;
         }
 
         public async Task<ICollection<ContributorRequest>> GetRequestForSurveyAsync(int surveyId)
         {
-            return await dbContext.ContributorRequests
+            return await _dbContext.ContributorRequests
                 .Where(r => r.SurveyId == surveyId)
                 .ToArrayAsync()
                 .ConfigureAwait(false);
@@ -29,15 +29,15 @@ namespace Tailspin.Surveys.Data.DataStore
 
         public async Task AddRequestAsync(ContributorRequest contributorRequest)
         {
-            dbContext.ContributorRequests.Add(contributorRequest);
-            await dbContext
+            _dbContext.ContributorRequests.Add(contributorRequest);
+            await _dbContext
                 .SaveChangesAsync()
                 .ConfigureAwait(false);
         }
 
         public async Task<ICollection<ContributorRequest>> GetRequestsForUserAsync(string emailAddress)
         {
-            return await dbContext.ContributorRequests
+            return await _dbContext.ContributorRequests
                 .Where(c => c.EmailAddress.ToLower() == emailAddress.ToLower())
                 .ToArrayAsync()
                 .ConfigureAwait(false);
@@ -45,8 +45,8 @@ namespace Tailspin.Surveys.Data.DataStore
 
         public async Task RemoveRequestAsync(ContributorRequest contributorRequest)
         {
-            dbContext.ContributorRequests.Remove(contributorRequest);
-            await dbContext
+            _dbContext.ContributorRequests.Remove(contributorRequest);
+            await _dbContext
                 .SaveChangesAsync()
                 .ConfigureAwait(false);
         }
