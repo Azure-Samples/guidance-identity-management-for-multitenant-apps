@@ -1,5 +1,5 @@
 # Running the Surveys application
-This topic describes how to run the Tailspin Surveys application locally, from Visual Studio. In these steps, you won't deploy the application to Azure. However, you will need to create some Azure resources (an Azure AD tenant and a Redis cache).
+This topic describes how to run the [Tailspin Surveys](02-tailspin-scenario.md) application locally, from Visual Studio. In these steps, you won't deploy the application to Azure. However, you will need to create some Azure resources (an Azure AD tenant and a Redis cache).
 
 ## Prerequisites:
 -	[Visual Studio 2015](http://go.microsoft.com/fwlink/?LinkId=532606)
@@ -13,6 +13,7 @@ Create a new Azure AD tenant or use an existing one. This tenant will represent 
 1. Sign into the [Azure management portal](https://manage.windowsazure.com).
 2. Click **New** > **App Services** > **Active Directory** > **Directory** > **Custom Create**.
 3. Enter the required information and click the **Finish** (checkmark) button.
+    - Do _not_ check **This is a B2C directory**.
 
 Register the Surveys application in your AD tenant.
 
@@ -80,7 +81,7 @@ Update the application manifest for the web API.
             "allowedMemberTypes": ["User"],
             "description": "Creators can create surveys",
             "displayName": "SurveyCreator",
-            "id": "1b4f816e-5eaf-48b9-8613-7923830595ad",
+            "id": "1b4f816e-5eaf-48b9-8613-7923830595ad", // Generate a new GUID
             "isEnabled": true,
             "value": "SurveyCreator"
           },
@@ -88,7 +89,7 @@ Update the application manifest for the web API.
             "allowedMemberTypes": ["User"],
             "description": "Administrators can manage the surveys in their tenant",
             "displayName": "SurveyAdmin",
-            "id": "c20e145e-5459-4a6c-a074-b942bbd4cfe1",
+            "id": "c20e145e-5459-4a6c-a074-b942bbd4cfe1",  // Generate a new GUID
             "isEnabled": true,
             "value": "SurveyAdmin"
           }
@@ -103,7 +104,7 @@ Update the application manifest for the web API.
 
 7.	Go back to the portal. Click **Manage Manifest** > **Upload Manifest** and upload the JSON file.
 
-Now repeat the same steps for the Surveys app, except do not add an entry for `knownClientApplications`. Use the same role definitions.
+Now repeat the same steps for the Surveys app, except do not add an entry for `knownClientApplications`. Use the same role definitions, but generate new GUIDs for the IDs.
 
 ## Create a new Redis Cache instance
 
@@ -112,6 +113,10 @@ The Surveys application uses Redis to cache OAuth 2 access tokens. To create the
 1.	Go to [https://portal.azure.com](https://portal.azure.com) and click **New** > **Data + Storage** > **Redis Cache**.
 2.	Fill in the required information (DNS name, subscription, etc) and click **Create**.
 3.	When the cache is created, click **Show access keys** and copy the primary key.
+
+For more information about creating a Redis cache, see [How to Use Azure Redis Cache](https://azure.microsoft.com/en-us/documentation/articles/cache-dotnet-how-to-use-azure-redis-cache/).
+
+![Creating a Redis cache](media/running-the-app/redis-cache.png)
 
 ## Set user secrets
 
@@ -140,8 +145,8 @@ The Surveys application uses Redis to cache OAuth 2 access tokens. To create the
     - `ClientId`: The client ID of the Surveys app.
     - `ClientSecret`: The key that your generated when you registered the Surveys application in Azure AD.
     - `WebApiResourceId`: The App ID URI that you specified when you created the Surveys.WebAPI application in Azure AD.
-    - `TenantId`: The object ID for your Azure AD tenant. To find this value in the Azure portal, navigate to your tenant and click View **Endpoints**. The tenant ID is the GUID that appears in the endpoint URLs.
-    - `Endpoint`: URL of the Redis cache.
+    - `TenantId`: The object ID for your Azure AD tenant. To find this value in the Azure portal, navigate to your tenant. Click **Applications**, then click **View Endpoints** at the bottom of the portal. The tenant ID is the GUID that appears in the endpoint URLs.
+    - `Endpoint`: Host name of the Redis cache, `[DNS name].redis.cache.windows.net`.
     - `Password`: Primary key for the Redis cache.
 
 4.	Save the updated secrets.json file.
@@ -168,8 +173,9 @@ In this step, you will use Entity Framework 7 to create a local SQL database, us
 
 2.	Navigate to the Tailspin.Surveys.Data project.
 
-3.	Run the following command:
+3.	Run the following commands:
 
+          dnvm use 1.0.0-rc1-final
           dnx ef database update
 
 ## Run the application
@@ -190,11 +196,13 @@ When the application starts, you are not signed in, so you see the welcome page:
 
 To sign up:
 
-1.	Click **Enroll your company in Tailspin**.
-2.	Sign in as an Azure AD admin user.
+1. Create a new Azure AD tenant. This tenant will represent a customer of the SaaS application.
+2. Add an admin user to the new tenant.
+3.	Click **Enroll your company in Tailspin**.
+4.	Sign in as the admin user for your tenant.
 3.	Accept the consent prompt.
 
-The application registers your tenant, and then signs you out. (The app signs you out because you need to set up the application roles in Azure AD, before using the application.)
+The application registers the tenant, and then signs you out. The app signs you out because you need to set up the application roles in Azure AD, before using the application.
 
 ![After sign up](media/running-the-app/screenshot2.png)
 
@@ -202,7 +210,7 @@ The application registers your tenant, and then signs you out. (The app signs yo
 
 When a tenant signs up, an AD admin for the tenant must assign application roles to users.
 
-1. Sign into the Azure management portal and navigate to your Azure AD tenant.
+1. Sign into the Azure management portal and navigate to the Azure AD tenant that signed up for the application.
 2. Click **Applications**. The portal will list `Survey` and `Survey.WebAPI` under "Applications that my company uses". If not, make sure you completed the sign up process.
 
 ![Registered apps](media/running-the-app/registered-apps.png)
@@ -213,7 +221,7 @@ If you have Azure AD Premium:
 
 2.	Click **Users and Groups**.
 
-3.	In the **Show** dropdown, select either **Groups** or **Users**.
+3.	In the **Show** dropdown, select either **Groups** or **All Users**.
 
 4.	Click the top checkmark to search.
 
