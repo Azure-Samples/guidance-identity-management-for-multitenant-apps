@@ -100,3 +100,7 @@ Here are some basic patterns for checking claims.
         IEnumerable<Claim> groups = User.FindAll("groups");
 
 For more details about using claims in authorization, see [Authorization](07-authorization.md).
+
+## Additional resources
+
+- [Claims-Based Authorization](https://docs.asp.net/en/latest/security/authorization/claims.html)

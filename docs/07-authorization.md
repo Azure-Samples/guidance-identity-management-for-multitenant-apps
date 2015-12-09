@@ -224,3 +224,8 @@ static readonly Dictionary<OperationAuthorizationRequirement, Func<List<UserPerm
         { Operations.UnPublish, x => x.Contains(UserPermissionType.Owner) }
     };
 ```
+
+## Additional resources
+
+- [Resource Based Authorization](https://docs.asp.net/en/latest/security/authorization/resourcebased.html)
+- [Custom Policy-Based Authorization](https://docs.asp.net/en/latest/security/authorization/policies.html)
