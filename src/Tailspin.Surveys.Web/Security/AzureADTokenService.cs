@@ -23,9 +23,15 @@ namespace Tailspin.Surveys.Web.Security
         private readonly AzureAdOptions _adOptions;
         private readonly ITokenCacheService _tokenCacheService;
         private readonly ILogger _logger;
-        // this is used only for using client credentials with assymetric encryption
         private readonly ICredentialService _credentialService;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="Tailspin.Surveys.Web.Security.AzureADTokenService"/>.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="tokenCacheService"></param>
+        /// <param name="credentialService"></param>
+        /// <param name="logger"></param>
         public AzureADTokenService(
             IOptions<ConfigurationOptions> options,
             ITokenCacheService tokenCacheService,
@@ -65,8 +71,7 @@ namespace Tailspin.Surveys.Web.Security
                     .ConfigureAwait(false);
                 var result = await authContext.AcquireTokenSilentAsync(
                     resource,
-                    await _credentialService.GetCredentialsAsync()
-                    .ConfigureAwait(false),
+                    await _credentialService.GetCredentialsAsync().ConfigureAwait(false),
                     new UserIdentifier(userId, UserIdentifierType.UniqueId))
                     .ConfigureAwait(false);
 
@@ -99,7 +104,7 @@ namespace Tailspin.Surveys.Web.Security
         /// <param name="authorizationCode">a string authorization code obtained when the user signed in</param>
         /// <param name="redirectUri">The Uri of the application requesting the access token</param>
         /// <param name="resource">The resouce identifier of the target resource</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="System.Threading.Tasks.Task{Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationResult}"/>.</returns>
         public async Task<AuthenticationResult> RequestAccessTokenAsync(
             ClaimsPrincipal claimsPrincipal,
             string authorizationCode,
@@ -121,7 +126,7 @@ namespace Tailspin.Surveys.Web.Security
                 var authenticationResult = await authenticationContext.AcquireTokenByAuthorizationCodeAsync(
                     authorizationCode,
                     new Uri(redirectUri),
-                    await _credentialService.GetCredentialsAsync(),
+                    await _credentialService.GetCredentialsAsync().ConfigureAwait(false),
                     resource)
                     .ConfigureAwait(false);
 
@@ -136,10 +141,10 @@ namespace Tailspin.Surveys.Web.Security
         }
 
         /// <summary>
-        /// This method clears the user's <see cref="TokenCache"/>.
+        /// This method clears the user's <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.TokenCache"/>.
         /// </summary>
-        /// <param name="claimsPrincipal">The <see cref="ClaimsPrincipal"/> for the user</param>
-        /// <returns></returns>
+        /// <param name="claimsPrincipal">The <see cref="System.Security.Claims.ClaimsPrincipal"/> for the user</param>
+        /// <returns>A <see cref="System.Threading.Tasks.Task"/></returns>
         public async Task ClearCacheAsync(ClaimsPrincipal claimsPrincipal)
         {
             Guard.ArgumentNotNull(claimsPrincipal, nameof(claimsPrincipal));
