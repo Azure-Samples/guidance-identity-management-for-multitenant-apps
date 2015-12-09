@@ -15,6 +15,7 @@ using Tailspin.Surveys.Security.Policy;
 using Tailspin.Surveys.Web.Logging;
 using Tailspin.Surveys.Web.Models;
 using Tailspin.Surveys.Web.Services;
+using Microsoft.AspNet.Authentication.Cookies;
 
 namespace Tailspin.Surveys.Web.Controllers
 {
@@ -617,7 +618,8 @@ namespace Tailspin.Surveys.Web.Controllers
 
             if (result.StatusCode == (int) HttpStatusCode.Forbidden)
             {
-                return RedirectToAction("Forbidden", "Home");
+                // Redirects user to Forbidden page
+                return new ChallengeResult(CookieAuthenticationDefaults.AuthenticationScheme);
             }
 
             if (result.StatusCode == (int) HttpStatusCode.NotFound)
