@@ -19,6 +19,7 @@ namespace Tailspin.Surveys.Data.DataStore
        public async Task<Question> GetQuestionAsync(int id)
         {
             return await _dbContext.Questions
+                .Include(q => q.Survey)
                 .SingleOrDefaultAsync(q => q.Id == id)
                 .ConfigureAwait(false);
         }

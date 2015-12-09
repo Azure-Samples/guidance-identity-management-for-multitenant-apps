@@ -10,7 +10,6 @@ using Tailspin.Surveys.Data.DataStore;
 using Tailspin.Surveys.Data.DTOs;
 using Tailspin.Surveys.Security.Policy;
 
-
 namespace Tailspin.Surveys.WebAPI.Controllers
 {
     /// <summary>
@@ -45,6 +44,12 @@ namespace Tailspin.Surveys.WebAPI.Controllers
                 //Logger.LogInformation("Details: Item not found {0}", id);
                 return HttpNotFound();
             }
+
+            if (!await _authorizationService.AuthorizeAsync(User, question.Survey, Operations.Update))
+            {
+                return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
+            }
+
             return new ObjectResult(DataMapping._questionToDto(question));
         }
 
@@ -115,13 +120,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
                 return HttpNotFound();
             }
 
-            var survey = await _surveyStore.GetSurveyAsync(question.SurveyId);
-            if (survey == null)
-            {
-                return HttpNotFound();
-            }
-
-            if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Update))
+            if (!await _authorizationService.AuthorizeAsync(User, question.Survey, Operations.Update))
             {
                 return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }
@@ -153,13 +152,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
                 return HttpNotFound();
             }
 
-            var survey = await _surveyStore.GetSurveyAsync(question.SurveyId);
-            if (survey == null)
-            {
-                return HttpNotFound();
-            }
-
-            if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Update))
+            if (!await _authorizationService.AuthorizeAsync(User, question.Survey, Operations.Update))
             {
                 return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }

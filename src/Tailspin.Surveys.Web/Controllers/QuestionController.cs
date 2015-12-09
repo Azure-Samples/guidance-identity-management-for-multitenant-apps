@@ -8,6 +8,10 @@ using Microsoft.AspNet.Mvc;
 using Tailspin.Surveys.Data.DTOs;
 using Tailspin.Surveys.Web.Security;
 using Tailspin.Surveys.Web.Services;
+using Microsoft.AspNet.Authentication.OpenIdConnect;
+using Microsoft.AspNet.Authentication.Cookies;
+using Tailspin.Surveys.Web.Models;
+using Microsoft.AspNet.Http.Authentication;
 
 namespace Tailspin.Surveys.Web.Controllers
 {
@@ -62,7 +66,7 @@ namespace Tailspin.Surveys.Web.Controllers
                         switch (result.StatusCode)
                         {
                             case (int)HttpStatusCode.Unauthorized:
-                                return await SignOut();
+                                return ReAuthenticateUser();
                             case (int)HttpStatusCode.Forbidden:
                                 ViewBag.Forbidden = true;
                                 return View(question);
@@ -101,12 +105,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View(result.Item);
                 }
 
-                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    return await SignOut();
-                }
+                var errorResult = CheckStatusCode(result);
+                if (errorResult != null) return errorResult;
 
-                ViewBag.Message = result.StatusCode;
+                ViewBag.Message = "Unexpected Error";
             }
             catch
             {
@@ -139,7 +141,7 @@ namespace Tailspin.Surveys.Web.Controllers
                         switch (result.StatusCode)
                         {
                             case (int)HttpStatusCode.Unauthorized:
-                                return await SignOut();
+                                return ReAuthenticateUser();
                             case (int)HttpStatusCode.Forbidden:
                                 ViewBag.Forbidden = true;
                                 return View(question);
@@ -178,12 +180,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View("Delete", result.Item);
                 }
 
-                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    return await SignOut();
-                }
+                var errorResult = CheckStatusCode(result);
+                if (errorResult != null) return errorResult;
 
-                ViewBag.Message = result.StatusCode;
+                ViewBag.Message = "Unexpected Error";
             }
             catch
             {
@@ -214,7 +214,7 @@ namespace Tailspin.Surveys.Web.Controllers
                     switch (result.StatusCode)
                     {
                         case (int)HttpStatusCode.Unauthorized:
-                            return await SignOut();
+                            return ReAuthenticateUser();
                         case (int)HttpStatusCode.Forbidden:
                             ViewBag.Forbidden = true;
                             return View(question);
@@ -231,10 +231,40 @@ namespace Tailspin.Surveys.Web.Controllers
             return View("~/Views/Shared/Error.cshtml");
         }
 
-        private async Task<IActionResult> SignOut()
+        private IActionResult CheckStatusCode(ApiResult result)
         {
-            return await _signInManager.SignOutAsync(
-                Url.Action("SignOutCallback", "Account", values: null, protocol: Request.Scheme));
+            if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
+            {
+                return ReAuthenticateUser();
+            }
+
+            if (result.StatusCode == (int)HttpStatusCode.Forbidden)
+            {
+                // Redirects user to Forbidden page
+                return new ChallengeResult(CookieAuthenticationDefaults.AuthenticationScheme);
+            }
+
+            if (result.StatusCode == (int)HttpStatusCode.NotFound)
+            {
+                ModelState.AddModelError(string.Empty, "The survey can not be found");
+                ViewBag.Message = "The survey can not be found";
+                return View("~/Views/Shared/Error.cshtml");
+            }
+
+            return null;
         }
+
+        private IActionResult ReAuthenticateUser()
+        {
+            return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme,
+                new AuthenticationProperties
+                {
+                    RedirectUri = Url.Action("SignInCallback", "Account")
+                });
+        }
+
+
+
+
     }
 }
