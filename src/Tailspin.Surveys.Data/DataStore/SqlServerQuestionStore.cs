@@ -20,6 +20,7 @@ namespace Tailspin.Surveys.Data.DataStore
         {
             return await _dbContext.Questions
                 .Include(q => q.Survey)
+                .ThenInclude(s => s.Contributors)
                 .SingleOrDefaultAsync(q => q.Id == id)
                 .ConfigureAwait(false);
         }
