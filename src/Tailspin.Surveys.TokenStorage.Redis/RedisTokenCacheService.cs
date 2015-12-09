@@ -11,6 +11,9 @@ using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.TokenStorage.Redis
 {
+    /// <summary>
+    /// Returns an instance of the RedisTokenCache 
+    /// </summary>
     public class RedisTokenCacheService : TokenCacheService
     {
         private IConnectionMultiplexer _connection;
