@@ -21,15 +21,15 @@ namespace Tailspin.Surveys.TokenStorage.Redis
         }
         public static void TokenCacheCleared(this ILogger logger, string key)
         {
-            logger.LogInformation("Cleared token cache for key {0}", key);
+            logger.LogInformation("Cleared token cache for Key: {0}", key);
         }
         public static void TokensRetrievedFromStore(this ILogger logger, string key)
         {
-            logger.LogVerbose("Retrieved all tokens from store for key {0}", key);
+            logger.LogVerbose("Retrieved all tokens from store for Key: {0}", key);
         }
         public static void TokensWrittenToStore(this ILogger logger, string clientId, string userId, string resource)
         {
-            logger.LogVerbose("Token states changed for Client :{0} User: {1}  Resource: {2} writing all tokens back to store", clientId, userId, resource);
+            logger.LogVerbose("Token states changed for Client: {0} User: {1}  Resource: {2} writing all tokens back to store", clientId, userId, resource);
         }
     }
 }
