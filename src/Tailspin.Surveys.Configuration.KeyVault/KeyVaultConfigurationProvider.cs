@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 namespace Tailspin.Surveys.Configuration.KeyVault
 {
     /// <summary>
-    /// Aspnet configuration provider to read secrets from key vault. This requires List and Get permissions on the vault
+    /// Asp.Net configuration provider to read secrets from key vault. This requires List and Get permissions on the vault
     /// </summary>
     public class KeyVaultConfigurationProvider : ConfigurationProvider
     {
@@ -71,7 +71,7 @@ namespace Tailspin.Surveys.Configuration.KeyVault
 
         /// <summary>
         /// Loads all secrets which are delimited by : so that they can be retrieved by the config system
-        /// Since KeyVault does not  allow characters as delimiters the share secret name is not used as key for configuration, the Tag properties are used instead
+        /// Since KeyVault does not  allow the : character as delimiter in the share secret name is not used as key for configuration, the Tag properties are used instead
         /// The tag should always be of the form "ConfigKey"="ParentKey1:Child1:.."
         /// </summary>
         public override void Load()
@@ -89,7 +89,7 @@ namespace Tailspin.Surveys.Configuration.KeyVault
         }
         /// <summary>
         /// Loads all secrets which are delimited by : so that they can be retrieved by the config system
-        /// Since KeyVault does not  allow characters as delimiters the share secret name is not used as key for configuration, the Tag properties are used instead
+        /// Since KeyVault does not  allow : as delimiters in the share secret name is not used as key for configuration, the Tag properties are used instead
         /// The tag should always be of the form "ConfigKey"="ParentKey1:Child1:.."
         /// </summary>
         /// <param name="token"></param>
@@ -118,8 +118,6 @@ namespace Tailspin.Surveys.Configuration.KeyVault
 
         private async Task<string> GetTokenAsync(string authority, string resource, string scope)
         {
-            // We want to use the default shared cache. Otherwise we would need to store the redis connection string in config files 
-            //We want to get that also from keyvault
             AuthenticationResult result = null;
             try
             {
@@ -133,7 +131,7 @@ namespace Tailspin.Surveys.Configuration.KeyVault
             }
             if (result == null)
             {
-                throw new InvalidOperationException("bearer token acquisition to Key Vault failed");
+                throw new InvalidOperationException("Bearer token acquisition needed to call KeyVault service failed");
             }
 
             return result.AccessToken;

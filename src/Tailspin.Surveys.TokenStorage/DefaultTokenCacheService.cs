@@ -8,6 +8,9 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace Tailspin.Surveys.TokenStorage
 {
+    /// <summary>
+    /// Returns the default token cache which is part of ADAL
+    /// </summary>
     public class DefaultTokenCacheService : TokenCacheService
     {
         /// <summary>

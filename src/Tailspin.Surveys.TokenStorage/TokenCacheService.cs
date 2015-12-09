@@ -12,8 +12,6 @@ namespace Tailspin.Surveys.TokenStorage
 {
     /// <summary>
     /// Returns and manages the instance of token cache to be used when making use of ADAL. 
-    /// This returns the default token cache in the case of DNX core and Redis token cache when using DNX451 since Redis client is supported only in DNX451
-    /// Lifetime should be scoped- we need a new instance for every request if we are using the redis cache
     public abstract class TokenCacheService : ITokenCacheService
     {
         protected readonly IHttpContextAccessor _httpContextAccessor;

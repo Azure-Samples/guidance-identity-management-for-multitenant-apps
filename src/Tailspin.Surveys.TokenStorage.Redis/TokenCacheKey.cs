@@ -22,8 +22,6 @@ namespace Tailspin.Surveys.TokenStorage.Redis
             Guard.ArgumentNotNullOrEmpty("uniqueUserId", uniqueUserId);
             Guard.ArgumentNotNullOrEmpty("clientId", clientId);
 
-            if (String.IsNullOrEmpty(uniqueUserId)) throw new ArgumentNullException("uniqueUserId");
-            if (String.IsNullOrEmpty(clientId)) throw new ArgumentNullException("clientId");
             _uniqueUserId = uniqueUserId;
             _clientId = clientId;
             _key = string.Format("UserId:{0}::ClientId:{1}", uniqueUserId, clientId);

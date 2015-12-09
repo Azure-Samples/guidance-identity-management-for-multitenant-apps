@@ -11,6 +11,9 @@ using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.TokenStorage.Redis
 {
+    /// <summary>
+    /// Returns an instance of the RedisTokenCache 
+    /// </summary>
     public class RedisTokenCacheService : TokenCacheService
     {
         private IConnectionMultiplexer _connection;
@@ -43,9 +46,7 @@ namespace Tailspin.Surveys.TokenStorage.Redis
                 /// 1. We want the consumer to pass the connection since the connection could be potentially used for other cache operations.
                 /// 2. There are many configuration settings for the connection and we want to leave it open to the user to choose whats appropriate.
                 /// 3. Testability if we allow injecting the connection
-                //var connection = _httpContextAccessor.HttpContext.ApplicationServices.GetService<IConnectionMultiplexer>();
                 _cache = await RedisTokenCache.CreateCacheAsync(_connection, key, _loggerFactory);
-                //return (cache = await RedisTokenCache.CreateCacheAsync(connection, key, _loggerFactory.CreateLogger<RedisTokenCache>()));
             }
 
             return await Task.FromResult(_cache);
