@@ -19,8 +19,8 @@ namespace Tailspin.Surveys.TokenStorage.Redis
         // use this for on behalf of tokens
         public TokenCacheKey(string uniqueUserId, string clientId)
         {
-            Guard.ArgumentNotNullOrEmpty("uniqueUserId", uniqueUserId);
-            Guard.ArgumentNotNullOrEmpty("clientId", clientId);
+            Guard.ArgumentNotNullOrWhiteSpace(uniqueUserId, nameof(uniqueUserId));
+            Guard.ArgumentNotNullOrWhiteSpace(clientId, nameof(clientId));
 
             _uniqueUserId = uniqueUserId;
             _clientId = clientId;
@@ -28,27 +28,11 @@ namespace Tailspin.Surveys.TokenStorage.Redis
 
         }
 
-        public string Key
-        {
-            get
-            {
-                return _key;
-            }
-        }
-        public string UniqueUserId
-        {
-            get
-            {
-                return _uniqueUserId;
-            }
-        }
-        public string ClientId
-        {
-            get
-            {
-                return _clientId;
-            }
-        }
+        public string Key { get { return _key; } }
+
+        public string UniqueUserId { get { return _uniqueUserId; } }
+
+        public string ClientId { get { return _clientId; } }
 
         public override string ToString()
         {

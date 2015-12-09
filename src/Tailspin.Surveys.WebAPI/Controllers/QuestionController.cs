@@ -41,7 +41,6 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             var question = await _questionStore.GetQuestionAsync(id);
             if (question == null)
             {
-                //Logger.LogInformation("Details: Item not found {0}", id);
                 return HttpNotFound();
             }
 

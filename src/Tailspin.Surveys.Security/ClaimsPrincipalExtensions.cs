@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Globalization;
+using Tailspin.Surveys.Common;
 using Tailspin.Surveys.Security;
 
 namespace System.Security.Claims
@@ -10,10 +11,7 @@ namespace System.Security.Claims
     {
         public static string FindFirstValue(this ClaimsPrincipal principal, string claimType, bool throwIfNotFound = false)
         {
-            if (principal == null)
-            {
-                throw new ArgumentNullException(nameof(principal));
-            }
+            Guard.ArgumentNotNull(principal, nameof(principal));
 
             var value = principal.FindFirst(claimType)?.Value;
             if (throwIfNotFound && string.IsNullOrWhiteSpace(value))
@@ -27,8 +25,6 @@ namespace System.Security.Claims
 
         public static string GetIssuerValue(this ClaimsPrincipal principal, bool throwIfNotFound = true)
         {
-            // The "iss" claim is REQUIRED by OIDC, so we're going to throw an exception if we don't have the claim OR the value.
-            // Per http://openid.net/specs/openid-connect-core-1_0.html#IDToken
             return principal.FindFirstValue(SurveyClaimTypes.IssuerValue, throwIfNotFound);
         }
 
@@ -69,23 +65,13 @@ namespace System.Security.Claims
 
         public static string GetUserName(this ClaimsPrincipal principal)
         {
-            if (principal == null)
-            {
-                throw new ArgumentNullException(nameof(principal));
-            }
-
             return principal.FindFirstValue(ClaimsIdentity.DefaultNameClaimType);
         }
 
         public static bool IsSignedInToApplication(this ClaimsPrincipal principal)
         {
-            if (principal == null)
-            {
-                throw new ArgumentNullException(nameof(principal));
-            }
+            Guard.ArgumentNotNull(principal, nameof(principal));
             return principal.Identity != null && principal.Identity.IsAuthenticated;
-            //return principal?.Identities != null &&
-            //    principal.Identities.Any(i => i.AuthenticationType == CookieAuthenticationDefaults..ApplicationCookieAuthenticationType);
         }
     }
 }

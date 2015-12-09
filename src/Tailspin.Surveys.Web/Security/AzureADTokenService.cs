@@ -23,9 +23,15 @@ namespace Tailspin.Surveys.Web.Security
         private readonly AzureAdOptions _adOptions;
         private readonly ITokenCacheService _tokenCacheService;
         private readonly ILogger _logger;
-        // this is used only for using client credentials with assymetric encryption
         private readonly ICredentialService _credentialService;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="Tailspin.Surveys.Web.Security.AzureADTokenService"/>.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="tokenCacheService"></param>
+        /// <param name="credentialService"></param>
+        /// <param name="logger"></param>
         public AzureADTokenService(
             IOptions<ConfigurationOptions> options,
             ITokenCacheService tokenCacheService,
@@ -48,7 +54,8 @@ namespace Tailspin.Surveys.Web.Security
         /// <returns>A string access token wrapped in a <see cref="Task"/></returns>
         public async Task<string> GetTokenForWebApiAsync(ClaimsPrincipal user)
         {
-            return await GetAccessTokenForResourceAsync(_adOptions.WebApiResourceId, user);
+            return await GetAccessTokenForResourceAsync(_adOptions.WebApiResourceId, user)
+                .ConfigureAwait(false);
         }
 
         private async Task<string> GetAccessTokenForResourceAsync(string resource, ClaimsPrincipal user)
@@ -60,11 +67,13 @@ namespace Tailspin.Surveys.Web.Security
             try
             {
                 _logger.BearerTokenAcquisitionStarted(resource, userName, issuerValue);
-                var authContext = await CreateAuthenticationContext(user);
+                var authContext = await CreateAuthenticationContext(user)
+                    .ConfigureAwait(false);
                 var result = await authContext.AcquireTokenSilentAsync(
                     resource,
-                    await _credentialService.GetCredentialsAsync(),
-                    new UserIdentifier(userId, UserIdentifierType.UniqueId));
+                    await _credentialService.GetCredentialsAsync().ConfigureAwait(false),
+                    new UserIdentifier(userId, UserIdentifierType.UniqueId))
+                    .ConfigureAwait(false);
 
                 _logger.BearerTokenAcquisitionSucceeded(resource, userName, issuerValue);
 
@@ -79,14 +88,12 @@ namespace Tailspin.Surveys.Web.Security
 
         private async Task<AuthenticationContext> CreateAuthenticationContext(ClaimsPrincipal claimsPrincipal)
         {
-            if (claimsPrincipal == null)
-            {
-                throw new ArgumentNullException(nameof(claimsPrincipal));
-            }
+            Guard.ArgumentNotNull(claimsPrincipal, nameof(claimsPrincipal));
 
             return new AuthenticationContext(
                Constants.AuthEndpointPrefix + claimsPrincipal.GetTenantIdValue(),
-                await _tokenCacheService.GetCacheAsync(claimsPrincipal.GetObjectIdentifierValue(), _adOptions.ClientId));
+                await _tokenCacheService.GetCacheAsync(claimsPrincipal.GetObjectIdentifierValue(), _adOptions.ClientId)
+                .ConfigureAwait(false));
         }
 
         /// <summary>
@@ -97,44 +104,31 @@ namespace Tailspin.Surveys.Web.Security
         /// <param name="authorizationCode">a string authorization code obtained when the user signed in</param>
         /// <param name="redirectUri">The Uri of the application requesting the access token</param>
         /// <param name="resource">The resouce identifier of the target resource</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="System.Threading.Tasks.Task{Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationResult}"/>.</returns>
         public async Task<AuthenticationResult> RequestAccessTokenAsync(
             ClaimsPrincipal claimsPrincipal,
             string authorizationCode,
             string redirectUri,
             string resource)
         {
-            if (claimsPrincipal == null)
-            {
-                throw new ArgumentNullException(nameof(claimsPrincipal));
-            }
-
-            if (string.IsNullOrWhiteSpace(authorizationCode))
-            {
-                throw new ArgumentNullException(nameof(authorizationCode));
-            }
-
-            if (string.IsNullOrWhiteSpace(redirectUri))
-            {
-                throw new ArgumentNullException(nameof(redirectUri));
-            }
-
-            if (string.IsNullOrWhiteSpace(resource))
-            {
-                throw new ArgumentNullException(nameof(resource));
-            }
+            Guard.ArgumentNotNull(claimsPrincipal, nameof(claimsPrincipal));
+            Guard.ArgumentNotNullOrWhiteSpace(authorizationCode, nameof(authorizationCode));
+            Guard.ArgumentNotNullOrWhiteSpace(redirectUri, nameof(redirectUri));
+            Guard.ArgumentNotNullOrWhiteSpace(resource, nameof(resource));
 
             try
             {
                 var userId = claimsPrincipal.GetObjectIdentifierValue();
                 var issuerValue = claimsPrincipal.GetIssuerValue();
                 _logger.AuthenticationCodeRedemptionStarted(userId, issuerValue, resource);
-                var authenticationContext = await CreateAuthenticationContext(claimsPrincipal);
+                var authenticationContext = await CreateAuthenticationContext(claimsPrincipal)
+                    .ConfigureAwait(false);
                 var authenticationResult = await authenticationContext.AcquireTokenByAuthorizationCodeAsync(
                     authorizationCode,
                     new Uri(redirectUri),
-                    await _credentialService.GetCredentialsAsync(),
-                    resource);
+                    await _credentialService.GetCredentialsAsync().ConfigureAwait(false),
+                    resource)
+                    .ConfigureAwait(false);
 
                 _logger.AuthenticationCodeRedemptionCompleted(userId, issuerValue, resource);
                 return authenticationResult;
@@ -147,18 +141,16 @@ namespace Tailspin.Surveys.Web.Security
         }
 
         /// <summary>
-        /// This method clears the user's <see cref="TokenCache"/>.
+        /// This method clears the user's <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.TokenCache"/>.
         /// </summary>
-        /// <param name="claimsPrincipal">The <see cref="ClaimsPrincipal"/> for the user</param>
-        /// <returns></returns>
+        /// <param name="claimsPrincipal">The <see cref="System.Security.Claims.ClaimsPrincipal"/> for the user</param>
+        /// <returns>A <see cref="System.Threading.Tasks.Task"/></returns>
         public async Task ClearCacheAsync(ClaimsPrincipal claimsPrincipal)
         {
-            if (claimsPrincipal == null)
-            {
-                throw new ArgumentNullException(nameof(claimsPrincipal));
-            }
+            Guard.ArgumentNotNull(claimsPrincipal, nameof(claimsPrincipal));
 
-            await _tokenCacheService.ClearCacheAsync(claimsPrincipal.GetObjectIdentifierValue(), _adOptions.ClientId);
+            await _tokenCacheService.ClearCacheAsync(claimsPrincipal.GetObjectIdentifierValue(), _adOptions.ClientId)
+                .ConfigureAwait(false);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Tailspin.Surveys.Data.DataStore
         public async Task<ICollection<Survey>> GetSurveysByOwnerAsync(int userId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize)
         {
             var cappedPageSize = Math.Min(Constants.MaxPageSize, pageSize);
-            return await _dbContext.Surveys.Where(s => s.OwnerId == userId && s.Published == false)
+            return await _dbContext.Surveys.Where(s => s.OwnerId == userId && !s.Published)
                                      .OrderBy(s => s.Id)
                                      .Skip(pageIndex * cappedPageSize)
                                      .Take(cappedPageSize)
@@ -47,7 +47,7 @@ namespace Tailspin.Surveys.Data.DataStore
         {
             var cappedPageSize = Math.Min(Constants.MaxPageSize, pageSize);
             return await _dbContext.SurveyContributors.Include(sc => sc.Survey)
-                                                      .Where(sc => sc.UserId == userId && sc.Survey.Published == false)
+                                                      .Where(sc => sc.UserId == userId && !sc.Survey.Published)
                                                       .Select(sc => sc.Survey)
                                                       .OrderBy(s => s.Id)
                                                       .Skip(pageIndex * cappedPageSize)
@@ -70,7 +70,7 @@ namespace Tailspin.Surveys.Data.DataStore
         public async Task<ICollection<Survey>> GetUnPublishedSurveysByTenantAsync(int tenantId, int pageIndex = 0, int pageSize = Constants.DefaultPageSize)
         {
             var cappedPageSize = Math.Min(Constants.MaxPageSize, pageSize);
-            return await _dbContext.Surveys.Where(s => s.TenantId == tenantId && s.Published == false)
+            return await _dbContext.Surveys.Where(s => s.TenantId == tenantId && !s.Published)
                                            .OrderBy(s => s.Id)
                                            .Skip(pageIndex * cappedPageSize)
                                            .Take(cappedPageSize)

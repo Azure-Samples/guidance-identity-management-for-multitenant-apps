@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.AspNet.Authentication;
+using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.Web.Security
 {
@@ -18,10 +19,8 @@ namespace Tailspin.Surveys.Web.Security
         /// <returns>true if the user is signing up a tenant, otherwise, false.</returns>
         internal static bool IsSigningUp(this BaseControlContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            Guard.ArgumentNotNull(context, nameof(context));
+
             // Note - Due to https://github.com/aspnet/Security/issues/546, we cannot get to the authentication properties
             // from the context in the RedirectToAuthenticationEndpoint event to check for sign up.  This bug is currently
             // slated to be fixed in the RC2 timeframe.  When this is fixed, remove the workaround that checks the HttpContext

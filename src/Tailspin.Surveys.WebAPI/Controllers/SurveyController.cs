@@ -43,12 +43,11 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             var survey = await _surveyStore.GetSurveyAsync(id);
             if (survey == null)
             {
-                //Logger.LogInformation("Details: Item not found {0}", id);
                 return HttpNotFound();
             }
 
             // The AuthorizationService uses the policies in the Tailspin.Surveys.Security project
-            if (await _authorizationService.AuthorizeAsync(User, survey, Operations.Read) == false)
+            if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Read))
             {
                 return new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
             }

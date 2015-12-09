@@ -20,6 +20,7 @@ using Constants = Tailspin.Surveys.Common.Constants;
 using SurveyAppConfiguration = Tailspin.Surveys.Web.Configuration;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.Threading.Tasks;
+using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.Web
 {
@@ -186,7 +187,6 @@ namespace Tailspin.Surveys.Web
                 options.ClientId = configOptions.AzureAd.ClientId;
                 options.Authority = Constants.AuthEndpointPrefix + "common/";
                 options.PostLogoutRedirectUri = configOptions.AzureAd.PostLogoutRedirectUri;
-                //options.RedirectUri = configOptions.AzureAd.PostLogoutRedirectUri;
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.TokenValidationParameters = new TokenValidationParameters { ValidateIssuer = false };
                 options.Events = new SurveyAuthenticationEvents(configOptions.AzureAd, loggerFactory);
@@ -214,15 +214,8 @@ namespace Tailspin.Surveys.Web
         }
         private async Task SeedDatabase(IApplicationBuilder app, SurveyAppConfiguration.ConfigurationOptions configOptions)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
-
-            if (configOptions == null)
-            {
-                throw new ArgumentNullException(nameof(configOptions));
-            }
+            Guard.ArgumentNotNull(app, nameof(app));
+            Guard.ArgumentNotNull(configOptions, nameof(configOptions));
 
             // This is to prevent users from signing up the application in the tenant that is hosting the application for other tenants.
             // You get a generic error from AAD which doesn't really say what happened if we try to sign up this tenant.
@@ -230,7 +223,8 @@ namespace Tailspin.Surveys.Web
             var tenantManager = app.ApplicationServices.GetService<TenantManager>();
             var issuerValue = GetIssuer(configOptions.AzureAd.TenantId);
 
-            var tenant = await tenantManager.FindByIssuerValueAsync(issuerValue);
+            var tenant = await tenantManager.FindByIssuerValueAsync(issuerValue)
+                .ConfigureAwait(false);
             if (tenant == null)
             {
                 tenant = new Tenant
@@ -252,8 +246,8 @@ namespace Tailspin.Surveys.Web
             // 1.  Use the well known endpoint to retrieve the OIDC configuration and parse the JSON for the "issuer" value.
             //     This can also be done with the browser to get the GUID for the configuration file.
             //     Example:  https://login.microsoftonline.com/<tenant>.onmicrosoft.com/.well-known/openid-configuration
-            // 2.  Use the commented code below to obtain an OAuth access token for the AAD Graph API as the web application,
-            //     do an HTTP GET on the tenantDetails resource, get the objectId for the tenant, and build the issuer value manually.
+            // 2.  Obtain an OAuth access token for the AAD Graph API as the web application, do an HTTP GET on the
+            //     tenantDetails resource, get the objectId for the tenant, and build the issuer value manually.
             // 3.  Use the AAD PowerShell cmdlets to get the tenant configuration.
 
             Guid tenantId;

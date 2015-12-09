@@ -37,10 +37,11 @@ namespace Tailspin.Surveys.Configuration.KeyVault
         /// </summary>
         /// <param name="appClientId"></param>
         /// <param name="vaultName"></param>
-        /// <param name="certificateThumbPrint"></param>
+        /// <param name="certificateThumbprint"></param>
         /// <param name="validateCertificate"></param>
-        public KeyVaultConfigurationProvider(string appClientId, string vaultName, string certificateThumbprint, bool validateCertificate, ILogger logger)
-            : this(appClientId, vaultName, StoreName.My, StoreLocation.CurrentUser, certificateThumbprint, validateCertificate, logger)
+        /// <param name="loggerFactory"></param>
+        public KeyVaultConfigurationProvider(string appClientId, string vaultName, string certificateThumbprint, bool validateCertificate, ILoggerFactory loggerFactory)
+            : this(appClientId, vaultName, StoreName.My, StoreLocation.CurrentUser, certificateThumbprint, validateCertificate, loggerFactory)
         {
         }
 
@@ -51,14 +52,15 @@ namespace Tailspin.Surveys.Configuration.KeyVault
         /// <param name="vaultName"></param>
         /// <param name="storeName"></param>
         /// <param name="storeLocation"></param>
-        /// <param name="certificateThumbPrint"></param>
+        /// <param name="certificateThumbprint"></param>
         /// <param name="validateCertificate"></param>
-        public KeyVaultConfigurationProvider(string appClientId, string vaultName, StoreName storeName, StoreLocation storeLocation, string certificateThumbprint, bool validateCertificate, ILogger logger)
+        /// <param name="loggerFactory"></param>
+        public KeyVaultConfigurationProvider(string appClientId, string vaultName, StoreName storeName, StoreLocation storeLocation, string certificateThumbprint, bool validateCertificate, ILoggerFactory loggerFactory)
         {
-            Guard.ArgumentNotNullOrEmpty(appClientId, "appClientId");
-            Guard.ArgumentNotNullOrEmpty(vaultName, "vaultName");
-            Guard.ArgumentNotNullOrEmpty(certificateThumbprint, "certificateThumbprint");
-            Guard.ArgumentNotNull(logger, "logger");
+            Guard.ArgumentNotNullOrWhiteSpace(appClientId, nameof(appClientId));
+            Guard.ArgumentNotNullOrWhiteSpace(vaultName, nameof(vaultName));
+            Guard.ArgumentNotNullOrWhiteSpace(certificateThumbprint, nameof(certificateThumbprint));
+            Guard.ArgumentNotNull(loggerFactory, nameof(loggerFactory));
 
             _appClientId = appClientId;
             _vault = $"https://{vaultName}.vault.azure.net:443/";
@@ -66,7 +68,7 @@ namespace Tailspin.Surveys.Configuration.KeyVault
             _storeLocation = storeLocation;
             _certificateThumbprint = certificateThumbprint;
             _validateCertificate = validateCertificate;
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger<KeyVaultConfigurationProvider>();
         }
 
         /// <summary>
