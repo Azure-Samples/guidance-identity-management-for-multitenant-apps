@@ -99,7 +99,7 @@ When a new customer signs up, the application instructs the customer to create s
 When a user signs in:
 
 1.	The application receives the user's groups as claims. The value of each claim is the object ID of a group.
-2.	Azure AD limits the number of groups sent in the token. If the number of groups exceeds this limit, Azure AD sends a special "overage" claim. If that claim is present, the application must query the Azure AD Graph API to get all of the groups to which that user belongs. For details, see [Authorization in Cloud Applications using AD Groups](http://www.dushyantgill.com/blog/2014/12/10/authorization-cloud-applications-using-ad-groups/), inder the section titled "Groups claim overage".
+2.	Azure AD limits the number of groups sent in the token. If the number of groups exceeds this limit, Azure AD sends a special "overage" claim. If that claim is present, the application must query the Azure AD Graph API to get all of the groups to which that user belongs. For details, see [Authorization in Cloud Applications using AD Groups](http://www.dushyantgill.com/blog/2014/12/10/authorization-cloud-applications-using-ad-groups/), under the section titled "Groups claim overage".
 3.	The application looks up the object IDs in its own database, to find the corresponding application roles to assign to the user.
 4.	The app adds a custom claim value to the user principal that expresses the application role. For example: "survey_role"="SurveyAdmin".
 
