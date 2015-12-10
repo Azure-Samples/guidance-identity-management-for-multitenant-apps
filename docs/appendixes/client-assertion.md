@@ -45,7 +45,11 @@ Notice that the `client_secret` parameter is no longer used. Instead, the `clien
 
 This section shows how to configure the Tailspin Surveys application to use client assertion. In these steps, you will generate a self-signed certificate that is suitable for development, but not for production use.
 
-1. Run the PowerShell script located at [/Scripts/New-AADServicePrincipalCredentialCertificate.ps1](https://github.com/mspnp/multitenant-saas-guidance/blob/master/scripts/New-AADServicePrincipalCredentialCertificate.ps1). Run the script with admin privileges. For the `Subject` parameter, enter any name, such as "surveysapp". The script generates a self-signed certificate and stores it in the "Current User/Personal" certificate store.
+1. Run the PowerShell script [/Scripts/Setup-KeyVault.ps1](https://github.com/mspnp/multitenant-saas-guidance/blob/master/scripts/Setup-KeyVault.ps1) as follows:
+ 
+        .\Setup-KeyVault.ps -Subject [subject]
+
+    For the `Subject` parameter, enter any name, such as "surveysapp". The script generates a self-signed certificate and stores it in the "Current User/Personal" certificate store.
 
 2. The output from the script is a JSON fragment. Add this to the Surveys application manifest.
 
