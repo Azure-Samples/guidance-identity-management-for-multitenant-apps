@@ -22,10 +22,9 @@ namespace Tailspin.Surveys.TokenStorage.Redis
         /// Creates a new instance of <see cref="Tailspin.Surveys.Security.TokenCacheService"/>
         /// </summary>
         /// <param name="connection"><see cref="StackExchange.Redis.IConnectionMultiplexer"/> used to access Redis.</param>
-        /// <param name="contextAccessor"><see cref="Microsoft.AspNet.Http.IHttpContextAccessor"/> used to access the current <see cref="Microsoft.AspNet.Http.HttpContext"/></param>
         /// <param name="loggerFactory"><see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> used to create type-specific <see cref="Microsoft.Extensions.Logging.ILogger"/> instances.</param>
-        public RedisTokenCacheService(IConnectionMultiplexer connection, IHttpContextAccessor contextAccessor, ILoggerFactory loggerFactory)
-            : base(contextAccessor, loggerFactory)
+        public RedisTokenCacheService(IConnectionMultiplexer connection, ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
             Guard.ArgumentNotNull(connection, nameof(connection));
             _connection = connection;
