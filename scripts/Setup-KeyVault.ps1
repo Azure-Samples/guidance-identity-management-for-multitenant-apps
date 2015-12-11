@@ -6,7 +6,7 @@
 [string]$CertStoreLocation = "Cert:\CurrentUser\My",
 
 [parameter(Mandatory=$false, ParameterSetName="GenerateCertificate")]
-[DateTime]$NotBefore = [System.DateTime]::Now.Date,
+[DateTime]$NotBefore = [DateTime]::Now.Date,
 
 [parameter(Mandatory=$false, ParameterSetName="GenerateCertificate")]
 [DateTime]$NotAfter = $NotBefore.AddYears(1),
@@ -20,11 +20,12 @@
 [parameter(Mandatory=$true, ParameterSetName="CreateKeyVault")]
 [string]$Location,
 
-[parameter(Mandatory=$true, ParameterSetName="CreateKeyVault")]
-[string]$ApplicationId,
+[parameter(Mandatory=$true, ParameterSetName="SetAccessPolicy")]
+[Guid[]]$ApplicationIds,
 
 [parameter(Mandatory=$true, ParameterSetName="CreateKeyVault")]
 [parameter(Mandatory=$true, ParameterSetName="SetValues")]
+[parameter(Mandatory=$true, ParameterSetName="SetAccessPolicy")]
 [string]$KeyVaultName,
 
 [parameter(Mandatory=$false, ParameterSetName="SetValues")]
@@ -65,6 +66,15 @@ param(
     }
 }
 
+function Set-AccessPolicy {
+param(
+[parameter(Mandatory=$true, ValueFromPipeline=$true)]$ApplicationId
+)
+    process {
+        Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -ServicePrincipalName $ApplicationId -PermissionsToSecrets get,list -ErrorAction Stop
+    }
+}
+
 switch($PSCmdlet.ParameterSetName)
 {
     "GenerateCertificate"
@@ -99,7 +109,12 @@ switch($PSCmdlet.ParameterSetName)
         Login-AzureRmAccount
         New-AzureRmResourceGroup –Name $ResourceGroupName –Location $Location -ErrorAction Stop
         New-AzureRmKeyVault -VaultName $KeyVaultName -ResourceGroupName $ResourceGroupName -Location $Location -ErrorAction Stop
-        Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -ServicePrincipalName $ApplicationId -ResourceGroupName $ResourceGroupName -PermissionsToSecrets get,list -ErrorAction Stop
+    }
+    "SetAccessPolicy"
+    {
+        Login-AzureRmAccount
+        # Set the access policy for the ApplicationIds
+        $ApplicationIds.GetEnumerator() | Set-AccessPolicy
     }
     "SetValues"
     {
