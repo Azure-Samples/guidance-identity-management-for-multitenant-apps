@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System; //Needed for KeyVaultConfigurationProvider
 using System.IdentityModel.Tokens;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
@@ -18,7 +19,6 @@ using Tailspin.Surveys.Security.Policy;
 using AppConfiguration = Tailspin.Surveys.WebApi.Configuration;
 using Constants = Tailspin.Surveys.Common.Constants;
 using Microsoft.Extensions.PlatformAbstractions;
-using System;
 
 namespace Tailspin.Surveys.WebApi
 {

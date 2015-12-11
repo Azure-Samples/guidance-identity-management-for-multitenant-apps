@@ -49,14 +49,14 @@ namespace Tailspin.Surveys.Web
 
             // Uncomment the block of code below if you want to load secrets from KeyVault
             // It is recommended to use certs for all authentication when using KeyVault
-            //#if DNX451
-            //            _configuration = builder.Build();
-            //            builder.AddKeyVaultSecrets(_configuration["AzureAd:ClientId"],
-            //                _configuration["KeyVault:Name"],
-            //                _configuration["AzureAd:Asymmetric:CertificateThumbprint"],
-            //                Convert.ToBoolean(_configuration["AzureAd:Asymmetric:ValidationRequired"]),
-            //                loggerFactory);
-            //#endif
+//#if DNX451
+//            _configuration = builder.Build();
+//            builder.AddKeyVaultSecrets(_configuration["AzureAd:ClientId"],
+//                _configuration["KeyVault:Name"],
+//                _configuration["AzureAd:Asymmetric:CertificateThumbprint"],
+//                Convert.ToBoolean(_configuration["AzureAd:Asymmetric:ValidationRequired"]),
+//                loggerFactory);
+//#endif
 
             _configuration = builder.Build();
         }
@@ -130,8 +130,8 @@ namespace Tailspin.Surveys.Web
             services.AddSingleton<HttpClientService>();
 
             // Use this for client certificate support
-            // services.AddSingleton<ICredentialService, CertificateCredentialService>();
-            services.AddSingleton<ICredentialService, ClientCredentialService>();
+            services.AddSingleton<ICredentialService, CertificateCredentialService>();
+            //services.AddSingleton<ICredentialService, ClientCredentialService>();
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<SignInManager, SignInManager>();
