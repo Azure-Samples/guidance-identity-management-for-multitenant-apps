@@ -14,7 +14,6 @@ namespace Tailspin.Surveys.TokenStorage
     /// Returns and manages the instance of token cache to be used when making use of ADAL. 
     public abstract class TokenCacheService : ITokenCacheService
     {
-        protected readonly IHttpContextAccessor _httpContextAccessor;
         protected readonly ILoggerFactory _loggerFactory;
         protected readonly ILogger _logger;
         protected TokenCache _cache = null;
@@ -22,14 +21,11 @@ namespace Tailspin.Surveys.TokenStorage
         /// <summary>
         /// Initializes a new instance of <see cref="Tailspin.Surveys.TokenStorage.TokenCacheService"/>
         /// </summary>
-        /// <param name="contextAccessor"><see cref="Microsoft.AspNet.Http.IHttpContextAccessor"/> used to access the current <see cref="Microsoft.AspNet.Http.HttpContext"/></param>
         /// <param name="loggerFactory"><see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> used to create type-specific <see cref="Microsoft.Extensions.Logging.ILogger"/> instances.</param>
-        protected TokenCacheService(IHttpContextAccessor contextAccessor, ILoggerFactory loggerFactory)
+        protected TokenCacheService(ILoggerFactory loggerFactory)
         {
-            Guard.ArgumentNotNull(contextAccessor, nameof(contextAccessor));
             Guard.ArgumentNotNull(loggerFactory, nameof(loggerFactory));
 
-            _httpContextAccessor = contextAccessor;
             _loggerFactory = loggerFactory;
             _logger = _loggerFactory.CreateLogger(this.GetType().FullName);
         }
@@ -46,15 +42,15 @@ namespace Tailspin.Surveys.TokenStorage
         /// Clears the token cache.
         /// </summary>
         /// <param name="userObjectId">Azure Active Directory user's ObjectIdentifier.</param>
-        /// <param name="clientId">Azure Active Directory ApplicationId.</param>
+        /// <param name="clientId">Azure Active Directory Client Id.</param>
         public virtual async Task ClearCacheAsync(string userObjectId, string clientId)
         {
             var cache = await GetCacheAsync(userObjectId, clientId);
             var items = cache.ReadItems().Where(ti => ti.UniqueId == userObjectId && ti.ClientId == clientId);
             foreach (var ti in items)
             {
+                //Note: This will trigger the writes to redis if we are using the redis implementation
                 cache.DeleteItem(ti);
-                //Note: This will trigger the writes to redis if we are using the redis implementation 
             }
         }
     }

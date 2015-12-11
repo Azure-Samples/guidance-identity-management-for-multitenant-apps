@@ -16,10 +16,9 @@ namespace Tailspin.Surveys.TokenStorage
         /// <summary>
         /// Creates a new instance of <see cref="Tailspin.Surveys.TokenStorage.DefaultTokenCacheService"/>
         /// </summary>
-        /// <param name="contextAccessor"><see cref="Microsoft.AspNet.Http.IHttpContextAccessor"/> used to access the current <see cref="Microsoft.AspNet.Http.HttpContext"/></param>
         /// <param name="loggerFactory"><see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> used to create type-specific <see cref="Microsoft.Extensions.Logging.ILogger"/> instances.</param>
-        public DefaultTokenCacheService(IHttpContextAccessor contextAccessor, ILoggerFactory loggerFactory)
-            : base(contextAccessor, loggerFactory)
+        public DefaultTokenCacheService(ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
             _cache = TokenCache.DefaultShared;
         }
