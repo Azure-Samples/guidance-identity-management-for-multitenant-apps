@@ -23,7 +23,7 @@ The secret is just a string, so you have to make sure not to leak the value. The
 
 However, anyone with access to the Azure subscription can view the app settings. Futher, there is always a temptation to check secrets into source control (e.g., in deployment scripts), share them by email, and so on.
 
-For additional security, you can use _client assertion_ instead of a client secret. With client assertion, the client uses an X.509 certificate to prove the token request came from the client. The client certificate is installed on the web server. It's easier to control access to the certificate, than to ensure that nobody inadvertently reveals a client secret.
+For additional security, you can use _client assertion_ instead of a client secret. With client assertion, the client uses an X.509 certificate to prove the token request came from the client. The client certificate is installed on the web server. Generally, it will be easier to restrict access to the certificate, than to ensure that nobody inadvertently reveals a client secret.
 
 Here is a token request using client assertion:
 
