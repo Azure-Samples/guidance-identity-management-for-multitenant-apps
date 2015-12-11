@@ -5,8 +5,7 @@
 // See https://github.com/aspnet/EntityFramework/issues/2357
 // Also https://github.com/aspnet/EntityFramework/issues/2256
 
-//
-
+using System; //Needed for KeyVaultConfigurationProvider
 using Microsoft.AspNet.Hosting;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;

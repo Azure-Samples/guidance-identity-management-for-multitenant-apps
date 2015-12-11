@@ -91,7 +91,8 @@ namespace Tailspin.Surveys.Configuration.KeyVault
         }
         /// <summary>
         /// Loads all secrets which are delimited by : so that they can be retrieved by the config system
-        /// Since KeyVault does not  allow : as delimiters in the share secret name is not used as key for configuration, the Tag properties are used instead
+        /// Since KeyVault does not  allow : as delimiters in the share secret name, the actual name is not used as key for configuration.
+       ///  The Tag property is used instead
         /// The tag should always be of the form "ConfigKey"="ParentKey1:Child1:.."
         /// </summary>
         /// <param name="token"></param>

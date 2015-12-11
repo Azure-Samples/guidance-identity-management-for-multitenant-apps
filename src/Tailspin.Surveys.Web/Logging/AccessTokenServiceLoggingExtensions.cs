@@ -18,11 +18,11 @@ namespace Tailspin.Surveys.Web.Logging
         }
         public static void BearerTokenAcquisitionSucceeded(this ILogger logger, string resource, string user, string issuer)
         {
-            logger.LogInformation("Succeededed bearer token acquisition to call webapi: {0} for issuer: {1} user: {2}", resource, issuer, user);
+            logger.LogInformation("Succeeded bearer token acquisition to call webapi: {0} for issuer: {1} user: {2}", resource, issuer, user);
         }
         public static void BearerTokenAcquisitionFailed(this ILogger logger, string resource, string user, string issuer, Exception exp)
         {
-            logger.LogError(string.Format(CultureInfo.InvariantCulture, "Succeededed bearer token acquisition to call webapi: {0} for issuer: {1} user: {2}", resource, issuer, user), exp);
+            logger.LogError(string.Format(CultureInfo.InvariantCulture, "Succeeded bearer token acquisition to call webapi: {0} for issuer: {1} user: {2}", resource, issuer, user), exp);
         }
     }
 }
