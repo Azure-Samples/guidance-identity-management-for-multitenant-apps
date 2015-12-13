@@ -99,7 +99,7 @@ namespace Tailspin.Surveys.TokenStorage.Redis
                 }
                 catch (Exception exp)
                 {
-                    _logger.WriteToRedisCacheFailed(exp);
+                    _logger.WriteToCacheFailed(exp);
                     throw;
                 }
             }

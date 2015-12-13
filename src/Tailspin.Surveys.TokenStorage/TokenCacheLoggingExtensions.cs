@@ -4,20 +4,20 @@
 using System;
 using Microsoft.Extensions.Logging;
 
-namespace Tailspin.Surveys.TokenStorage.Redis
+namespace Tailspin.Surveys.TokenStorage
 {
     /// <summary>
     /// ILogger extensions for events which occur in the RedisTokenCache
     /// </summary>
-    internal static class RedisTokenCacheLoggingExtensions
+    public static class TokenCacheLoggingExtensions
     {
         public static void ReadFromCacheFailed(this ILogger logger, Exception exp)
         {
-            logger.LogError("Reading from redis cache failed", exp);
+            logger.LogError("Reading from cache failed", exp);
         }
-        public static void WriteToRedisCacheFailed(this ILogger logger, Exception exp)
+        public static void WriteToCacheFailed(this ILogger logger, Exception exp)
         {
-            logger.LogError("Write to redis cache failed", exp);
+            logger.LogError("Writing to cache failed", exp);
         }
         public static void TokenCacheCleared(this ILogger logger, string key)
         {
