@@ -74,10 +74,18 @@ namespace Tailspin.Surveys.Web.Security
                 identity.AddClaim(new Claim(ClaimTypes.Email, email));
             }
 
-            // We need to normalize the name claim for the Identity model
             var name = principal.GetDisplayNameValue();
             if (!string.IsNullOrWhiteSpace(name))
             {
+                // It looks like AAD does something strange here, but it's actually the JwtSecurityTokenHandler making assumptions
+                // about the claims from AAD.  It takes the unique_name claim from AAD and maps it to a ClaimTypes.Name claim, which
+                // is the default type for a name claim for our identity.  If we don't remove the old one, there will be two name claims,
+                // so let's get rid of the first one.
+                var previousNameClaim = principal.FindFirst(ClaimTypes.Name);
+                if (previousNameClaim != null)
+                {
+                    identity.RemoveClaim(previousNameClaim);
+                }
                 identity.AddClaim(new Claim(identity.NameClaimType, name));
             }
         }
