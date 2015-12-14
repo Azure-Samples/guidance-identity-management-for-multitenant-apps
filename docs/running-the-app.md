@@ -62,7 +62,7 @@ This tenant will represent the SaaS provider. To create a new tenant:
 5.	Click the top checkmark to search.
 6.	Select `Surveys.WebAPI`.
 7.	Click the bottom checkmark to complete the dialog. This will add `Surveys.WebAPI` to the permissions list.
-8.	In the **Delegated Permissions** dropdown, select **Access Surveys.API**.
+8.	In the **Delegated Permissions** dropdown, select **Access Surveys.WebAPI**.
 9.	Click **Save**.
 
 ![Setting delegated permissions](media/running-the-app/delegated-permissions.png)
