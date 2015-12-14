@@ -120,9 +120,9 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, userId),
                 new Claim(ClaimTypes.Email, emailAddress),
-                new Claim(SurveyClaimTypes.ObjectId, "objectId"),
-                new Claim(SurveyClaimTypes.TenantId, "TenantId"),
-                new Claim(SurveyClaimTypes.IssuerValue, "issuer")
+                new Claim(AzureADClaimTypes.ObjectId, "objectId"),
+                new Claim(AzureADClaimTypes.TenantId, "TenantId"),
+                new Claim(OpenIdConnectClaimTypes.IssuerValue, "issuer")
 
             }));
             httpContext.SetupGet(c => c.User).Returns(principal);
