@@ -55,7 +55,7 @@ namespace System.Security.Claims
 
         public static string GetDisplayNameValue(this ClaimsPrincipal principal)
         {
-            return principal.FindFirstValue("name", true);
+            return principal.FindFirstValue(AzureADClaimTypes.Name, true);
         }
 
         public static string GetEmailValue(this ClaimsPrincipal principal)
