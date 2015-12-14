@@ -69,7 +69,7 @@ Now give the web app permissions to call the web API:
 
 Update the application manifest for the web API.
 
-1.	In the Azure portal, select the Surveys.WepAPI application.
+1.	In the Azure management portal, select the Surveys.WepAPI application.
 
 2.	Click **Manage Manifest** and select **Download Manifest**.
 
@@ -196,7 +196,7 @@ When the application starts, you are not signed in, so you see the welcome page:
 
 To sign up:
 
-1. Create a new Azure AD tenant. This tenant will represent a customer of the SaaS application.
+1. Create a new Azure AD tenant as we did for Tailspin but with a different company name. This tenant will represent a customer of the SaaS application.
 2. Add an admin user to the new tenant.
 3.	Click **Enroll your company in Tailspin**.
 4.	Sign in as the admin user for your tenant.
