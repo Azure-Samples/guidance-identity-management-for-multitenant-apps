@@ -8,14 +8,16 @@ This topic describes how to run the [Tailspin Surveys](02-tailspin-scenario.md) 
 
 ## Set up your Azure AD tenant
 
-Create a new Azure AD tenant or use an existing one. This tenant will represent the SaaS provider. To create a new tenant:
+### Create a new Azure AD tenant or use an existing one. 
+
+This tenant will represent the SaaS provider. To create a new tenant:
 
 1. Sign into the [Azure management portal](https://manage.windowsazure.com).
 2. Click **New** > **App Services** > **Active Directory** > **Directory** > **Custom Create**.
 3. Enter the required information and click the **Finish** (checkmark) button.
     - Do _not_ check **This is a B2C directory**.
 
-Register the Surveys application in your AD tenant.
+### Register the Surveys application in your AD tenant.
 
 1.	In the [Azure management portal](https://manage.windowsazure.com), navigate to your AD tenant.
 2.	Click **Applications**.
@@ -35,7 +37,7 @@ Register the Surveys application in your AD tenant.
 11.	Click **Save**.
 12.	Copy the value of the key.  _Note_: Do this now, because the key won't be visible after you navigate away from this page, although you can always generate a new one.
 
-Register the Surveys web API.
+### Register the Surveys web API.
 
 1. In the Azure portal, add a new application as described in the previous steps.
 
@@ -51,15 +53,15 @@ Register the Surveys web API.
 
     - You don't need to generate a key for the web API.
 
-Now give the web app permissions to call the web API:
+### Give the web app permissions to call the web API:
 
 1.	In the Azure management portal, click the Surveys application.
 2.	Click **Configure**.
 3.	Under **Permissions to other applications**, click **Add Application**.
 4.	In the dropdown next to **Show**, select **All Apps**.
 5.	Click the top checkmark to search.
-6.	Select `Surveys.API`.
-7.	Click the bottom checkmark to complete the dialog. This will add `Surveys.API` to the permissions list.
+6.	Select `Surveys.WebAPI`.
+7.	Click the bottom checkmark to complete the dialog. This will add `Surveys.WebAPI` to the permissions list.
 8.	In the **Delegated Permissions** dropdown, select **Access Surveys.API**.
 9.	Click **Save**.
 
