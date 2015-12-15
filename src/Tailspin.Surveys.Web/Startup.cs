@@ -70,6 +70,12 @@ namespace Tailspin.Surveys.Web
             var adOptions = configOptions.AzureAd;
             services.Configure<SurveyAppConfiguration.ConfigurationOptions>(_configuration);
 
+            services.AddCaching();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(1);
+            });
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(PolicyNames.RequireSurveyCreator,
@@ -95,10 +101,6 @@ namespace Tailspin.Surveys.Web
             services.AddEntityFramework()
                 .AddSqlServer()
                 .AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configOptions.Data.SurveysConnectionString));
-
-            services.AddScoped<TenantManager, TenantManager>();
-            services.AddScoped<UserManager, UserManager>();
-
 
             // Add MVC services to the services container.
             services.AddMvc();
@@ -135,6 +137,8 @@ namespace Tailspin.Surveys.Web
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<SignInManager, SignInManager>();
+            services.AddScoped<TenantManager, TenantManager>();
+            services.AddScoped<UserManager, UserManager>();
         }
 
         // Configure is called after ConfigureServices is called.
@@ -142,7 +146,7 @@ namespace Tailspin.Surveys.Web
         {
             var configOptions = app.ApplicationServices.GetService<IOptions<SurveyAppConfiguration.ConfigurationOptions>>().Value;
             // Configure the HTTP request pipeline.
-
+            app.UseSession();
             // Add the following to the request pipeline only in development environment.
             if (env.IsDevelopment())
             {

@@ -12,7 +12,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static TokenStorageBuilder AddTokenStorage(this IServiceCollection services)
         {
             // Add the default token service
-            services.AddScoped<ITokenCacheService, DefaultTokenCacheService>();
+            services.AddScoped<ITokenCacheService, SessionTokenCacheService>();
             return new TokenStorageBuilder(services);
         }
     }

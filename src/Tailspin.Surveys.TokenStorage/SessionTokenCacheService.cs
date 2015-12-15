@@ -5,22 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.TokenStorage
 {
-    /// <summary>
-    /// Returns the default token cache which is part of ADAL
-    /// </summary>
-    public class DefaultTokenCacheService : TokenCacheService
+    public class SessionTokenCacheService : TokenCacheService
     {
         /// <summary>
-        /// Creates a new instance of <see cref="Tailspin.Surveys.TokenStorage.DefaultTokenCacheService"/>
+        /// Initializes a new instance of <see cref="Tailspin.Surveys.TokenStorage.SessionTokenCacheService"/>
         /// </summary>
+        /// <param name="contextAccessor">An instance of <see cref="Microsoft.AspNet.Http.IHttpContextAccessor"/> used to get access to the current HTTP context.</param>
         /// <param name="loggerFactory"><see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> used to create type-specific <see cref="Microsoft.Extensions.Logging.ILogger"/> instances.</param>
-        public DefaultTokenCacheService(ILoggerFactory loggerFactory)
+        public SessionTokenCacheService(IHttpContextAccessor contextAccessor, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
-            _cache = TokenCache.DefaultShared;
+            Guard.ArgumentNotNull(contextAccessor, nameof(contextAccessor));
+            Guard.ArgumentNotNull(loggerFactory, nameof(loggerFactory));
+            _cache = new SessionTokenCache(contextAccessor, _loggerFactory);
         }
 
         /// <summary>
