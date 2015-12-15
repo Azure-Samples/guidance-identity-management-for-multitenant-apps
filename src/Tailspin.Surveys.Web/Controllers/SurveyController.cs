@@ -16,6 +16,8 @@ using Tailspin.Surveys.Web.Logging;
 using Tailspin.Surveys.Web.Models;
 using Tailspin.Surveys.Web.Services;
 using Microsoft.AspNet.Authentication.Cookies;
+using System;
+using System.Linq;
 
 namespace Tailspin.Surveys.Web.Controllers
 {
@@ -463,6 +465,26 @@ namespace Tailspin.Surveys.Web.Controllers
                     return RedirectToAction(nameof(Contributors), new { id = contributorRequestViewModel.SurveyId });
                 }
 
+                var existingContributors = await _surveyService.GetSurveyContributorsAsync(contributorRequestViewModel.SurveyId);
+                if (existingContributors.Succeeded)
+                {
+                    if (existingContributors.Item.Contributors.Any(item =>
+                        String.Equals(item.Email, contributorRequestViewModel.EmailAddress, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        ViewBag.SurveyId = contributorRequestViewModel.SurveyId;
+                        ViewBag.Message = contributorRequestViewModel.EmailAddress + " is already a contributor";
+                        return View();
+                    }
+
+                    if (existingContributors.Item.Requests.Any(item =>
+                        String.Equals(item.EmailAddress, contributorRequestViewModel.EmailAddress, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        ViewBag.SurveyId = contributorRequestViewModel.SurveyId;
+                        ViewBag.Message = contributorRequestViewModel.EmailAddress + " has already been requested before";
+                        return View();
+                    }
+                }
+
                 await _surveyService.AddContributorRequestAsync(new ContributorRequest
                 {
                     SurveyId = contributorRequestViewModel.SurveyId,
@@ -474,7 +496,7 @@ namespace Tailspin.Surveys.Web.Controllers
                 var result = await _surveyService.GetSurveyContributorsAsync(contributorRequestViewModel.SurveyId);
                 if (result.Succeeded)
                 {
-                    return View("Contributors",result.Item);
+                    return View("Contributors", result.Item);
                 }
                 else
                 {
@@ -611,18 +633,18 @@ namespace Tailspin.Surveys.Web.Controllers
 
         private IActionResult CheckStatusCode(ApiResult result)
         {
-            if (result.StatusCode == (int) HttpStatusCode.Unauthorized)
+            if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
             {
                 return ReAuthenticateUser();
             }
 
-            if (result.StatusCode == (int) HttpStatusCode.Forbidden)
+            if (result.StatusCode == (int)HttpStatusCode.Forbidden)
             {
                 // Redirects user to Forbidden page
                 return new ChallengeResult(CookieAuthenticationDefaults.AuthenticationScheme);
             }
 
-            if (result.StatusCode == (int) HttpStatusCode.NotFound)
+            if (result.StatusCode == (int)HttpStatusCode.NotFound)
             {
                 ModelState.AddModelError(string.Empty, "The survey can not be found");
                 ViewBag.Message = "The survey can not be found";
