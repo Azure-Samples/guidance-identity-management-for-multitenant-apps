@@ -4,14 +4,14 @@ This chapter describes how a multitenant application can authenticate users from
 
 - [Overview](#overview)
 - [Registering the application with AAD](#registering-the-application-with-aad)
-- [Configuring the OpenID Connect middleware](#configuring-the-openid-connect-middleware)
+- [Configuring the authentication middleware](#configuring-the-authentication-middleware)
 - [Authentication events](#authentication-events)
 - [Initiating the authentication flow](#initiating-the-authentication-flow)
 - [Notes on the OpenID Connect middleware](#notes-on-the-openid-connect-middleware)
 
 ## Overview
 
-Our reference implementation is an ASP.NET 5 application. The application uses the built-in OpenID Connect middleware to perform the OIDC authentication flow. The following diagram shows what happens when the user signs in, at a high level.
+Our [reference implementation](02-tailspin-scenario.md) is an ASP.NET 5 application. The application uses the built-in OpenID Connect middleware to perform the OIDC authentication flow. The following diagram shows what happens when the user signs in, at a high level.
 
 ![Authentication flow](media/authentication/auth-flow.png)
 
@@ -39,9 +39,9 @@ In the **Configure** page:
   -	You can set multiple reply URLs. During development, you can use a `localhost` address, for running the app locally.
 -	Generate a client secret: Under **keys**, click on the drop down that says **Select duration** and pick either 1 or 2 years. The key will be visible when you click **Save**. Be sure to copy the value, because it's not shown again when you reload the configuration page.
 
-## Configuring the OpenID Connect middleware
+## Configuring the authentication middleware
 
-This section describes how to configure the ASP.NET 5 OIDC middleware for multitenant authentication.
+This section describes how to configure the authentication middleware in ASP.NET 5 for multitenant authentication with OpenID Connect.
 
 In your startup class, add the OpenID Connect middleware:
 
@@ -91,16 +91,21 @@ app.UseCookieAuthentication(options =>
 
 The OpenID Connect middleware raises a series of events during authentication, which your app can hook into.
 
-Event | Description
-------|------------
-RedirectToAuthenticationEndpoint |	Called right before the middleware redirects to the authentication endpoint. You can use this event to modify the redirect URL; for example, to add request parameters. See [Adding the admin consent prompt](05-tenant-signup.md#adding-the-admin-consent-prompt).
-AuthorizationResponseReceived	|	Called when the middleware receives the authentication response from the identity provider (IDP), but before the middleware validates the response.  
-AuthorizationCodeReceived	|	Called with the authorization code.
-TokenResponseReceived	|	Called after the middleware gets an access token from the IDP. Applies only to authorization code flow.
-AuthenticationValidated	|	Called after the middleware validates the ID token. At this point, the authentication ticket is valid and has a valid set of claims. You can use this event to perform additional validation on the claims, or to transform claims. See [Working with claims](04-working-with-claims.md).
-UserInformationReceived	|	Called if the middleware gets the user profile from the user info endpoint. Applies only to authorization code flow, and only when `GetClaimsFromUserInfoEndpoint = true` in the middleware options.
-TicketReceived |	Called when authentication is completed. After this event is handled, the user is signed into the app.
-AuthenticationFailed	|	Called if authentication fails. Use this event to handle authentication failures &mdash; for example, by redirecting to an error page.
+- **RedirectToAuthenticationEndpoint**. Called right before the middleware redirects to the authentication endpoint. You can use this event to modify the redirect URL; for example, to add request parameters. See [Adding the admin consent prompt](05-tenant-signup.md#adding-the-admin-consent-prompt).
+
+- **AuthorizationResponseReceived**. Called after the middleware receives the authentication response from the identity provider (IDP), but before the middleware validates the response.  
+
+- **AuthorizationCodeReceived**. Called with the authorization code.
+
+- **TokenResponseReceived**. Called after the middleware gets an access token from the IDP. Applies only to authorization code flow.
+
+- **AuthenticationValidated**. Called after the middleware validates the ID token. At this point, the authentication ticket is valid and has a valid set of claims. You can use this event to perform additional validation on the claims, or to transform claims. See [Working with claims](04-working-with-claims.md).
+
+- **UserInformationReceived**. Called if the middleware gets the user profile from the user info endpoint. Applies only to authorization code flow, and only when `GetClaimsFromUserInfoEndpoint = true` in the middleware options.
+
+- **TicketReceived**. Called when authentication is completed. This is the last event, assuming that authentication succeeds. After this event is handled, the user is signed into the app.
+
+- **AuthenticationFailed**. Called if authentication fails. Use this event to handle authentication failures &mdash; for example, by redirecting to an error page.
 
 To provide callbacks for the events, set the **Events** option on the middleware. There are two different ways to declare the event handlers: Inline with lambdas, or in a class that derives from **OpenIdConnectEvents**.
 
@@ -169,6 +174,21 @@ This causes the middleware to return a 302 (Found) response that redirects to th
 
 The OpenID Connect middleware provided in ASP.NET 5 hides most of the protocol details. This section contains some notes about the implementation, that may be useful for understanding the protocol flow. Also see [Appendix: Overview of OAuth 2 and OpenID Connect](appendixes/about-oauth2-oidc.md).
 
+First, let's examine the authentication flow in terms of ASP.NET (ignoring the details of the OIDC protocol flow between the app and Azure AD). The following diagram shows the process.
+
+![Sign-in flow](media/authentication/sign-in-flow.png)
+
+1. The browser sends a GET request to the sign-in action.
+2. The account controller returns a `ChallengeResult`.
+3. OIDC middleware sends an HTTP 302 response, redirecting to Azure AD.
+4. The browser sends the authentication request to Azure AD
+5. User signs in, and Azure AD sends authentication response
+6. The OIDC middleware creates a claims principal and passes it to the cookie authentication middleware.
+7. The cookie middleware serializes the claims principal and sets a cookie.
+8. The OIDC middleware redirects to the callback URL.
+10. The browser follows the redirect, sending the cookie in the request.
+11. The cookie middleware deserializes the cookie to a claims principal and sets `HttpContext.User` to the claims principal. The request is passed to MVC controller.
+
 ### OpenID connect endpoints
 
 Azure AD supports [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html), wherein the identity provider (IDP) returns a JSON metadata document from a [well-known endpoint](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig). The metadata document contains information such as:
@@ -206,5 +226,4 @@ To specify a different flow, set the **ResponseType** property on the options. F
 
 If authentication succeeds, the OIDC middleware creates an authentication ticket, which contains a claims principal that holds the user's claims. You can access the ticket inside the **AuthenticationValidated** or **TicketReceived** event.
 
-> Note: Until the entire authentication flow is completed, `HttpContext.User` still holds an anonymous principal,  _not_ the authenticated user.
-After the **TicketReceived** event, the OIDC middleware calls the cookie middleware to persist the authentication ticket. At that point, the app redirects again. That's when the cookie middleware deserializes the ticket and sets `HttpContext.User` to the authenticated user.
+> Note: Until the entire authentication flow is completed, `HttpContext.User` still holds an anonymous principal,  _not_ the authenticated user. The anonymous principal has an empty claims collection. After authentication completes and the app redirects, the cookie middleware deserializes the authentication cookie and sets `HttpContext.User` to a claims principal that represents the authenticated user.

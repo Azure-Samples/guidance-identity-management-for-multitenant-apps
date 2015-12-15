@@ -21,6 +21,8 @@ For a discussion of how to define and manage roles, see [Application roles](06-a
 
 Regardless of how you manage the roles, your authorization code will look similar. ASP.NET 5 introduces an abstraction called _authorization policies_. With this feature, you define authorization policies in code, and then apply those policies to controller actions. The policy is decoupled from the controller.
 
+### Create policies
+
 To define a policy, first create a class that implements `IAuthorizationRequirement`. It's easiest to derive from `AuthorizationHandler`. In the `Handle` method, examine the relevant claim(s).
 
 Here is an example from the Tailspin Surveys application:
@@ -45,7 +47,7 @@ public class SurveyCreatorRequirement : AuthorizationHandler<SurveyCreatorRequir
 
 This class defines the requirement for a user to create a new survey. The user must be in the SurveyAdmin or SurveyCreator role.
 
-In your startup class, define a named policy that includes one or more requirements. (If there are multiple requirements, the user must meet _each_ requirement to be authorized.) The following code defines two policies:
+In your startup class, define a named policy that includes one or more requirements. If there are multiple requirements, the user must meet _every_ requirement to be authorized. The following code defines two policies:
 
     services.AddAuthorization(options =>
     {
@@ -66,7 +68,11 @@ In your startup class, define a named policy that includes one or more requireme
 
 > See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Startup.cs)
 
-Finally, to authorize an action in an MVC controller, set the policy in the Authorize attribute:
+This code also sets the authentication scheme, which tells ASP.NET which authentication middleware should run if authorization fails. In this case, we specify the cookie authentication middleware, because the cookie authentication middleware can redirect the user to a "Forbidden" page. The location of the Forbidden page is set in the AccessDeniedPath option for the cookie middleware; see [Configuring the authentication middleware](03-authentication#configuring-the-authentication-middleware).
+
+### Authorize controller actions
+
+Finally, to authorize an action in an MVC controller, set the policy in the `Authorize` attribute:
 
 ```
 [Authorize(Policy = "SurveyCreatorRequirement")]
@@ -227,5 +233,6 @@ static readonly Dictionary<OperationAuthorizationRequirement, Func<List<UserPerm
 
 ## Additional resources
 
-- [Resource Based Authorization](https://docs.asp.net/en/latest/security/authorization/resourcebased.html)
-- [Custom Policy-Based Authorization](https://docs.asp.net/en/latest/security/authorization/policies.html)
+- [Resource Based Authorization](https://docs.asp.net/en/latest/security/authorization/resourcebased.html) (ASP.NET documentation)
+- [Custom Policy-Based Authorization](https://docs.asp.net/en/latest/security/authorization/policies.html) (ASP.NET documentation)
+- [Understanding ASP.NET 5 authorization handlers](appendixes/aspnet5-authorization.md)
