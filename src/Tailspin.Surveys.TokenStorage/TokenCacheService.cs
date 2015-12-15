@@ -46,12 +46,8 @@ namespace Tailspin.Surveys.TokenStorage
         public virtual async Task ClearCacheAsync(string userObjectId, string clientId)
         {
             var cache = await GetCacheAsync(userObjectId, clientId);
-            var items = cache.ReadItems().Where(ti => ti.UniqueId == userObjectId && ti.ClientId == clientId);
-            foreach (var ti in items)
-            {
-                //Note: This will trigger the writes to redis if we are using the redis implementation
-                cache.DeleteItem(ti);
-            }
+            cache.Clear();
         }
     }
 }
+
