@@ -5,7 +5,6 @@ namespace Tailspin.Surveys.Common.Configuration
 {
     public class RedisOptions
     {
-        public string Endpoint { get; set; }
-        public string Password { get; set; }
+        public string Configuration { get; set; }
     }
 }
