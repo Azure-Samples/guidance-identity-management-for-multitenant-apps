@@ -9,12 +9,11 @@ namespace Tailspin.Surveys.TokenStorage
 {
     public class SessionTokenCache : TokenCache
     {
-        private const string SessionTokenCacheKey = "Tailspin.Surveys.AccessTokens";
+        private const string SessionTokenCacheKeyPrefix = "Tailspin.Surveys.AccessTokens_{0}";
 
+        private string _sessionTokenCacheKey;
         private HttpContext _context;
-
         private ILogger _logger;
-
         private ISession _session;
 
         /// <summary>
@@ -27,10 +26,10 @@ namespace Tailspin.Surveys.TokenStorage
             _context = contextAccessor.HttpContext;
             _logger = loggerFactory.CreateLogger<SessionTokenCache>();
             _session = contextAccessor.HttpContext.Session;
+            _sessionTokenCacheKey = string.Format(SessionTokenCacheKeyPrefix, _context.User.GetObjectIdentifierValue());
             AfterAccess = AfterAccessNotification;
-
             byte[] sessionData;
-            if (_session.TryGetValue(SessionTokenCacheKey, out sessionData))
+            if (_session.TryGetValue(_sessionTokenCacheKey, out sessionData))
             {
                 this.Deserialize(sessionData);
             }
@@ -46,7 +45,7 @@ namespace Tailspin.Surveys.TokenStorage
             {
                 try
                 {
-                    _session.Set(SessionTokenCacheKey, this.Serialize());
+                    _session.Set(_sessionTokenCacheKey, this.Serialize());
                     _logger.TokensWrittenToStore(args.ClientId, args.UniqueId, args.Resource);
                     this.HasStateChanged = false;
                 }
@@ -64,7 +63,7 @@ namespace Tailspin.Surveys.TokenStorage
         public override void Clear()
         {
             base.Clear();
-            _session.Remove(SessionTokenCacheKey);
+            _session.Remove(_sessionTokenCacheKey);
             _logger.TokenCacheCleared(_context.User.GetObjectIdentifierValue());
         }
     }
