@@ -41,8 +41,8 @@
     "frameworks": {
       "dnx451": {
         "dependencies": {
-          "Tailspin.Surveys.Configuration.KeyVault": "1.0.0-*",
-          "Tailspin.Surveys.TokenStorage.Redis": "1.0.0-*"
+          "Microsoft.Extensions.Caching.Redis": "1.0.0-rc1-final",
+          "Tailspin.Surveys.Configuration.KeyVault": "1.0.0-*"
         }
       },
         "dnxcore50": { }

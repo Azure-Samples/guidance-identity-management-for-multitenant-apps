@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Features;
 using Microsoft.Extensions.Logging;
@@ -11,7 +9,7 @@ namespace Tailspin.Surveys.TokenStorage
 {
     public class SessionTokenCache : TokenCache
     {
-        private const string SessionTokenCacheKey = "Tailspin.Surveys.Session.AccessTokens";
+        private const string SessionTokenCacheKey = "Tailspin.Surveys.AccessTokens";
 
         private HttpContext _context;
 
@@ -49,12 +47,12 @@ namespace Tailspin.Surveys.TokenStorage
                 try
                 {
                     _session.Set(SessionTokenCacheKey, this.Serialize());
-                    //_logger.TokensWrittenToStore(args.ClientId, args.UniqueId, args.Resource);
+                    _logger.TokensWrittenToStore(args.ClientId, args.UniqueId, args.Resource);
                     this.HasStateChanged = false;
                 }
                 catch (Exception exp)
                 {
-                    //_logger.WriteToRedisCacheFailed(exp);
+                    _logger.WriteToCacheFailed(exp);
                     throw;
                 }
             }
@@ -67,7 +65,7 @@ namespace Tailspin.Surveys.TokenStorage
         {
             base.Clear();
             _session.Remove(SessionTokenCacheKey);
-            //_logger.TokenCacheCleared(_key.ToString());
+            _logger.TokenCacheCleared(_context.User.GetObjectIdentifierValue());
         }
     }
 }

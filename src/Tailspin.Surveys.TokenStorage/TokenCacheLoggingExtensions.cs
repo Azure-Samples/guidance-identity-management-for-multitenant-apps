@@ -19,9 +19,9 @@ namespace Tailspin.Surveys.TokenStorage
         {
             logger.LogError("Writing to cache failed", exp);
         }
-        public static void TokenCacheCleared(this ILogger logger, string key)
+        public static void TokenCacheCleared(this ILogger logger, string userId)
         {
-            logger.LogInformation("Cleared token cache for Key: {0}", key);
+            logger.LogInformation("Cleared token cache for User: {0}", userId);
         }
         public static void TokensRetrievedFromStore(this ILogger logger, string key)
         {

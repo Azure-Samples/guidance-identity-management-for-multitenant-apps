@@ -70,6 +70,15 @@ namespace Tailspin.Surveys.Web
             var adOptions = configOptions.AzureAd;
             services.Configure<SurveyAppConfiguration.ConfigurationOptions>(_configuration);
 
+#if DNX451
+            services.AddRedisCache();
+            services.Configure<Microsoft.Extensions.Caching.Redis.RedisCacheOptions>(options =>
+            {
+                options.Configuration = configOptions.Redis.Configuration;
+            });
+#endif
+
+            // This will only add the LocalCache implementation of IDistributedCache if there is not an IDistributedCache already registered.
             services.AddCaching();
             services.AddSession(options =>
             {
@@ -113,20 +122,6 @@ namespace Tailspin.Surveys.Web
 
             // This will register the default token storage.
             services.AddTokenStorage();
-            //Stack exchange client is only only supported in DNX451 at present
-            //The custom RedisTokenCache built for this application uses the StackExchange client 
-#if DNX451
-            services.AddRedisConnection(options =>
-            {
-                options.AddEndpoint(configOptions.Redis.Endpoint)
-                    .UsePassword(configOptions.Redis.Password)
-                    .UseSsl();
-            });
-
-            // Replace the default token storage with a Redis-based version.
-            services.AddTokenStorage()
-                .UseRedisTokenStorageService();
-#endif
 
             services.AddScoped<IAccessTokenService, AzureADTokenService>();
             services.AddSingleton<HttpClientService>();
