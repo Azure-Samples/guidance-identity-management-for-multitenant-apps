@@ -83,7 +83,7 @@ This section shows how to configure the Tailspin Surveys application to use clie
 
         certutil -store -user my [subject]
 
-    where `[subject]` is the value that you specified for Subject in the PowerShell script. The thumbprint is listed under "Cert Hash(sha1)".
+    where `[subject]` is the value that you specified for Subject in the PowerShell script. The thumbprint is listed under "Cert Hash(sha1)". Remove the spaces between the hexadecimal numbers.
 
 4. Update your app secrets. In Solution Explorer, right-click the Tailspin.Surveys.Web project and select **Manage User Secrets**. Add an entry for "Asymmetric" as shown below:
 
@@ -94,13 +94,13 @@ This section shows how to configure the Tailspin Surveys application to use clie
             "TenantId": "[Your tenant ID]",
             // new:
             "Asymmetric": {
-              "CertificateThumbprint": "[Thumbprint]", // Example: 105b2ff3bc842c53582661716db1b7cdc6b43ec9
+              "CertificateThumbprint": "[Thumbprint]", // Example: "105b2ff3bc842c53582661716db1b7cdc6b43ec9"
               "StoreName": "My",
               "StoreLocation": "CurrentUser",
               "ValidationRequired": "false"
             }
 
-    You must set `ValidationRequired` to false, because the certificate was not a signed by a root CA authority. In production, use a certificate that is signed by a CA authority and set `ValidationRequired` to true.
+    You must set `ValidationRequired` to false, because the certificate was not a signed by a root CA authority. In production, use a certificate that is signed by a CA authority and set `ValidationRequired` to true. 
 
 5. In Startup.cs, locate the code that registers the `ICredentialService`. Uncomment the line that uses `CertificateCredentialService`, and comment out the line that uses `ClientCredentialService`:
 
