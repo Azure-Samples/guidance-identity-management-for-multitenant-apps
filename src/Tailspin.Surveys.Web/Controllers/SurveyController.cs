@@ -397,7 +397,7 @@ namespace Tailspin.Surveys.Web.Controllers
         /// </summary>
         /// <param name="id">The id of the <see cref="Survey"/></param>
         /// <returns>A view showing contributors associated with a <see cref="Survey"/></returns>
-        public async Task<IActionResult> ShowContributors(int id)
+        public async Task<IActionResult> Contributors(int id)
         {
             try
             {
@@ -460,7 +460,7 @@ namespace Tailspin.Surveys.Web.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return RedirectToAction(nameof(ShowContributors), new { id = contributorRequestViewModel.SurveyId });
+                    return RedirectToAction(nameof(Contributors), new { id = contributorRequestViewModel.SurveyId });
                 }
 
                 await _surveyService.AddContributorRequestAsync(new ContributorRequest
@@ -474,7 +474,7 @@ namespace Tailspin.Surveys.Web.Controllers
                 var result = await _surveyService.GetSurveyContributorsAsync(contributorRequestViewModel.SurveyId);
                 if (result.Succeeded)
                 {
-                    return View("ShowContributors",result.Item);
+                    return View("Contributors",result.Item);
                 }
                 else
                 {

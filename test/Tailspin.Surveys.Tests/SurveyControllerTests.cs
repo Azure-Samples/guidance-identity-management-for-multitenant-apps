@@ -60,7 +60,7 @@ namespace MultiTentantSurveyAppTests
         }
 
         [Fact]
-        public async Task ShowContributors_ShowsContributorsForSurvey()
+        public async Task Contributors_ShowsContributorsForSurvey()
         {
             var contributors = new ContributorsDTO();
             var apiResult = new Mock<ApiResult<ContributorsDTO>>();
@@ -70,7 +70,7 @@ namespace MultiTentantSurveyAppTests
             _surveyService.Setup(s => s.GetSurveyContributorsAsync(It.IsAny<int>()))
                 .ReturnsAsync(apiResult.Object);
 
-            var result = await _target.ShowContributors(12345);
+            var result = await _target.Contributors(12345);
             var viewResult = Assert.IsType<ViewResult>(result);
 
             Assert.Equal(contributors, viewResult.ViewData.Model);
