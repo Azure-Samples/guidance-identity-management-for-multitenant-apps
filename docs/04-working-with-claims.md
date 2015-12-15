@@ -58,8 +58,8 @@ For example, Azure AD sends a "upn" claim that contains the user's email. Other 
   }
   ```
 
-- Adding **default claim values** for claims that aren't present &mdash; for example, assigning a user to a default role. In some cases this can simplify authorization logic.
-- Adding **custom claim types**, to represent application-specific information about the user. For example, you might store some information about the user in a database. You could create a custom claim for that information, adding it to the authentication ticket. The advantage of this approach is that the claim gets stored in the user cookie, so you only need to get it from the database once per login session.
+- Add **default claim values** for claims that aren't present &mdash; for example, assigning a user to a default role. In some cases this can simplify authorization logic.
+- Add **custom claim types** with application-specific information about the user. For example, you might store some information about the user in a database. You could add a custom claim with this information to the authentication ticket. The claim is stored in a cookie, so you only need to get it from the database once per login session. On the other hand, you also want to avoid creating excessively large cookies, so you need to consider the trade-off between cookie size versus database lookups.   
 
 After the authentication flow is complete, the claims are available in the `HttpContext.User`. At that point, you should treat them as a read-only collection &mdash; e.g., use them to make authorization decisions.
 
