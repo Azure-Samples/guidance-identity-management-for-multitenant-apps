@@ -468,23 +468,20 @@ namespace Tailspin.Surveys.Web.Controllers
                 var existingContributors = await _surveyService.GetSurveyContributorsAsync(contributorRequestViewModel.SurveyId);
                 if (existingContributors.Succeeded)
                 {
-                    foreach (var item in existingContributors.Item.Contributors)
+                    if (existingContributors.Item.Contributors.Any(item =>
+                        String.Equals(item.Email, contributorRequestViewModel.EmailAddress, StringComparison.OrdinalIgnoreCase)))
                     {
-                        if (String.Equals(item.Email, contributorRequestViewModel.EmailAddress, StringComparison.OrdinalIgnoreCase))
-                        {
-                            ViewBag.SurveyId = contributorRequestViewModel.SurveyId;
-                            ViewBag.Message = contributorRequestViewModel.EmailAddress + " is already a contributor";
-                            return View();
-                        }
+                        ViewBag.SurveyId = contributorRequestViewModel.SurveyId;
+                        ViewBag.Message = contributorRequestViewModel.EmailAddress + " is already a contributor";
+                        return View();
                     }
-                    foreach (var item in existingContributors.Item.Requests)
+
+                    if (existingContributors.Item.Requests.Any(item =>
+                        String.Equals(item.EmailAddress, contributorRequestViewModel.EmailAddress, StringComparison.OrdinalIgnoreCase)))
                     {
-                        if (String.Equals(item.EmailAddress, contributorRequestViewModel.EmailAddress, StringComparison.OrdinalIgnoreCase))
-                        {
-                            ViewBag.SurveyId = contributorRequestViewModel.SurveyId;
-                            ViewBag.Message = contributorRequestViewModel.EmailAddress + " has already been requested before";
-                            return View();
-                        }
+                        ViewBag.SurveyId = contributorRequestViewModel.SurveyId;
+                        ViewBag.Message = contributorRequestViewModel.EmailAddress + " has already been requested before";
+                        return View();
                     }
                 }
 
