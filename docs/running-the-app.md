@@ -6,9 +6,11 @@ This topic describes how to run the [Tailspin Surveys](02-tailspin-scenario.md) 
 -	[ASP.NET 5 and Microsoft Web Developer Tools](https://docs.asp.net/en/latest/getting-started/installing-on-windows.html#install-asp-net-with-visual-studio)
 -	[Microsoft Azure](https://azure.microsoft.com) account
 
-## Create a new Azure AD tenant 
+## Set up your Azure AD tenant
 
-This tenant will represent the SaaS provider. 
+### Create a new Azure AD tenant or use an existing one. 
+
+This tenant will represent the SaaS provider. To create a new tenant:
 
 1. Sign into the [Azure management portal](https://manage.windowsazure.com).
 2. Click **New** > **App Services** > **Active Directory** > **Directory** > **Custom Create**.
@@ -131,23 +133,21 @@ For more information about creating a Redis cache, see [How to Use Azure Redis C
                 "ClientId": "[Surveys application client ID]",
                 "ClientSecret": "[Surveys application client secret]",
                 "PostLogoutRedirectUri": "https://localhost:44300/",
-                "WebApiResourceId": "[App ID URI of your Survey.WebAPI application]",
+                "WebApiResourceId": "[Surveys.WebAPI app ID URI]",
                 "TenantId": "[Your tenant ID]"
               },
             "Redis": {
-                "Endpoint": "[Redis cache endpoint]",
-                "Password": "[Redis cache primary key]"
+              "Configuration": "[Redis DNS name].redis.cache.windows.net,password=[Redis primary key],ssl=true"
               }
           }
 
     Replace the entries in [square brackets] with the correct values.
 
-    - `ClientId`: The client ID of the Surveys app.
-    - `ClientSecret`: The key that your generated when you registered the Surveys application in Azure AD.
-    - `WebApiResourceId`: The App ID URI that you specified when you created the Surveys.WebAPI application in Azure AD.
-    - `TenantId`: The object ID for your Azure AD tenant. To find this value in the Azure portal, navigate to your tenant. Click **Applications**, then click **View Endpoints** at the bottom of the portal. The tenant ID is the GUID that appears in the endpoint URLs.
-    - `Endpoint`: Host name of the Redis cache, `[DNS name].redis.cache.windows.net`.
-    - `Password`: Primary key for the Redis cache.
+    - `AzureAd:ClientId`: The client ID of the Surveys app.
+    - `AzureAd:ClientSecret`: The key that you generated when you registered the Surveys application in Azure AD.
+    - `AzureAd:WebApiResourceId`: The App ID URI that you specified when you created the Surveys.WebAPI application in Azure AD.
+    - `AzureAd:TenantId`: The object ID for your Azure AD tenant. To find this value in the Azure portal, navigate to your tenant. Click **Applications**, then click **View Endpoints** at the bottom of the portal. The tenant ID is the GUID that appears in the endpoint URLs.
+    - `Redis:Configuration`: Build this string from the DNS name of the Redis cache and the primarcy access key. For example, "tailspin.redis.cache.windows.net,password=2h5tBxxx,ssl=true".
 
 4.	Save the updated secrets.json file.
 
