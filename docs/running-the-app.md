@@ -6,18 +6,16 @@ This topic describes how to run the [Tailspin Surveys](02-tailspin-scenario.md) 
 -	[ASP.NET 5 and Microsoft Web Developer Tools](https://docs.asp.net/en/latest/getting-started/installing-on-windows.html#install-asp-net-with-visual-studio)
 -	[Microsoft Azure](https://azure.microsoft.com) account
 
-## Set up your Azure AD tenant
+## Create a new Azure AD tenant 
 
-### Create a new Azure AD tenant or use an existing one. 
-
-This tenant will represent the SaaS provider. To create a new tenant:
+This tenant will represent the SaaS provider. 
 
 1. Sign into the [Azure management portal](https://manage.windowsazure.com).
 2. Click **New** > **App Services** > **Active Directory** > **Directory** > **Custom Create**.
 3. Enter the required information and click the **Finish** (checkmark) button.
     - Do _not_ check **This is a B2C directory**.
 
-### Register the Surveys application in your AD tenant.
+## Register the Surveys web app in your AD tenant
 
 1.	In the [Azure management portal](https://manage.windowsazure.com), navigate to your AD tenant.
 2.	Click **Applications**.
@@ -37,7 +35,7 @@ This tenant will represent the SaaS provider. To create a new tenant:
 11.	Click **Save**.
 12.	Copy the value of the key.  _Note_: Do this now, because the key won't be visible after you navigate away from this page, although you can always generate a new one.
 
-### Register the Surveys web API.
+## Register the Surveys web API in your AD tenant
 
 1. In the Azure portal, add a new application as described in the previous steps.
 
@@ -53,7 +51,7 @@ This tenant will represent the SaaS provider. To create a new tenant:
 
     - You don't need to generate a key for the web API.
 
-### Give the web app permissions to call the web API:
+## Give the web app permissions to call the web API
 
 1.	In the Azure management portal, click the Surveys application.
 2.	Click **Configure**.
