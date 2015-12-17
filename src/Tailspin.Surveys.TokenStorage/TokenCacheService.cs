@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Logging;
@@ -33,25 +34,18 @@ namespace Tailspin.Surveys.TokenStorage
         /// <summary>
         /// Returns an instance of <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.TokenCache"/>.
         /// </summary>
-        /// <param name="userObjectId">Azure Active Directory user's ObjectIdentifier.</param>
-        /// <param name="clientId">Azure Active Directory ApplicationId.</param>
+        /// <param name="claimsPrincipal">Current user's <see cref="System.Security.Claims.ClaimsPrincipal"/>.</param>
         /// <returns>An instance of <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.TokenCache"/>.</returns>
-        public abstract Task<TokenCache> GetCacheAsync(string userObjectId, string clientId);
+        public abstract Task<TokenCache> GetCacheAsync(ClaimsPrincipal claimsPrincipal);
 
         /// <summary>
         /// Clears the token cache.
         /// </summary>
-        /// <param name="userObjectId">Azure Active Directory user's ObjectIdentifier.</param>
-        /// <param name="clientId">Azure Active Directory Client Id.</param>
-        public virtual async Task ClearCacheAsync(string userObjectId, string clientId)
+        /// <param name="claimsPrincipal">Current user's <see cref="System.Security.Claims.ClaimsPrincipal"/>.</param>
+        public virtual async Task ClearCacheAsync(ClaimsPrincipal claimsPrincipal)
         {
-            var cache = await GetCacheAsync(userObjectId, clientId);
-            var items = cache.ReadItems().Where(ti => ti.UniqueId == userObjectId && ti.ClientId == clientId);
-            foreach (var ti in items)
-            {
-                //Note: This will trigger the writes to redis if we are using the redis implementation
-                cache.DeleteItem(ti);
-            }
+            var cache = await GetCacheAsync(claimsPrincipal);
+            cache.Clear();
         }
     }
 }
