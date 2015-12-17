@@ -51,9 +51,9 @@ This section shows how to configure the Tailspin Surveys application to use clie
 
     For the `Subject` parameter, enter any name, such as "surveysapp". The script generates a self-signed certificate and stores it in the "Current User/Personal" certificate store.
 
-2. The output from the script is a JSON fragment. Add this to the Surveys application manifest.
+2. The output from the script is a JSON fragment. Add this to the application manifest of the web app, as follows:
 
-    1. Log into the Azure portal and navigate to your Azure AD directory.
+    1. Log into the [Azure management portal](https://github.comhttps://manage.windowsazure.com) and navigate to your Azure AD directory.
 
     2. Click **Applications**.
 

@@ -3,6 +3,8 @@
 
 ## Phase 1: Identity Management
 
+> **This guidance project is still under development**
+
 This project consists of:
 
 - The Tailspin Surveys application, a reference implementation of a multi-tenant SaaS application.

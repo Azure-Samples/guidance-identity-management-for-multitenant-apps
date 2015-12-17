@@ -14,9 +14,7 @@ namespace Tailspin.Surveys.TokenStorage
         private const string SessionTokenCacheKey = "Tailspin.Surveys.TokenCache";
 
         private HttpContext _context;
-
         private ILogger _logger;
-
         private ISession _session;
 
         private IDataProtector _protector;
@@ -38,7 +36,6 @@ namespace Tailspin.Surveys.TokenStorage
             _session = contextAccessor.HttpContext.Session;
             _protector = dataProtectionProvider.CreateProtector(typeof(SessionTokenCache).FullName);
             AfterAccess = AfterAccessNotification;
-
             byte[] sessionData;
             if (_session.TryGetValue(SessionTokenCacheKey, out sessionData))
             {
