@@ -53,7 +53,7 @@ namespace Tailspin.Surveys.Web.Logging
             }
             else
             {
-                _logger.RequestFailed(method, uri, requestStopwatch.Elapsed, response.ReasonPhrase, response.StatusCode.ToString(), userId, issuerValue);
+                _logger.RequestFailed(method, uri, requestStopwatch.Elapsed, response.ReasonPhrase, (int)response.StatusCode, userId, issuerValue);
 
             }
             return response;
