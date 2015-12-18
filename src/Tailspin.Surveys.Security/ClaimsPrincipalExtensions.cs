@@ -25,7 +25,7 @@ namespace System.Security.Claims
 
         public static string GetIssuerValue(this ClaimsPrincipal principal, bool throwIfNotFound = true)
         {
-            return principal.FindFirstValue(SurveyClaimTypes.IssuerValue, throwIfNotFound);
+            return principal.FindFirstValue(OpenIdConnectClaimTypes.IssuerValue, throwIfNotFound);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace System.Security.Claims
         /// <returns>The AAD Tenant ID if it exists, otherwise, an exception is thrown.</returns>
         public static string GetTenantIdValue(this ClaimsPrincipal principal)
         {
-            return principal.FindFirstValue(SurveyClaimTypes.TenantId, true);
+            return principal.FindFirstValue(AzureADClaimTypes.TenantId, true);
         }
 
         public static int GetSurveyUserIdValue(this ClaimsPrincipal principal)
@@ -50,12 +50,12 @@ namespace System.Security.Claims
 
         public static string GetObjectIdentifierValue(this ClaimsPrincipal principal, bool throwIfNotFound = true)
         {
-            return principal.FindFirstValue(SurveyClaimTypes.ObjectId, throwIfNotFound);
+            return principal.FindFirstValue(AzureADClaimTypes.ObjectId, throwIfNotFound);
         }
 
         public static string GetDisplayNameValue(this ClaimsPrincipal principal)
         {
-            return principal.FindFirstValue("name", true);
+            return principal.FindFirstValue(AzureADClaimTypes.Name, true);
         }
 
         public static string GetEmailValue(this ClaimsPrincipal principal)

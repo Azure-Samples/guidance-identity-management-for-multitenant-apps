@@ -25,7 +25,7 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "54321"),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
-                new Claim(SurveyClaimTypes.TenantId, "tenantid"),
+                new Claim(AzureADClaimTypes.TenantId, "tenantid"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -42,7 +42,7 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "54321"),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
-                new Claim(SurveyClaimTypes.TenantId, "tenantid")
+                new Claim(AzureADClaimTypes.TenantId, "tenantid")
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
             var target = new TestableSurveyAuthorizationHandler();
@@ -58,7 +58,7 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
-                new Claim(SurveyClaimTypes.TenantId, "tenantid"),
+                new Claim(AzureADClaimTypes.TenantId, "tenantid"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -75,7 +75,7 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "54321"),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
-                new Claim(SurveyClaimTypes.TenantId, "tenantid"),
+                new Claim(AzureADClaimTypes.TenantId, "tenantid"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -92,7 +92,7 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "54321"),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "54321"),
-                new Claim(SurveyClaimTypes.TenantId, "tenantid"),
+                new Claim(AzureADClaimTypes.TenantId, "tenantid"),
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
             var target = new TestableSurveyAuthorizationHandler();
@@ -108,7 +108,7 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
-                new Claim(SurveyClaimTypes.TenantId, "tenantid"),
+                new Claim(AzureADClaimTypes.TenantId, "tenantid"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -125,7 +125,7 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
-                new Claim(SurveyClaimTypes.TenantId, "tenantid"),
+                new Claim(AzureADClaimTypes.TenantId, "tenantid"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -142,7 +142,7 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "54321"),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
-                new Claim(SurveyClaimTypes.TenantId, "tenantid"),
+                new Claim(AzureADClaimTypes.TenantId, "tenantid"),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -175,7 +175,7 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "11111"), // Different tenant from survey
-                new Claim(SurveyClaimTypes.TenantId, "tenantid"),
+                new Claim(AzureADClaimTypes.TenantId, "tenantid"),
                 new Claim(ClaimTypes.Role, Roles.SurveyAdmin)
             }));
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
@@ -210,7 +210,7 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
-                new Claim(SurveyClaimTypes.TenantId, "tenantid"),
+                new Claim(AzureADClaimTypes.TenantId, "tenantid"),
                 new Claim(ClaimTypes.Role, Roles.SurveyReader),
                 new Claim(ClaimTypes.Role, Roles.SurveyCreator),
                 new Claim(ClaimTypes.Role, Roles.SurveyReader)
@@ -229,7 +229,7 @@ namespace MultiTentantSurveyAppTests
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, "11111"),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, "12345"),
-                new Claim(SurveyClaimTypes.TenantId, "tenantid"),
+                new Claim(AzureADClaimTypes.TenantId, "tenantid"),
                 new Claim(ClaimTypes.Role, Roles.SurveyReader),
                 new Claim(ClaimTypes.Role, Roles.SurveyReader)
             }));
