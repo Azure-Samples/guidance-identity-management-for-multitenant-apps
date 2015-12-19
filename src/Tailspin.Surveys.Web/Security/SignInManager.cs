@@ -57,8 +57,6 @@ namespace Tailspin.Surveys.Web.Security
                 await _httpContext.Authentication.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme,
                     new AuthenticationProperties { RedirectUri = redirectUrl });
 
-                await _accessTokenService.ClearCacheAsync(_httpContext.User);
-
                 _logger.SignoutCompleted(userObjectIdentifier, issuer);
             }
             catch (Exception exp)
