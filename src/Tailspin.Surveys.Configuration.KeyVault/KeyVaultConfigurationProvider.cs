@@ -124,7 +124,7 @@ namespace Tailspin.Surveys.Configuration.KeyVault
             AuthenticationResult result = null;
             try
             {
-                var authContext = new AuthenticationContext(authority, TokenCache.DefaultShared);
+                var authContext = new AuthenticationContext(authority);
                 result = await authContext.AcquireTokenAsync(resource, _assertion);
             }
             catch (Exception exp)
