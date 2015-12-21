@@ -40,4 +40,4 @@ In this guindance, we consider the following scenarios for organizational sign-i
     - This scenario includes Office365 and Dynamics CRM tenants.
 -	On-premise Active Directory (AD). In this case, there are two options:
     - The customer uses [Azure AD Connect](https://azure.microsoft.com/en-us/documentation/articles/active-directory-aadconnect/) to sync their on-premise AD with Azure AD. This is the simplest option.
-    - The SaaS provider federates with the customer's AD through Active Directory Federation Services (AD FS). See [Federating with a customer's AD FS](08-adfs.md).
+    - The SaaS provider federates with the customer's AD through Active Directory Federation Services (AD FS). See [Federating with a customer's AD FS](09-adfs.md).
