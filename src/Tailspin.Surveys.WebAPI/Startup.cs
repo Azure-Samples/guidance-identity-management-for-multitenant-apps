@@ -3,6 +3,7 @@
 
 using System; //Needed for KeyVaultConfigurationProvider
 using System.IdentityModel.Tokens;
+using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Diagnostics;
@@ -68,13 +69,13 @@ namespace Tailspin.Surveys.WebApi
                     policy =>
                     {
                         policy.AddRequirements(new SurveyCreatorRequirement());
-                        policy.AddAuthenticationSchemes("Bearer");
+                        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
                     });
                 options.AddPolicy(PolicyNames.RequireSurveyAdmin,
                     policy =>
                     {
                         policy.AddRequirements(new SurveyAdminRequirement());
-                        policy.AddAuthenticationSchemes("Bearer");
+                        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
                     });
             });
 
