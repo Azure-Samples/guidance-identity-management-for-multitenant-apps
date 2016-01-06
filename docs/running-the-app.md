@@ -8,7 +8,7 @@ This topic describes how to run the [Tailspin Surveys](02-tailspin-scenario.md) 
 
 ## Set up your Azure AD tenant
 
-### Create a new Azure AD tenant or use an existing one. 
+### Create a new Azure AD tenant or use an existing one.
 
 This tenant will represent the SaaS provider. To create a new tenant:
 
@@ -133,8 +133,7 @@ For more information about creating a Redis cache, see [How to Use Azure Redis C
                 "ClientId": "[Surveys application client ID]",
                 "ClientSecret": "[Surveys application client secret]",
                 "PostLogoutRedirectUri": "https://localhost:44300/",
-                "WebApiResourceId": "[Surveys.WebAPI app ID URI]",
-                "TenantId": "[Your tenant ID]"
+                "WebApiResourceId": "[Surveys.WebAPI app ID URI]"
               },
             "Redis": {
               "Configuration": "[Redis DNS name].redis.cache.windows.net,password=[Redis primary key],ssl=true"
@@ -146,7 +145,6 @@ For more information about creating a Redis cache, see [How to Use Azure Redis C
     - `AzureAd:ClientId`: The client ID of the Surveys app.
     - `AzureAd:ClientSecret`: The key that you generated when you registered the Surveys application in Azure AD.
     - `AzureAd:WebApiResourceId`: The App ID URI that you specified when you created the Surveys.WebAPI application in Azure AD.
-    - `AzureAd:TenantId`: The object ID for your Azure AD tenant. To find this value in the Azure portal, navigate to your tenant. Click **Applications**, then click **View Endpoints** at the bottom of the portal. The tenant ID is the GUID that appears in the endpoint URLs.
     - `Redis:Configuration`: Build this string from the DNS name of the Redis cache and the primarcy access key. For example, "tailspin.redis.cache.windows.net,password=2h5tBxxx,ssl=true".
 
 4.	Save the updated secrets.json file.
@@ -196,11 +194,9 @@ When the application starts, you are not signed in, so you see the welcome page:
 
 To sign up:
 
-1. Create a new Azure AD tenant as we did for Tailspin but with a different company name. This tenant will represent a customer of the SaaS application.
-2. Add an admin user to the new tenant.
-3.	Click **Enroll your company in Tailspin**.
-4.	Sign in as the admin user for your tenant.
-3.	Accept the consent prompt.
+1. Click **Enroll your company in Tailspin**.
+2. Sign in as the admin user for your tenant.
+3. Accept the consent prompt.
 
 The application registers the tenant, and then signs you out. The app signs you out because you need to set up the application roles in Azure AD, before using the application.
 
