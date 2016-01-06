@@ -19,7 +19,7 @@ namespace Tailspin.Surveys.Web.Security
     {
         private readonly HttpContext _httpContext;
 
-        private readonly IAccessTokenService _accessTokenService;
+        private readonly ISurveysTokenService _surveysTokenService;
 
         private readonly ILogger _logger;
 
@@ -27,14 +27,14 @@ namespace Tailspin.Surveys.Web.Security
         /// Initializes a new instance of <see cref="Tailspin.Surveys.Web.Security.SignInManager"/>;
         /// </summary>
         /// <param name="contextAccessor">An instance of <see cref="Microsoft.AspNet.Http.IHttpContextAccessor"/> used to get access to the current HTTP context.</param>
-        /// <param name="accessTokenService">An instance of <see cref="Tailspin.Surveys.Web.Security.IAccessTokenService"/></param>
+        /// <param name="surveysTokenService">An instance of <see cref="Tailspin.Surveys.Web.Security.ISurveysTokenService"/></param>
         /// <param name="logger">An <see cref="Microsoft.Extensions.Logging.ILogger"/> implementation used for diagnostic information.</param>
         public SignInManager(IHttpContextAccessor contextAccessor,
-            IAccessTokenService accessTokenService,
+            ISurveysTokenService surveysTokenService,
             ILogger<SignInManager> logger)
         {
             _httpContext = contextAccessor.HttpContext;
-            _accessTokenService = accessTokenService;
+            _surveysTokenService = surveysTokenService;
             _logger = logger;
         }
 

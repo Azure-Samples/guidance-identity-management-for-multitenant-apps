@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace Tailspin.Surveys.Web.Security
 {
-    public interface IAccessTokenService
+    public interface ISurveysTokenService
     {
         /// <summary>
         /// This method retrieves the access token for the WebAPI resource that has previously

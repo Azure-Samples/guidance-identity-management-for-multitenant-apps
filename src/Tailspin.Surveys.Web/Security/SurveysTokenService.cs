@@ -18,7 +18,7 @@ namespace Tailspin.Surveys.Web.Security
     /// <summary>
     /// This service helps with the acquisition of access tokens from Azure Active Directory.
     /// </summary>
-    public class AzureADTokenService : IAccessTokenService
+    public class SurveysTokenService : ISurveysTokenService
     {
         private readonly AzureAdOptions _adOptions;
         private readonly ITokenCacheService _tokenCacheService;
@@ -26,17 +26,17 @@ namespace Tailspin.Surveys.Web.Security
         private readonly ICredentialService _credentialService;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="Tailspin.Surveys.Web.Security.AzureADTokenService"/>.
+        /// Initializes a new instance of <see cref="Tailspin.Surveys.Web.Security.SurveysTokenService"/>.
         /// </summary>
         /// <param name="options"></param>
         /// <param name="tokenCacheService"></param>
         /// <param name="credentialService"></param>
         /// <param name="logger"></param>
-        public AzureADTokenService(
+        public SurveysTokenService(
             IOptions<ConfigurationOptions> options,
             ITokenCacheService tokenCacheService,
             ICredentialService credentialService,
-            ILogger<AzureADTokenService> logger)
+            ILogger<SurveysTokenService> logger)
         {
             _adOptions = options?.Value?.AzureAd;
             _tokenCacheService = tokenCacheService;

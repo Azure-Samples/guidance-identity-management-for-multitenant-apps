@@ -239,10 +239,10 @@ namespace Tailspin.Surveys.Web.Security
         public override async Task AuthorizationCodeReceived(AuthorizationCodeReceivedContext context)
         {
             var principal = context.AuthenticationTicket.Principal;
-            var accessTokenService = context.HttpContext.RequestServices.GetService<IAccessTokenService>();
+            var tokenService = context.HttpContext.RequestServices.GetService<ISurveysTokenService>();
             try
             {
-                await accessTokenService.RequestAccessTokenAsync(
+                await tokenService.RequestAccessTokenAsync(
                     principal,
                     context.ProtocolMessage.Code,
                     context.AuthenticationTicket.Properties.Items[OpenIdConnectDefaults.RedirectUriForCodePropertiesKey],
@@ -254,7 +254,7 @@ namespace Tailspin.Surveys.Web.Security
                 // If an exception is thrown within this event, the user is never set on the OWIN middleware,
                 // so there is no need to sign out.  However, the access token could have been put into the
                 // cache so we need to clean it up.
-                await accessTokenService.ClearCacheAsync(principal)
+                await tokenService.ClearCacheAsync(principal)
                     .ConfigureAwait(false);
                 throw;
             }
