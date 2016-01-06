@@ -123,7 +123,7 @@ namespace Tailspin.Surveys.Web
             // This will register the default token storage.
             services.AddTokenStorage();
 
-            services.AddScoped<IAccessTokenService, AzureADTokenService>();
+            services.AddScoped<ISurveysTokenService, SurveysTokenService>();
             services.AddSingleton<HttpClientService>();
 
             // Use this for client certificate support

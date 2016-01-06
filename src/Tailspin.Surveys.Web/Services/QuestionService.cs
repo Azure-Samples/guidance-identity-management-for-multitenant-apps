@@ -24,15 +24,15 @@ namespace Tailspin.Surveys.Web.Services
     public class QuestionService: IQuestionService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IAccessTokenService _accessTokenService;
+        private readonly ISurveysTokenService _surveysTokenService;
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
         
-        public QuestionService(HttpClientService factory, IHttpContextAccessor httpContextAccessor, IAccessTokenService accessTokenService)
+        public QuestionService(HttpClientService factory, IHttpContextAccessor httpContextAccessor, ISurveysTokenService surveysTokenService)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpClient = factory.GetHttpClient();
-            _accessTokenService = accessTokenService;
+            _surveysTokenService = surveysTokenService;
             _cancellationToken = httpContextAccessor?.HttpContext?.RequestAborted ?? CancellationToken.None;
         }
 
@@ -40,7 +40,7 @@ namespace Tailspin.Surveys.Web.Services
         {
             var path = $"/questions/{id}";
             var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Get, path, null,
-                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                        await _surveysTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
                                 .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<QuestionDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
@@ -49,7 +49,7 @@ namespace Tailspin.Surveys.Web.Services
         {
             var path = $"/surveys/{question.SurveyId}/questions";
             var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Post, path, question,
-                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                        await _surveysTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
                                 .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<QuestionDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
@@ -58,7 +58,7 @@ namespace Tailspin.Surveys.Web.Services
         {
             var path = $"/questions/{question.Id}";
             var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Put, path, question,
-                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                        await _surveysTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
                                 .ConfigureAwait(false), _cancellationToken);
             return await ApiResult<QuestionDTO>.FromResponseAsync(response).ConfigureAwait(false);
         }
@@ -67,7 +67,7 @@ namespace Tailspin.Surveys.Web.Services
         {
             var path = $"/questions/{id}";
             var response = await _httpClient.SendRequestWithBearerTokenAsync(HttpMethod.Delete, path, null,
-                        await _accessTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
+                        await _surveysTokenService.GetTokenForWebApiAsync(_httpContextAccessor.HttpContext.User)
                                 .ConfigureAwait(false), _cancellationToken);
             return new ApiResult { Response = response };
         }
