@@ -105,7 +105,7 @@ namespace Tailspin.Surveys.Web.Security
         /// <param name="redirectUri">The Uri of the application requesting the access token</param>
         /// <param name="resource">The resouce identifier of the target resource</param>
         /// <returns>A <see cref="System.Threading.Tasks.Task{Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationResult}"/>.</returns>
-        public async Task<AuthenticationResult> RequestAccessTokenAsync(
+        public async Task<AuthenticationResult> RequestTokenAsync(
             ClaimsPrincipal claimsPrincipal,
             string authorizationCode,
             string redirectUri,
