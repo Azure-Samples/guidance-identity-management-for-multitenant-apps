@@ -3,6 +3,7 @@
 
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Tailspin.Surveys.Data.DataModels;
@@ -16,7 +17,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
     /// This class provides a REST based API for the management of questions.
     /// This class uses Bearer token authentication and authorization.
     /// </summary>
-    [Authorize(ActiveAuthenticationSchemes = "Bearer")]
+    [Authorize(ActiveAuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class QuestionController : Controller
     {
         private readonly IQuestionStore _questionStore;
