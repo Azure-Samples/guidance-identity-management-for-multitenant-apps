@@ -16,11 +16,10 @@ namespace Tailspin.Surveys.Security.Policy
         {
             if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin) || context.User.HasClaim(ClaimTypes.Role, Roles.SurveyCreator))
             {
-                context.Succeed(requirement);
-                return;
+                context.Succeed(requirement);                
             }
 
-            context.Fail();
+            return;
         }
     }
 }
