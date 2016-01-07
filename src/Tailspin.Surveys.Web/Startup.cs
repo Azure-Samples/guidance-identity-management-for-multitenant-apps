@@ -91,6 +91,7 @@ namespace Tailspin.Surveys.Web
                     policy =>
                     {
                         policy.AddRequirements(new SurveyCreatorRequirement());
+                        policy.RequireAuthenticatedUser(); // Adds DenyAnonymousAuthorizationRequirement 
                         // By adding the CookieAuthenticationDefaults.AuthenticationScheme,
                         // if an authenticated user is not in the appropriate role, they will be redirected to the "forbidden" experience.
                         policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -100,6 +101,7 @@ namespace Tailspin.Surveys.Web
                     policy =>
                     {
                         policy.AddRequirements(new SurveyAdminRequirement());
+                        policy.RequireAuthenticatedUser(); // Adds DenyAnonymousAuthorizationRequirement 
                         // By adding the CookieAuthenticationDefaults.AuthenticationScheme,
                         // if an authenticated user is not in the appropriate role, they will be redirected to the "forbidden" experience.
                         policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);

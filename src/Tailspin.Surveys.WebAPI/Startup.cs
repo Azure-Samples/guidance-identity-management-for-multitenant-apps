@@ -69,12 +69,14 @@ namespace Tailspin.Surveys.WebApi
                     policy =>
                     {
                         policy.AddRequirements(new SurveyCreatorRequirement());
+                        policy.RequireAuthenticatedUser(); // Adds DenyAnonymousAuthorizationRequirement 
                         policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
                     });
                 options.AddPolicy(PolicyNames.RequireSurveyAdmin,
                     policy =>
                     {
                         policy.AddRequirements(new SurveyAdminRequirement());
+                        policy.RequireAuthenticatedUser(); // Adds DenyAnonymousAuthorizationRequirement 
                         policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
                     });
             });
