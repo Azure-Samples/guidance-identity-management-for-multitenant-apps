@@ -112,26 +112,6 @@ namespace Tailspin.Surveys.WebApi
                 });
             }
 
-            app.UseExceptionHandler(app2 =>
-            {
-                app2.Run(async context =>
-                {
-                    var error = context.Features.Get<IExceptionHandlerFeature>();
-                    if (error != null)
-                    {
-                        // This error would not normally be exposed to the client 
-                        //await context.Response.WriteAsync("<br>Error: " + HtmlEncoder.Default.HtmlEncode(error.Error.Message) + "<br>\r\n");
-                    }
-
-                    await System.Threading.Tasks.Task.FromResult(0);
-                });
-            });
-            //else
-            //{
-            //    // Add Error handling middleware which catches all application specific errors and
-            //    // sends the request to the following path or controller action.
-            //    app.UseExceptionHandler("/Home/Error");
-            //}
             app.UseIISPlatformHandler();
 
             app.UseJwtBearerAuthentication(options =>
