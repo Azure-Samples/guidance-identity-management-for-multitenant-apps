@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace Tailspin.Surveys.Web.Security
 {
-    public interface IAccessTokenService
+    public interface ISurveysTokenService
     {
         /// <summary>
         /// This method retrieves the access token for the WebAPI resource that has previously
@@ -28,7 +28,7 @@ namespace Tailspin.Surveys.Web.Security
         /// <param name="redirectUri">The Uri of the application requesting the access token</param>
         /// <param name="resource">The resouce identifier of the target resource</param>
         /// <returns>A <see cref="System.Threading.Tasks.Task{Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationResult}"/>.</returns>
-        Task<AuthenticationResult> RequestAccessTokenAsync(
+        Task<AuthenticationResult> RequestTokenAsync(
             ClaimsPrincipal claimsPrincipal,
             string authorizationCode,
             string redirectUri,

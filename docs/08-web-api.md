@@ -70,7 +70,7 @@ The following code gets the access token, using delegated user identity. This co
     string authority = "https://login.microsoftonline.com/" + tenantID
     string resourceID = "https://tailspin.onmicrosoft.com/survey.webapi" // App ID URI
     ClientCredential credential = new ClientCredential(clientId, clientSecret);
-    AuthenticationContext context = new AuthenticationContext(authority, tokenCache);
+    AuthenticationContext authContext = new AuthenticationContext(authority, tokenCache);
     AuthenticationResult authResult = await authContext.AcquireTokenByAuthorizationCodeAsync(
         authorizationCode, new Uri(redirectUri), credential, resourceID);
 
