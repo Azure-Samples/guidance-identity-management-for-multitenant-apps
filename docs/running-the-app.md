@@ -152,12 +152,11 @@ For more information about creating a Redis cache, see [How to Use Azure Redis C
 5.	Repeat these steps for the Tailspin.Surveys.WebAPI project, but paste the following into secrets.json:
 
           {
-              "AzureAd": {
+            "AzureAd": {
                 "WebApiResourceId": "[App ID URI of your Survey.WebAPI application]"
               },
             "Redis": {
-                "Endpoint": "[Redis cache endpoint]",
-                "Password": "[Redis cache primary key]"
+                "Configuration": "[Redis DNS name].redis.cache.windows.net,password=[Redis primary key],ssl=true"
               }
           }
 
