@@ -63,14 +63,14 @@ In order for Azure AD to issue a bearer token for the web API, you need to confi
 
 ## Getting an access token
 
-Before calling the web API, the web application must get an access token from Azure AD. In a .NET application, use the [Azure AD Authentication Library (ADAL) for .NET](https://msdn.microsoft.com/en-us/library/azure/jj573266.aspx).
+Before calling the web API, the web application must get an access token from Azure AD. In a .NET application, use the [Azure AD Authentication Library (ADAL) for .NET][ADAL].
 
-The following code gets the access token, using delegated user identity. This code requires the OAuth 2 access code, which the application gets during authentication.
+The following code calls ADAL to get an access token, using delegated user identity. This code requires the OAuth 2 access code, which the application gets during authentication.
 
     string authority = "https://login.microsoftonline.com/" + tenantID
     string resourceID = "https://tailspin.onmicrosoft.com/surveys.webapi" // App ID URI
     ClientCredential credential = new ClientCredential(clientId, clientSecret);
-    AuthenticationContext authContext = new AuthenticationContext(authority, tokenCache);
+    AuthenticationContext context = new AuthenticationContext(authority, tokenCache);
     AuthenticationResult authResult = await authContext.AcquireTokenByAuthorizationCodeAsync(
         authorizationCode, new Uri(redirectUri), credential, resourceID);
 
@@ -82,7 +82,9 @@ Here are the various parameters that are needed:
 - `clientSecret`. The web application's client secret.
 - `redirectUri`. The redirect URI that you set for OpenID connect. This is where the IDP calls back with the token.
 - `resourceID`. The App ID URI of the web API, which you created when you registered the web API in Azure AD
-- `tokenCache`. An object that caches the access tokens. See [TODO] for more information.
+- `tokenCache`. An object that caches the access tokens. See [Token caching](08-token-caching.md).
+
+<!--- Here talk about the credentials abstraction -->
 
 ## Using the access token to call the web API
 
@@ -116,7 +118,7 @@ The following code from the Surveys application shows how to set the Authorizati
 
 ## Authenticating in the web API
 
-The web API has to authenticate the bearer token. In ASP.NET 5, you can use the [Microsoft.AspNet.Authentication.JwtBearer](https://www.nuget.org/packages/Microsoft.AspNet.Authentication.JwtBearer) package. This package provides middleware that enables the application to receive OpenID Connect bearer tokens.
+The web API has to authenticate the bearer token. In ASP.NET 5, you can use the [Microsoft.AspNet.Authentication.JwtBearer][JwtBearer] package. This package provides middleware that enables the application to receive OpenID Connect bearer tokens.
 
 Register the middleware in your web API `Startup` class.
 
@@ -135,7 +137,7 @@ Register the middleware in your web API `Startup` class.
 > See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.WebAPI/Startup.cs).
 
 - **Audience**. Set this to the App ID URL for the web API, which you created when you registered the web API with Azure AD.
-- **Authority**. For a multitenant application, set this to https://login.microsoftonline.com/common/.
+- **Authority**. For a multitenant application, set this to `https://login.microsoftonline.com/common/``.
 - **TokenValidationParameters**. For a multitenant application, set **ValidateIssuer**. to false. That means the application will validate the issuer.
 - **Events** is a class that derives from **JwtBearerEvents**.
 
@@ -143,7 +145,7 @@ Register the middleware in your web API `Startup` class.
 
 Validate the token issuer in the **JwtBearerEvents.ValidatedToken** event. The issuer is sent in the "iss" claim.
 
-In the Surveys application, the web API doesn't handle [tenant sign-up](05-tenant-signup.md). Therefore, it just checks if the issuer is already in the application database. If not, throws an exception, which causes the authentication to fail.
+In the Surveys application, the web API doesn't handle [tenant sign-up](05-tenant-signup.md). Therefore, it just checks if the issuer is already in the application database. If not, it throws an exception, which causes authentication to fail.
 
     public override async Task ValidatedToken(ValidatedTokenContext context)
     {
@@ -192,6 +194,13 @@ This returns a 401 status code if the user is not authenticated, and 403 if the 
                 });
         });
 
-## Additional Resources
 
-- [Authentication Scenarios for Azure AD](https://azure.microsoft.com/en-us/documentation/articles/active-directory-authentication-scenarios/#web-application-to-web-api)
+## Additional resources
+
+- [Authentication Scenarios for Azure AD][auth-scenarios]
+
+<!-- links -->
+
+[ADAL]: https://msdn.microsoft.com/en-us/library/azure/jj573266.aspx
+[auth-scenarios]: https://azure.microsoft.com/en-us/documentation/articles/active-directory-authentication-scenarios/#web-application-to-web-api
+[JwtBearer]: https://www.nuget.org/packages/Microsoft.AspNet.Authentication.JwtBearer
