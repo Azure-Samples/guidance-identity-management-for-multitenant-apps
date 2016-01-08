@@ -15,13 +15,10 @@ namespace Tailspin.Surveys.Security.Policy
         protected override void Handle(AuthorizationContext context, SurveyAdminRequirement requirement)
         {
             //Check user claims for Role
-            if (!context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin))
+            if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin))
             {
-                context.Fail();
-                return;
+                context.Succeed(requirement);
             }
-
-            context.Succeed(requirement);
         }
     }
 }

@@ -55,9 +55,9 @@ namespace Tailspin.Surveys.Security.Policy
         {
             // if the survey is in the same tenant
             //      Add SURVEYADMIN/SURVEYCREATER/SURVEYREADER to permission set
-            // Else if survey is in differnt tenant
-            //      Add CONTRIBUTOR to permissionset if user is contributor on survey
-
+            // else if survey is in differnt tenant
+            //      Add CONTRIBUTOR to permission set if user is contributor on survey
+            //
             // if user is owner of the survey
             //      Add OWNER to the permission set
             var permissions = new List<UserPermissionType>();
@@ -92,15 +92,11 @@ namespace Tailspin.Surveys.Security.Policy
             {
                 permissions.Add(UserPermissionType.Contributor);
             }
+
             if (ValidateUserPermissions[operation](permissions))
             {
                 _logger.ValidatePermissionsSucceeded(user, context.User.GetTenantIdValue(), operation.Name, permissions.Select(p => p.ToString()));
                 context.Succeed(operation);
-            }
-            else
-            {
-                _logger.ValidatePermissionsFailed(user, context.User.GetTenantIdValue(), operation.Name, permissions.Select(p => p.ToString()));
-                context.Fail();
             }
         }
     }
