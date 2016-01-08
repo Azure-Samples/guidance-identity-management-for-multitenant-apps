@@ -18,8 +18,6 @@ namespace Tailspin.Surveys.Security.Policy
             {
                 context.Succeed(requirement);                
             }
-
-            return;
         }
     }
 }
