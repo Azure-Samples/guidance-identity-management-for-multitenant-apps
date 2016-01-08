@@ -81,6 +81,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View(question);
                 }
             }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
+            }
             catch
             {
                 // Errors have been logged by QuestionService. Swallowing exception to stay on same page to display error.
@@ -109,6 +113,10 @@ namespace Tailspin.Surveys.Web.Controllers
                 if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
+            }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
             }
             catch
             {
@@ -156,6 +164,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View(question);
                 }
             }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
+            }
             catch
             {
                 // Errors have been logged by QuestionService. Swallowing exception to stay on same page to display error.
@@ -184,6 +196,10 @@ namespace Tailspin.Surveys.Web.Controllers
                 if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
+            }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
             }
             catch
             {
@@ -223,6 +239,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     }
                 }
             }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
+            }
             catch
             {
                 // Errors have been logged by QuestionService. Swallowing exception to stay on same page to display error.
@@ -259,12 +279,9 @@ namespace Tailspin.Surveys.Web.Controllers
             return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme,
                 new AuthenticationProperties
                 {
+                    IsPersistent = true,
                     RedirectUri = Url.Action("SignInCallback", "Account")
                 });
         }
-
-
-
-
     }
 }
