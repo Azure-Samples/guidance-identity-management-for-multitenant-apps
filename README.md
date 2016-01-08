@@ -1,5 +1,5 @@
 ![Microsoft patterns & practices](http://pnp.azurewebsites.net/images/pnp-logo.png)
-# Building Multi-Tenant SaaS Applications on Windows Azure
+# Building Multi-Tenant SaaS Applications on Microsoft Azure
 
 ## Phase 1: Identity Management
 
