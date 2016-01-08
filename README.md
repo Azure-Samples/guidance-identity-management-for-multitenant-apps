@@ -28,9 +28,9 @@ The written guidance reflects what we learned in the process of building the app
     - Resource-based authorization
 - [Securing a backend web API](docs/08-web-api.md)
     - How to use bearer tokens to authenticate calls from the web app to a backend web API.
-- [Federating with a customer's AD FS](docs/09-adfs.md)
-    - How to authenticate via Active Directory Federation Services (AD FS), in order to federate with a customer's on-premise Active Directory.
 - Appendixes
     - [Overview of OAuth 2 and OpenID Connect](docs/appendixes/about-oauth2-oidc.md)
     - [Using client assertion to get access tokens from Azure AD](docs/appendixes/client-assertion.md)
     - [Understanding ASP.NET 5 authorization handlers](docs/appendixes/aspnet5-authorization.md)
+    - [Federating with a customer's AD FS](docs/appendixes/adfs.md)
+
