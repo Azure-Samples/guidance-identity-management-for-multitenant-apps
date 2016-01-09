@@ -36,6 +36,7 @@ namespace Tailspin.Surveys.Web.Controllers
                 OpenIdConnectDefaults.AuthenticationScheme,
                 new AuthenticationProperties
                 {
+                    IsPersistent = true,
                     RedirectUri = Url.Action("SignInCallback", "Account")
                 });
         }

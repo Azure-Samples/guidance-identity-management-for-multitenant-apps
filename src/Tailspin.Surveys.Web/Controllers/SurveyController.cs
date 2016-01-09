@@ -18,6 +18,7 @@ using Tailspin.Surveys.Web.Services;
 using Microsoft.AspNet.Authentication.Cookies;
 using System;
 using System.Linq;
+using Tailspin.Surveys.Web.Security;
 
 namespace Tailspin.Surveys.Web.Controllers
 {
@@ -66,20 +67,25 @@ namespace Tailspin.Surveys.Web.Controllers
                 if (result.Succeeded)
                 {
                     // If the user is in the creator role, the view shows a "Create Survey" button.
-                    ViewBag.IsUserCreator = await _authorizationService.AuthorizeAsync(User, PolicyNames.RequireSurveyCreator);
+                    ViewBag.IsUserCreator =
+                        await _authorizationService.AuthorizeAsync(User, PolicyNames.RequireSurveyCreator);
                     _logger.GetSurveysForUserOperationSucceeded(actionName, user, issuerValue);
                     return View(result.Item);
                 }
 
                 _logger.GetSurveysForUserOperationFailed(actionName, user, issuerValue, result.StatusCode);
 
-                if (result.StatusCode == (int)HttpStatusCode.Unauthorized)
+                if (result.StatusCode == (int) HttpStatusCode.Unauthorized)
                 {
                     //this should happen if the bearer token validation fails. We wont sign the user out for 403 - since user may have access to some resources and not others
                     return ReAuthenticateUser();
                 }
 
                 ViewBag.Message = "Unexpected Error";
+            }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
             }
             catch
             {
@@ -113,6 +119,10 @@ namespace Tailspin.Surveys.Web.Controllers
                 }
 
                 ViewBag.Message = "Unexpected Error";
+            }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
             }
             catch
             {
@@ -176,6 +186,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View(survey);
                 }
             }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
+            }
             catch
             {
                 ModelState.AddModelError(string.Empty, "Unable to create survey.");
@@ -202,6 +216,10 @@ namespace Tailspin.Surveys.Web.Controllers
                 if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
+            }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
             }
             catch
             {
@@ -236,6 +254,10 @@ namespace Tailspin.Surveys.Web.Controllers
 
                 ViewBag.Message = "Unexpected Error";
             }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
+            }
             catch
             {
                 ViewBag.Message = "Unexpected Error";
@@ -264,6 +286,10 @@ namespace Tailspin.Surveys.Web.Controllers
                 if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
+            }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
             }
             catch
             {
@@ -312,6 +338,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View("EditTitle", model);
                 }
             }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
+            }
             catch
             {
                 ModelState.AddModelError(string.Empty, "Unable to save changes.");
@@ -338,6 +368,10 @@ namespace Tailspin.Surveys.Web.Controllers
                 if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
+            }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
             }
             catch
             {
@@ -387,6 +421,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View("~/Views/Shared/Error.cshtml");
                 }
             }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
+            }
             catch
             {
                 ViewBag.Message = "Unexpected Error";
@@ -413,6 +451,10 @@ namespace Tailspin.Surveys.Web.Controllers
                 if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
+            }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
             }
             catch
             {
@@ -441,6 +483,10 @@ namespace Tailspin.Surveys.Web.Controllers
                 if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
+            }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
             }
             catch
             {
@@ -504,6 +550,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View("~/Views/Shared/Error.cshtml");
                 }
             }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
+            }
             catch
             {
                 ViewBag.Message = "Unexpected Error";
@@ -538,6 +588,10 @@ namespace Tailspin.Surveys.Web.Controllers
                 if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
+            }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
             }
             catch
             {
@@ -589,6 +643,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     }
                 }
             }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
+            }
             catch
             {
                 ViewBag.Message = "Unexpected Error";
@@ -623,6 +681,10 @@ namespace Tailspin.Surveys.Web.Controllers
                 if (errorResult != null) return errorResult;
 
                 ViewBag.Message = "Unexpected Error";
+            }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
             }
             catch
             {
@@ -697,6 +759,10 @@ namespace Tailspin.Surveys.Web.Controllers
                     }
                 }
             }
+            catch (AuthenticationException)
+            {
+                return ReAuthenticateUser();
+            }
             catch
             {
                 ViewBag.Message = "Unexpected Error";
@@ -709,6 +775,7 @@ namespace Tailspin.Surveys.Web.Controllers
             return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme,
                 new AuthenticationProperties
                 {
+                    IsPersistent = true,
                     RedirectUri = Url.Action("SignInCallback", "Account")
                 });
         }
