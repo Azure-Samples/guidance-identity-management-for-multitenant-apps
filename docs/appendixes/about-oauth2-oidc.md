@@ -1,4 +1,4 @@
-# Appendix: Overview of OAuth 2 and OpenID Connect
+# Overview of OAuth 2 and OpenID Connect
 
 This guidance talks a lot about authentication using the OpenID Connect protocol. For the most part, you can configure OpenID Connect in your application and the authentication will "just work." However, it's still good to understand what's happening when a user signs in. This chapter provides a high-level overview of OpenID Connect.
 
