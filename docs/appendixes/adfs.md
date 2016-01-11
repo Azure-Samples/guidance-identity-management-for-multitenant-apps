@@ -20,7 +20,7 @@ There are three main roles in the trust relation:
 -	The SaaS provider's AD FS is the [resource partner](https://technet.microsoft.com/en-us/library/cc758463(v=ws.10).aspx), which trusts the account partner and receives the user claims.
 -	The application is configured as a relying party (RP) in the SaaS provider's AD FS.
 
-![Federation trust](media/adfs/federation-trust.png)
+![Federation trust](../media/adfs/federation-trust.png)
 
 > Note: In this chapter, we assume the application uses OpenID connect as the authentication protocol. Another option is to use WS-Federation.
 
@@ -67,21 +67,7 @@ The SaaS provider can deploy AD FS either on-premise or on Azure VMs. For securi
 -	Domain controllers and AD FS servers should never be exposed directly to the Internet and should be in a virtual network with direct access to them.
 -	Web application proxies (previously AD FS proxies) must be used to publish AD FS servers to the Internet.
 
-To set up a similar topology in Azure requires the use of Virtual networks, NSG’s, azure VM’s and availability sets. Here is a summary of the high-level steps. For details, see [Guidelines for Deploying Windows Server Active Directory on Azure Virtual Machines](https://msdn.microsoft.com/library/azure/jj156090.aspx) (MSDN).
-
-1.	Create a virtual network.
-2.	Deploy domain controllers on the virtual network.
-3.	Create an [internal load balanced set](https://azure.microsoft.com/en-us/documentation/articles/load-balancer-internal-getstarted/https:/msdn.microsoft.com/library/azure/dn690125.aspx) that includes the AD FS servers, and uses a new private IP address within the virtual network (a dynanmic IP address).
-4.	Update DNS to create the FQDN to point to the private IP address of the internal load balanced.
-5.	Create a cloud service (or a separate virtual network) for the Web Application Proxy nodes.
-6.	Deploy the Web Application Proxy nodes in the cloud service or virtual network:
-
-	1.	Create an external load balanced set that includes the Web Application Proxy nodes. (See [Load balancing for Azure infrastructure services](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-load-balance/).)
-	2.	Update the external DNS name (FQDN) to point to the cloud service public IP address (the VIP).
-	3.	Configure AD FS proxies to use the FQDN that corresponds to the internal load balanced set for the AD FS servers.
-	4.	Update claims-based web sites to use the external FQDN for their claims provider.
-
-6.	Restrict access from the Web Application Proxy nodes to any machine in the AD FS virtual network. In order to restrict access, you can use of Network security groups (NSGs). For more information, see [Secure your Office 365 ADFS infrastructure in Microsoft Azure leveraging Network Security Groups]( http://kylgrn.com/2014/12/09/secure-your-office-365-adfs-infrastructure-in-microsoft-azure-leveraging-network-security-groups/) (blog post).
+To set up a similar topology in Azure requires the use of Virtual networks, NSG’s, azure VM’s and availability sets. For more details, see [Guidelines for Deploying Windows Server Active Directory on Azure Virtual Machines](https://msdn.microsoft.com/library/azure/jj156090.aspx) (MSDN).
 
 ## Configure the application to use OpenID Connect authentication with AD FS
 
@@ -113,11 +99,11 @@ Here are the steps in more detail.
 1.	Right-click the newly added claims provider trust, and select **Edit Claims Rules**.
 2.	Click **Add Rule**.
 3.	Select "Pass Through of Filter an Incoming Claim" and click **Next**.
-	![Add Transform Claim Rule Wizard](media/adfs/edit-claims-rule.png)
+	![Add Transform Claim Rule Wizard](../media/adfs/edit-claims-rule.png)
 4.	Enter a name for the rule.
 5.	Under "Incoming claim type", select **UPN**.
 6.	Select "Pass through all claim values".
-  ![Add Transform Claim Rule Wizard](media/adfs/edit-claims-rule2.png)
+  ![Add Transform Claim Rule Wizard](../media/adfs/edit-claims-rule2.png)
 7.	Click **Finish**.
 8.	Repeat steps 2 - 7, and specify **Anchor Claim Type** for the incoming claim type.
 9.	Click **OK** to complete the wizard.
@@ -146,10 +132,10 @@ The customer must do the following:
 2.	In the console tree, under **AD FS**, right click **Relying Party Trusts**. Select **Add Relying Party Trust**.
 3.	Select **Claims Aware** and click **Start**.
 4.	On the **Select Data Source** page, select the option "Import data about the claims provider published online or on a local network". Enter the URI of the SaaS provider's federation metadata endpoint.
-  ![Add Relying Party Trust Wizard](media/adfs/add-rp-trust.png)
+  ![Add Relying Party Trust Wizard](../media/adfs/add-rp-trust.png)
 5.	On the **Specify Display Name** page, enter any name.
 6.	On the **Choose Access Control Policy** page, choose a policy. You could permit everyone in the organization, or choose a specific security group.
-  ![Add Relying Party Trust Wizard](media/adfs/add-rp-trust2.png)
+  ![Add Relying Party Trust Wizard](../media/adfs/add-rp-trust2.png)
 7.	Click **Next** to complete the wizard.
 
 ### Add claims rules
@@ -157,13 +143,13 @@ The customer must do the following:
 1.	Right-click the newly added relying party trust, and select **Edit Claim Issuance Policy**.
 2.	Click **Add Rule**.
 3.	Select "Send LDAP Attributes as Claims" and click **Next**.
-  ![Add Transform Claim Rule Wizard](media/adfs/add-claims-rules.png)
+  ![Add Transform Claim Rule Wizard](../media/adfs/add-claims-rules.png)
 4.	Enter a name for the rule, such as "UPN".
 5.	Under **Attribute store**, select **Active Directory**.
 6.	In the **Mapping of LDAP attributes** section:
   -	Under **LDAP Attribute**, select **User-Principal-Name**.
   - Under **Outgoing Claim Type**, select **UPN**.
-  ![Add Transform Claim Rule Wizard](media/adfs/add-claims-rules2.png)
+  ![Add Transform Claim Rule Wizard](../media/adfs/add-claims-rules2.png)
 7.	Click **Finish**.
 8.	Click **Add Rule** again.
 9.	Select "Send Claims Using a Custom Rule" and click **Next**.
