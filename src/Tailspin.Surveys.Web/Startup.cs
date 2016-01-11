@@ -80,10 +80,12 @@ namespace Tailspin.Surveys.Web
 
             // This will only add the LocalCache implementation of IDistributedCache if there is not an IDistributedCache already registered.
             services.AddCaching();
-            services.AddSession(options =>
-            {
-                options.IdleTimeout = TimeSpan.FromHours(1);
-            });
+
+            // Uncomment this to use the session-based token storage.
+            // services.AddSession(options =>
+            // {
+            //     options.IdleTimeout = TimeSpan.FromHours(1);
+            // });
 
             services.AddAuthorization(options =>
             {
@@ -122,8 +124,10 @@ namespace Tailspin.Surveys.Web
 
             // Register application services.
 
-            // This will register the default token storage.
-            services.AddTokenStorage();
+            // This will register the token storage.  By default, AddTokenStorage() will use the session-based storage, but we want
+            // to configure it the token storage to use the IDistributedCache storage implementation.
+            services.AddTokenStorage()
+                .UseDistributedCache();
 
             services.AddScoped<ISurveysTokenService, SurveysTokenService>();
             services.AddSingleton<HttpClientService>();
@@ -143,7 +147,10 @@ namespace Tailspin.Surveys.Web
         {
             var configOptions = app.ApplicationServices.GetService<IOptions<SurveyAppConfiguration.ConfigurationOptions>>().Value;
             // Configure the HTTP request pipeline.
-            app.UseSession();
+
+            // Uncomment this to use the session-based token storage.
+            // app.UseSession();
+
             // Add the following to the request pipeline only in development environment.
             if (env.IsDevelopment())
             {

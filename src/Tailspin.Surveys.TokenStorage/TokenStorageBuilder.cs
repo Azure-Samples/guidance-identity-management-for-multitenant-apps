@@ -35,5 +35,15 @@ namespace Tailspin.Surveys.TokenStorage
             Services.AddScoped<ITokenCacheService, T>();
             return this;
         }
+
+        /// <summary>
+        /// Replaces the currently configured <see cref="Tailspin.Surveys.TokenStorage.ITokenCacheService"/> implementation with the <see cref="Tailspin.Surveys.TokenStorage.DistributedTokenCacheService"/> implementation.
+        /// </summary>
+        /// <returns>The current instance of <see cref="Tailspin.Surveys.TokenStorage.TokenStorageBuilder"/>.</returns>
+        public TokenStorageBuilder UseDistributedCache()
+        {
+            Services.AddScoped<ITokenCacheService, DistributedTokenCacheService>();
+            return this;
+        }
     }
 }
