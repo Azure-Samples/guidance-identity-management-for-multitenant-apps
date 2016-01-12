@@ -145,7 +145,7 @@ For more information about creating a Redis cache, see [How to Use Azure Redis C
     - `AzureAd:ClientId`: The client ID of the Surveys app.
     - `AzureAd:ClientSecret`: The key that you generated when you registered the Surveys application in Azure AD.
     - `AzureAd:WebApiResourceId`: The App ID URI that you specified when you created the Surveys.WebAPI application in Azure AD.
-    - `Redis:Configuration`: Build this string from the DNS name of the Redis cache and the primarcy access key. For example, "tailspin.redis.cache.windows.net,password=2h5tBxxx,ssl=true".
+    - `Redis:Configuration`: Build this string from the DNS name of the Redis cache and the primary access key. For example, "tailspin.redis.cache.windows.net,password=2h5tBxxx,ssl=true".
 
 4.	Save the updated secrets.json file.
 
