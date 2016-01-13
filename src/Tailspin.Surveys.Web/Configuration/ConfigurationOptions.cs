@@ -5,7 +5,9 @@ using Tailspin.Surveys.Common.Configuration;
 
 namespace Tailspin.Surveys.Web.Configuration
 {
-    //Top level configuration object in the configuration object graph for the MVC app 
+    /// <summary>
+    ///This class holds various configuration values used by the Tailspin.Surveys.Web project.
+    /// </summary>
     public class ConfigurationOptions
     {
         public ConfigurationOptions()
