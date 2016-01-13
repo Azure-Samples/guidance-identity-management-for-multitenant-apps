@@ -8,6 +8,9 @@ using Tailspin.Surveys.Configuration.KeyVault;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+/// <summary>
+/// Extension methods for IConfigurationBuilder for loading configuration from KeyVault
+/// </summary>
     public static class KeyVaultConfigurationExtensions
     {
 
