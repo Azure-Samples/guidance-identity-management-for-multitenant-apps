@@ -24,12 +24,18 @@
 [Guid[]]$ApplicationIds,
 
 [parameter(Mandatory=$true, ParameterSetName="CreateKeyVault")]
-[parameter(Mandatory=$true, ParameterSetName="SetValues")]
+[parameter(Mandatory=$true, ParameterSetName="SetConfigValue")]
 [parameter(Mandatory=$true, ParameterSetName="SetAccessPolicy")]
 [string]$KeyVaultName,
 
-[parameter(Mandatory=$false, ParameterSetName="SetValues")]
-[PSObject[]]$Values
+[parameter(Mandatory=$false, ParameterSetName="SetConfigValue")]
+[string]$KeyName,
+
+[parameter(Mandatory=$false, ParameterSetName="SetConfigValue")]
+[string]$KeyValue,
+
+[parameter(Mandatory=$false, ParameterSetName="SetConfigValue")]
+[string]$ConfigName
 )
 
 function Validate-ValueParameter {
@@ -116,21 +122,15 @@ switch($PSCmdlet.ParameterSetName)
         # Set the access policy for the ApplicationIds
         $ApplicationIds.GetEnumerator() | Set-AccessPolicy
     }
-    "SetValues"
+    "SetConfigValue"
     {
-        if ($Values -eq $null)
-        {
-            #For testing or inline config settings
-            $Values = @(
-                [PSCustomObject]@{ Name="Setting1"; Value="Value1"; Tags=@{"ConfigKey"="ConfigurationKeyName"}};
-            )
-        }
+        $KeyValueObject = [PSCustomObject]@{ Name=$KeyName; Value=$KeyValue; Tags=@{"ConfigKey"=$ConfigName}}
 
-        #Make sure our $Values parameter is valid
-        $Values.GetEnumerator() | Validate-ValueParameter
+        #Make sure our $KeyValueObject is valid
+        Validate-ValueParameter $KeyValueObject
         #Everything is good, so login to AzureRM
         Login-AzureRmAccount
         #Setup secrets
-        $Values.GetEnumerator() | Set-KeyVaultSecret
+        Set-KeyVaultSecret $KeyValueObject
     }
 }
