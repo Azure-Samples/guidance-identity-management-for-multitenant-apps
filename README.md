@@ -1,6 +1,8 @@
 ![Microsoft patterns & practices](http://pnp.azurewebsites.net/images/pnp-logo.png)
 # Building Multi-Tenant SaaS Applications on Microsoft Azure
 
+[![Build status](https://ci.appveyor.com/api/projects/status/jvlkk0yw4txcp231/branch/master?svg=true)](https://ci.appveyor.com/project/mspnp/multitenant-saas-guidance)
+
 ## Phase 1: Identity Management
 
 > **This guidance project is still under development**
