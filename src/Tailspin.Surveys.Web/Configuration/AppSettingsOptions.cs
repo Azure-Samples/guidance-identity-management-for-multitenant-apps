@@ -3,6 +3,9 @@
 
 namespace Tailspin.Surveys.Web.Configuration
 {
+    /// <summary>
+    ///Configuration elements under "AppSettings" 
+    /// </summary>
     public class AppSettingsOptions
     {
         public string WebApiUrl { get; set; }
