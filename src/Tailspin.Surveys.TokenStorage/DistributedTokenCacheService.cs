@@ -19,7 +19,7 @@ namespace Tailspin.Surveys.TokenStorage
         private IDistributedCache _distributedCache;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="Tailspin.Surveys.TokenStorage.SessionTokenCacheService"/>
+        /// Initializes a new instance of <see cref="Tailspin.Surveys.TokenStorage.DistributedTokenCacheService"/>
         /// </summary>
         /// <param name="contextAccessor">An instance of <see cref="Microsoft.AspNet.Http.IHttpContextAccessor"/> used to get access to the current HTTP context.</param>
         /// <param name="loggerFactory"><see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> used to create type-specific <see cref="Microsoft.Extensions.Logging.ILogger"/> instances.</param>

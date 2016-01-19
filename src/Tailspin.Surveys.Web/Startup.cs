@@ -21,6 +21,7 @@ using SurveyAppConfiguration = Tailspin.Surveys.Web.Configuration;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.Threading.Tasks;
 using Tailspin.Surveys.Common;
+using Tailspin.Surveys.TokenStorage;
 
 namespace Tailspin.Surveys.Web
 {
@@ -71,6 +72,7 @@ namespace Tailspin.Surveys.Web
             services.Configure<SurveyAppConfiguration.ConfigurationOptions>(_configuration);
 
 #if DNX451
+            // This will add the Redis implementation of IDistributedCache
             services.AddRedisCache();
             services.Configure<Microsoft.Extensions.Caching.Redis.RedisCacheOptions>(options =>
             {
@@ -80,12 +82,6 @@ namespace Tailspin.Surveys.Web
 
             // This will only add the LocalCache implementation of IDistributedCache if there is not an IDistributedCache already registered.
             services.AddCaching();
-
-            // Uncomment this to use the session-based token storage.
-            // services.AddSession(options =>
-            // {
-            //     options.IdleTimeout = TimeSpan.FromHours(1);
-            // });
 
             services.AddAuthorization(options =>
             {
@@ -124,10 +120,8 @@ namespace Tailspin.Surveys.Web
 
             // Register application services.
 
-            // This will register the token storage.  By default, AddTokenStorage() will use the session-based storage, but we want
-            // to configure it the token storage to use the IDistributedCache storage implementation.
-            services.AddTokenStorage()
-                .UseDistributedCache();
+            // This will register IDistributedCache based token cache which ADAL will use for caching access tokens.
+            services.AddScoped<ITokenCacheService, DistributedTokenCacheService>();
 
             services.AddScoped<ISurveysTokenService, SurveysTokenService>();
             services.AddSingleton<HttpClientService>();
@@ -147,10 +141,6 @@ namespace Tailspin.Surveys.Web
         {
             var configOptions = app.ApplicationServices.GetService<IOptions<SurveyAppConfiguration.ConfigurationOptions>>().Value;
             // Configure the HTTP request pipeline.
-
-            // Uncomment this to use the session-based token storage.
-            // app.UseSession();
-
             // Add the following to the request pipeline only in development environment.
             if (env.IsDevelopment())
             {
