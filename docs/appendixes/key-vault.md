@@ -158,7 +158,7 @@ Add the admin user as a co-administrator for your Azure subscription.
 
 1. Run the PowerShell script [/Scripts/Setup-KeyVault.ps1][Setup-KeyVault] as follows:
 
-        .\Setup-KeyVault.ps -Subject <<subject>>
+        .\Setup-KeyVault.ps1 -Subject <<subject>>
 
     For the `Subject` parameter, enter any name, such as "surveysapp". The script generates a self-signed certificate and stores it in the "Current User/Personal" certificate store.
 
@@ -256,7 +256,9 @@ You will use the thumbprint later.
 
 3. Run SetupKeyVault.ps again to add the database connection string:
 
-        .\Setup-KeyVault.ps1 -KeyVaultName <<key vault name> -KeyName ConnectionString -KeyValue "DB connection string" -ConfigName "Data:SurveysConnectionString"
+        .\Setup-KeyVault.ps1 -KeyVaultName <<key vault name> -KeyName ConnectionString -KeyValue <<DB connection string>> -ConfigName "Data:SurveysConnectionString"
+
+    where `<<DB connection string>>` is the value of the database connection string.
 
     For testing with the local database, copy the connection string from the Tailspin.Surveys.Web/appsettings.json file. If you do that, make sure to change the double backslash ('\\\\') into a single backslash. The double backslash is an escape character in the JSON file.
 
