@@ -1,4 +1,4 @@
-# Understanding ASP.NET 5 authorization handlers
+# ASP.NET 5 authorization handlers
 The [authorization APIs](https://docs.asp.net/en/latest/security/authorization/index.html) in ASP.NET 5 define three main abstractions:
 
 -	**Authorization handler**. Makes authorization decisions

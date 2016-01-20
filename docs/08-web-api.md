@@ -68,7 +68,7 @@ Before calling the web API, the web application must get an access token from Az
 The following code gets the access token, using delegated user identity. This code requires the OAuth 2 access code, which the application gets during authentication.
 
     string authority = "https://login.microsoftonline.com/" + tenantID
-    string resourceID = "https://tailspin.onmicrosoft.com/survey.webapi" // App ID URI
+    string resourceID = "https://tailspin.onmicrosoft.com/surveys.webapi" // App ID URI
     ClientCredential credential = new ClientCredential(clientId, clientSecret);
     AuthenticationContext authContext = new AuthenticationContext(authority, tokenCache);
     AuthenticationResult authResult = await authContext.AcquireTokenByAuthorizationCodeAsync(
