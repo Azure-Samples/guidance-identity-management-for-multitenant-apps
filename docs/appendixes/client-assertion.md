@@ -77,7 +77,7 @@ This section shows how to configure the Tailspin Surveys application to use clie
 
     7.	Go back to the portal. Click **Manage Manifest** > **Upload Manifest** and upload the JSON file.
 
-3. Get the thumbprint of the certificate. You can use the MMC certificate snap-in (but see [this KB article][kb2023835]) or else run the following command:
+3. Run the following command to get the thumbprint of the certificate.
 
         certutil -store -user my [subject]
 
@@ -131,7 +131,6 @@ At run time, the web application reads the certificate from the certificate stor
 
 [configure-web-app]: https://azure.microsoft.com/en-us/documentation/articles/web-sites-configure/
 [azure-management-portal]: https://github.comhttps://manage.windowsazure.com
-[kb2023835]: https://support.microsoft.com/en-us/kb/2023835
 [RFC7521]: https://tools.ietf.org/html/rfc7521
 [RFC7523]: https://tools.ietf.org/html/rfc7523
 [Setup-KeyVault]: https://github.com/mspnp/multitenant-saas-guidance/blob/master/scripts/Setup-KeyVault.ps1

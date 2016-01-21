@@ -25,7 +25,8 @@ Advantages:
 -	The application doesn't need any extra Active Directory permissions, other than reading the user's profile.
 
 Drawbacks:
--	Customers without Azure AD Premium cannot assign security groups to roles. For these customers, all user assignments must be done by an AD administrator.
+- Customers without Azure AD Premium cannot assign security groups to roles. For these customers, all user assignments must be done by an AD administrator.
+- If you have a backend web API, which is separate from the web app, then role assignments for the web app don't apply to the web API. For more discussion of this point, see [Securing a backend web API](08-web-api.md).
 
 ### Implementation
 
@@ -56,7 +57,7 @@ Drawbacks:
 
 The `value`  property appears in the role claim. The `id` property is the unique identifier for the defined role. Always generate a new GUID value for `id`.
 
-**Assign users**. When a new customer signs up, after the application is registered in the customer's AD tenant, an AD admin for that tenant will assign users to roles.
+**Assign users**. When a new customer signs up, the application is registered in the customer's AD tenant. At this point, an AD admin for that tenant can assign users to roles.
 
 >	As noted earlier, customers with Azure AD Premium can also assign security groups to roles.
 
@@ -80,8 +81,8 @@ Advantages:
 -	For customers who do not have Azure AD Premium, this approach enables the customer to use security groups to manage role assignments.
 
 Disadvantages
--	Complexity. Because every tenant sends different group claims, the app must keep track of which security groups correspond to which application roles, for each tenant.
--	If the customer removes the application from their AD tenant, the security groups are left in the AD tenant.
+- Complexity. Because every tenant sends different group claims, the app must keep track of which security groups correspond to which application roles, for each tenant.
+- If the customer removes the application from their AD tenant, the security groups are left in the AD tenant.
 
 #### Implementation
 
@@ -92,7 +93,7 @@ In the application manifest, set the `groupMembershipClaims` property to "Securi
        "groupMembershipClaims": "SecurityGroup",
     }
 
-When a new customer signs up, the application instructs the customer to create security groups for the roles needed by the application. The customer then neesd to enter the group object IDs into the application. The application stores these in a table that maps group IDs to application roles, per tenant.
+When a new customer signs up, the application instructs the customer to create security groups for the roles needed by the application. The customer then needs to enter the group object IDs into the application. The application stores these in a table that maps group IDs to application roles, per tenant.
 
 > Note: Alternatively, the application could create the groups programmatically, using the Azure AD Graph API.  This would be less error prone. However, it requires the application to obtain "read and write all groups" permissions for the customer's AD directory. Many customers might be unwilling to grant this level of access.
 
@@ -101,7 +102,7 @@ When a user signs in:
 1.	The application receives the user's groups as claims. The value of each claim is the object ID of a group.
 2.	Azure AD limits the number of groups sent in the token. If the number of groups exceeds this limit, Azure AD sends a special "overage" claim. If that claim is present, the application must query the Azure AD Graph API to get all of the groups to which that user belongs. For details, see [Authorization in Cloud Applications using AD Groups](http://www.dushyantgill.com/blog/2014/12/10/authorization-cloud-applications-using-ad-groups/), under the section titled "Groups claim overage".
 3.	The application looks up the object IDs in its own database, to find the corresponding application roles to assign to the user.
-4.	The app adds a custom claim value to the user principal that expresses the application role. For example: "survey_role"="SurveyAdmin".
+4.	The application adds a custom claim value to the user principal that expresses the application role. For example: `survey_role` = "SurveyAdmin".
 
 Authorization policies should use the custom role claim, not the group claim.
 
@@ -122,7 +123,7 @@ There are many existing examples for this approach. For example, see [Create an 
 
 ## Additional resources
 
--	[Authorization in a web app using Azure AD application roles & role claims](https:\azure.microsoft.com\en-us\documentation\samples\active-directory-dotnet-webapp-roleclaims) (sample)
+-	[Authorization in a web app using Azure AD application roles & role claims](https://azure.microsoft.com/en-us/documentation/samples/active-directory-dotnet-webapp-roleclaims/)
 -	[Authorization in Cloud Applications using AD Groups](http://www.dushyantgill.com/blog/2014/12/10/authorization-cloud-applications-using-ad-groups/)
 -	[Roles based access control in cloud applications using Azure AD](http://www.dushyantgill.com/blog/2014/12/10/roles-based-access-control-in-cloud-applications-using-azure-ad/)
 -	[Supported Token and Claim Types](https://azure.microsoft.com/en-us/documentation/articles/active-directory-token-and-claims/).  Describes the role and group claims in Azure AD.

@@ -63,16 +63,24 @@ In order for Azure AD to issue a bearer token for the web API, you need to confi
 
 ## Getting an access token
 
-Before calling the web API, the web application must get an access token from Azure AD. In a .NET application, use the [Azure AD Authentication Library (ADAL) for .NET][ADAL].
+Before calling the web API, the web application gets an access token from Azure AD. In a .NET application, use the [Azure AD Authentication Library (ADAL) for .NET][ADAL].
 
-The following code calls ADAL to get an access token, using delegated user identity. This code requires the OAuth 2 access code, which the application gets during authentication.
+In the OAuth 2 authorization code flow, the application exchanges an authorization code for an access token. The following code uses ADAL to get the access token. This code is called during the `AuthorizationCodeReceived` event.
 
-    string authority = "https://login.microsoftonline.com/" + tenantID
-    string resourceID = "https://tailspin.onmicrosoft.com/surveys.webapi" // App ID URI
-    ClientCredential credential = new ClientCredential(clientId, clientSecret);
-    AuthenticationContext context = new AuthenticationContext(authority, tokenCache);
-    AuthenticationResult authResult = await authContext.AcquireTokenByAuthorizationCodeAsync(
-        authorizationCode, new Uri(redirectUri), credential, resourceID);
+    // The OpenID Connect middleware sends this event when it gets the authorization code.   
+    public override async Task AuthorizationCodeReceived(AuthorizationCodeReceivedContext context)
+    {
+        string authorizationCode = context.ProtocolMessage.Code;
+        string authority = "https://login.microsoftonline.com/" + tenantID
+        string resourceID = "https://tailspin.onmicrosoft.com/surveys.webapi" // App ID URI
+        ClientCredential credential = new ClientCredential(clientId, clientSecret);
+
+        AuthenticationContext authContext = new AuthenticationContext(authority, tokenCache);
+        AuthenticationResult authResult = await authContext.AcquireTokenByAuthorizationCodeAsync(
+            authorizationCode, new Uri(redirectUri), credential, resourceID);
+
+        // If successful, the token is in authResult.AccessToken
+    }
 
 Here are the various parameters that are needed:
 
@@ -86,32 +94,36 @@ Here are the various parameters that are needed:
 
 <!--- Here talk about the credentials abstraction -->
 
+If `AcquireTokenByAuthorizationCodeAsync` succeeds, ADAL caches the token. Later, you can get the token from the cache by calling AcquireTokenSilentAsync:
+
+    AuthenticationContext authContext = new AuthenticationContext(authority, tokenCache);
+    var result = await authContext.AcquireTokenSilentAsync(resourceID, credential, new UserIdentifier(userId, UserIdentifierType.UniqueId));
+
+where `userId` is the user's object ID, which is found in the `http://schemas.microsoft.com/identity/claims/objectidentifier` claim.
+
 ## Using the access token to call the web API
 
 Once you have the token, send it in the Authorization header of the HTTP requests to the web API.
 
 	Authorization: Bearer xxxxxxxxxx
 
-The following code from the Surveys application shows how to set the Authorization header using the **HttpClient** class.
+The following extension method from the Surveys application sets the Authorization header on an HTTP request, using the **HttpClient** class.
 
-    public static class HttpClientExtensions
+    public static async Task<HttpResponseMessage> SendRequestWithBearerTokenAsync(this HttpClient httpClient, HttpMethod method, string path, object requestBody, string accessToken, CancellationToken ct)
     {
-        public static async Task<HttpResponseMessage> SendRequestWithBearerTokenAsync(this HttpClient httpClient, HttpMethod method, string path, object requestBody, string accessToken, CancellationToken ct)
+        var request = new HttpRequestMessage(method, path);
+        if (requestBody != null)
         {
-            var request = new HttpRequestMessage(method, path);
-            if (requestBody != null)
-            {
-                var json = JsonConvert.SerializeObject(requestBody, Formatting.None);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                request.Content = content;
-            }
-
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            var response = await httpClient.SendAsync(request, ct);
-            return response;
+            var json = JsonConvert.SerializeObject(requestBody, Formatting.None);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            request.Content = content;
         }
+
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var response = await httpClient.SendAsync(request, ct);
+        return response;
     }
 
 > See [HttpClientExtensions](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Common/HttpClientExtensions.cs).
