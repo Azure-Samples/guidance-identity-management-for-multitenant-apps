@@ -1,10 +1,10 @@
 # Securing a backend web API
 
-The [Tailspin Surveys](02-tailspin-scenario.md) application uses a backend web API to manage CRUD operations on surveys. For example, when a user clicks "My Surveys", the web application calls a REST API:
+The [Tailspin Surveys](02-tailspin-scenario.md) application uses a backend web API to manage CRUD operations on surveys. For example, when a user clicks "My Surveys", the web application sends an HTTP request to the web API:
 
     GET /users/{userId}/surveys
 
-This API returns a JSON object:
+The web API returns a JSON object:
 
     {
       "Published":[],
@@ -15,25 +15,29 @@ This API returns a JSON object:
       "Contribute": [{"Id":8,"Title":"My survey"}]
     }
 
-The Web API does not allow anonymous requests, so the web app must authenticate itself with the web API, using an OAuth 2 bearer token.
+The web API does not allow anonymous requests, so the web app must authenticate itself using OAuth 2 bearer tokens.
 
 > This is a server-to-server scenario. The application does not make any AJAX calls to the API from the browser client.
 
-There are two main approaches you can take: _delegated user identity_ or _application identity_. The Tailspin application implements delegated user identity.
+There are two main approaches you can take:
+
+- Delegated user identity. The web application authenticates with the user's identity.
+- Application identity. The web application authenticates with its client ID, using OAuth2 client credential flow.
+
+The Tailspin application implements delegated user identity. Here are the main differences:
 
 **Delegated user identity**
 
-- The web application authenticates with the user's identity, using OAuth 2 authorization code flow or OpenID connect.
-- The web API gets the user identity from the access token-, and makes authorization decisions based on the user identity.
-- Typically the web application will still make some authorization decisons that affect UI (such as showing or hiding UI elements).
-- The web application needs to handle 403 errors from the web API.
-- Potentially the web API can also be used by untrusted clients, such as a JavaScript application or a native client applicaton.
+- The bearer token sent to the web API contains the user identity.
+- The web API makes authorization decisions based on the user identity.
+- The web application needs to handle 403 (Forbidden) errors from the web API, if the user is not authorized to perform an action.
+- Typically, the web application still makes some authorization decisons that affect UI, such as showing or hiding UI elements).
+- With this approach, the web API can potentially be used by untrusted clients, such as a JavaScript application or a native client applicaton.
 
 **Application identity**
 
-- The web application authenticates with its application identity, using OAuth 2 with client credentials flow.
 - The web API does not get information about the user.
-- The web API cannot perform any authorization based on the user identity. All authorization decisons are made by the web application.
+- The web API cannot perform any authorization based on the user identity. All authorization decisons are made by the web application.  
 - The web API cannot be used by an untrusted client (JavaScript or native client applicaton).
 - This approach may be somewhat simpler to implement, because there is no authorization logic in the Web API.
 

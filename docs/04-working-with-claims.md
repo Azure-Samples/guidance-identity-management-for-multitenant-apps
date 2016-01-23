@@ -7,7 +7,7 @@
 
 ## Claims in Azure AD
 
-When a user signs in, Azure AD sends an ID token that contains a set of claims about the user. A claim is simply a piece of information, expressed as a key/value pair. For example, `email`=`bob@contoso.com`.  Claims have an issuer -- in this case, Azure AD -- which is the entity that authenticates the user and creates the claims. You trust the claims because you trust the issuer. (Conversely, if you don't trust the issuer, don't trust the claims!)
+When a user signs in, Azure AD sends an ID token that contains a set of claims about the user. A claim is simply a piece of information, expressed as a key/value pair. For example, `email`=`bob@contoso.com`.  Claims have an issuer &mdash; in this case, Azure AD &mdash; which is the entity that authenticates the user and creates the claims. You trust the claims because you trust the issuer. (Conversely, if you don't trust the issuer, don't trust the claims!)
 
 At a high level:
 
@@ -61,14 +61,14 @@ For example, Azure AD sends a "upn" claim that contains the user's email. Other 
 - Add **default claim values** for claims that aren't present &mdash; for example, assigning a user to a default role. In some cases this can simplify authorization logic.
 - Add **custom claim types** with application-specific information about the user. For example, you might store some information about the user in a database. You could add a custom claim with this information to the authentication ticket. The claim is stored in a cookie, so you only need to get it from the database once per login session. On the other hand, you also want to avoid creating excessively large cookies, so you need to consider the trade-off between cookie size versus database lookups.   
 
-After the authentication flow is complete, the claims are available in the `HttpContext.User`. At that point, you should treat them as a read-only collection &mdash; e.g., use them to make authorization decisions.
+After the authentication flow is complete, the claims are available in `HttpContext.User`. At that point, you should treat them as a read-only collection &mdash; e.g., use them to make authorization decisions.
 
 ## Issuer validation
 In OpenID Connect, the issuer claim ("iss") identifies the IDP that issued the ID token. Part of the OIDC authentication flow is to verify that the issuer claim matches the actual issuer. The OIDC middleware handles this for you.
 
 In Azure AD, the issuer value is unique per AD tenant (`https://sts.windows.net/<tenantID>`). Therefore, an application should do an additional check, to make sure the issuer represents a tenant that is allowed to sign in to the app.
 
-For a single-tenant application, you can just check that the issuer is your own tenant. In fact, the OIDC middleware does this automatically. In a multi-tenant app, you need to allow for multiple issuers, corresponding to the different tenants. Here is a general approach to use:
+For a single-tenant application, you can just check that the issuer is your own tenant. In fact, the OIDC middleware does this automatically by default. In a multi-tenant app, you need to allow for multiple issuers, corresponding to the different tenants. Here is a general approach to use:
 
 -	In the OIDC middleware options, set **ValidateIssuer** to false. This turns off the automatic check.
 -	When a tenant signs up, store the tenant and the issuer in your user DB.
@@ -83,7 +83,7 @@ With claims, a user's identity is no longer a monolithic entity. For example, a 
 
 Here are some basic patterns for checking claims.
 
-- 	Check that the user has a particular claim with a particular value:
+- 	To check that the user has a particular claim with a particular value:
 
           if (User.HasClaim(ClaimTypes.Role, "Admin")) { ... }
 
@@ -91,13 +91,13 @@ Here are some basic patterns for checking claims.
 
     The **ClaimTypes** class defines constants for commonly-used claim types. However, you can use any string value for the claim type.
 
--	Get a single value for a claim type, when you expect there to be at most one value:
+-	To get a single value for a claim type, when you expect there to be at most one value:
 
          string email = User.FindFirst(ClaimTypes.Email)?.Value;
 
--	Get all the values for a claim type:
+-	To get all the values for a claim type:
 
-        IEnumerable<Claim> groups = User.FindAll("groups");
+         IEnumerable<Claim> groups = User.FindAll("groups");
 
 For more details about using claims in authorization, see [Authorization](07-authorization.md).
 
