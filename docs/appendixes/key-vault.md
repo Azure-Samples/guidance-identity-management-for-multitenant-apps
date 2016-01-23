@@ -82,6 +82,7 @@ When the application starts, `KeyVaultConfigurationProvider` enumerates all of t
         }
     }
 
+> See [KeyVaultConfigurationProvider.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Configuration.KeyVault/KeyVaultConfigurationProvider.cs).
 
 ## Setting up Key Vault in the Surveys app
 
@@ -190,7 +191,7 @@ Add the admin user as a co-administrator for your Azure subscription.
 
 3. Add the same JSON fragment to the application manifest of the web API (Surveys.WebAPI).
 
-4. Get the thumbprint of the certificate. You can use the MMC certificate snap-in (but see [this KB article][kb2023835]) or else run the following command:
+4. Run the following command to get the thumbprint of the certificate.
 
         certutil -store -user my [subject]
 
@@ -355,14 +356,11 @@ Replace the entries in [square brackets] and save the secrets.json file.
 
 > For the web API, make sure to use the client ID for the Surveys.WebAPI application, not the Surveys application.
 
-<!-- Links -->
-
 [authorize-app]: https://azure.microsoft.com/en-us/documentation/articles/key-vault-get-started/#authorize
 [azure-management-portal]: https://manage.windowsazure.com/
 [azure-rm-cmdlets]: https://msdn.microsoft.com/en-us/library/mt125356.aspx
 [client-assertion]: client-assertion.md
 [configuration]: https://docs.asp.net/en/latest/fundamentals/configuration.html
-[kb2023835]: https://support.microsoft.com/en-us/kb/2023835
 [KeyVault]: https://azure.microsoft.com/en-us/services/key-vault/
 [KeyVaultConfigurationProvider]: https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Configuration.KeyVault/KeyVaultConfigurationProvider.cs
 [key-tags]: https://msdn.microsoft.com/en-us/library/azure/dn903623.aspx#BKMK_Keytags

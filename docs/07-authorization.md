@@ -27,21 +27,17 @@ To define a policy, first create a class that implements `IAuthorizationRequirem
 
 Here is an example from the Tailspin Surveys application:
 
-```
-public class SurveyCreatorRequirement : AuthorizationHandler<SurveyCreatorRequirement>, IAuthorizationRequirement
-{
-    protected override void Handle(AuthorizationContext context, SurveyCreatorRequirement requirement)
+    public class SurveyCreatorRequirement : AuthorizationHandler<SurveyCreatorRequirement>, IAuthorizationRequirement
     {
-        if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin) ||
-            context.User.HasClaim(ClaimTypes.Role, Roles.SurveyCreator))
+        protected override void Handle(AuthorizationContext context, SurveyCreatorRequirement requirement)
         {
-            context.Succeed(requirement);
-            return;
+            if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin) ||
+                context.User.HasClaim(ClaimTypes.Role, Roles.SurveyCreator))
+            {
+                context.Succeed(requirement);
+            }
         }
-        context.Fail();
     }
-}
-```
 
 > See [SurveyCreatorRequirement.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Security/Policy/SurveyCreatorRequirement.cs)
 
@@ -68,7 +64,7 @@ In your startup class, define a named policy that includes one or more requireme
 
 > See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Startup.cs)
 
-This code also sets the authentication scheme, which tells ASP.NET which authentication middleware should run if authorization fails. In this case, we specify the cookie authentication middleware, because the cookie authentication middleware can redirect the user to a "Forbidden" page. The location of the Forbidden page is set in the AccessDeniedPath option for the cookie middleware; see [Configuring the authentication middleware](03-authentication#configuring-the-authentication-middleware).
+This code also sets the authentication scheme, which tells ASP.NET which authentication middleware should run if authorization fails. In this case, we specify the cookie authentication middleware, because the cookie authentication middleware can redirect the user to a "Forbidden" page. The location of the Forbidden page is set in the AccessDeniedPath option for the cookie middleware; see [Configuring the authentication middleware](03-authentication.md#configuring-the-authentication-middleware).
 
 ### Authorize controller actions
 
@@ -138,7 +134,7 @@ if (await _authorizationService.AuthorizeAsync(User, survey, Operations.Read) ==
 Because we pass in a `Survey` object, this call will invoke the `SurveyAuthorizationHandler`.
 
 In your authorization code, a good approach is to aggregate all of the user's role-based and resource-based permissions, then check the aggregate set against the desired operation.
-Here is an example from the Surveys app. The application defines three permission types:
+Here is an example from the Surveys app. The application defines several permission types:
 
 - Admin
 - Contributor
@@ -194,10 +190,6 @@ The following code creates a list of permissions, given a particular user and su
         if (ValidateUserPermissions[operation](permissions))
         {
             context.Succeed(operation);
-        }
-        else
-        {
-            context.Fail();
         }
     }
 

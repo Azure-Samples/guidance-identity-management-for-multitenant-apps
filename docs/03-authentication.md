@@ -71,21 +71,19 @@ Set the following middleware options:
 - **ClientId**. The application's client ID, which you got when you registered the application in Azure AD.
 -	**Authority**. For a multitenant application, set this to `https://login.microsoftonline.com/common/`. This is the URL for the Azure AD common endpoint, which enables users from any Azure AD tenant to sign in. For more information about the common endpoint, see [this blog post](http://www.cloudidentity.com/blog/2014/08/26/the-common-endpoint-walks-like-a-tenant-talks-like-a-tenant-but-is-not-a-tenant/).
 - In **TokenValidationParameters**, set **ValidateIssuer** to false. That means the app will be responsible for validating the issuer value in the ID token. (The middleware still validates the token itself.) For more information about validating the issuer, see [Issuer validation](04-working-with-claims.md#issuer-validation).
-- **CallbackPath**. Set this equal to the path in the Reply URL that you registered in Azure AD. For example, if the reply URL is `http://contoso.com/aadsignin`, **CallbackPath** should be `aadsignin`.
+- **CallbackPath**. Set this equal to the path in the Reply URL that you registered in Azure AD. For example, if the reply URL is `http://contoso.com/aadsignin`, **CallbackPath** should be `aadsignin`. If you don't set this option, the default value is `signin-oidc`.
 - **PostLogoutRedirectUri**. Specify the redirct URL to use after signing out.
 - **SignInScheme**. Set this to `CookieAuthenticationDefaults.AuthenticationScheme`. This setting means that after the user is authenticated, the user claims are stored locally in a cookie. This cookie is how the user stays logged in during the browser session.
 - **Events.** Event callbacks; see [Authentication events](#authentication-events).
 
 Also add the Cookie Authentication middleware to the pipeline. This middleware is responsible for writing the user claims to a cookie, and then reading the cookie during subsequent page loads.
 
-```
-app.UseCookieAuthentication(options =>
-{
-    options.AutomaticAuthenticate = true;
-    options.AutomaticChallenge = true;
-    options.AccessDeniedPath = "/Home/Forbidden";
-});
-```
+    app.UseCookieAuthentication(options =>
+    {
+        options.AutomaticAuthenticate = true;
+        options.AutomaticChallenge = true;
+        options.AccessDeniedPath = "/Home/Forbidden";
+    });
 
 ## Authentication events
 
@@ -156,18 +154,18 @@ The second approach is recommended if your event callbacks have any substantial 
 
 To start the authentication flow in MVC 6, return a **ChallengeResult** from the contoller:
 
-```
-[AllowAnonymous]
-public IActionResult SignIn()
-{
-    return new ChallengeResult(
-        OpenIdConnectDefaults.AuthenticationScheme,
-        new AuthenticationProperties
-        {
-            RedirectUri = Url.Action("SignInCallback", "Account")
-        });
-}
-```
+    [AllowAnonymous]
+    public IActionResult SignIn()
+    {
+        return new ChallengeResult(
+            OpenIdConnectDefaults.AuthenticationScheme,
+            new AuthenticationProperties
+            {
+                IsPersistent = true,
+                RedirectUri = Url.Action("SignInCallback", "Account")
+            });
+    }
+
 This causes the middleware to return a 302 (Found) response that redirects to the authentication endpoint.
 
 ## Notes on the OpenID Connect middleware

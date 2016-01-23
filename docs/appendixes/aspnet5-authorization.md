@@ -1,4 +1,9 @@
 # ASP.NET 5 authorization handlers
+
+In ASP.NET 5, authorization logic can be encapsulated by writing an _authorization handler_, which implements the IAuthorizationHandler interface. This appendix shows some patterns for writing authorization handlers. We'll start by implementing `IAuthorizationHandler` directly (it's not much code), then show the more typical approach, which is to derive from the abstract `AuthorizationHandler` class.
+
+## What is an authorization handler?
+
 The [authorization APIs](https://docs.asp.net/en/latest/security/authorization/index.html) in ASP.NET 5 define three main abstractions:
 
 -	**Authorization handler**. Makes authorization decisions
@@ -7,11 +12,11 @@ The [authorization APIs](https://docs.asp.net/en/latest/security/authorization/i
 
 To make an authorization decision, an authorization handler is passed three things:
 
--	A set of requirements.
+-	A collection of requirements.
 -	A claims principal that represents the current user (whether authenticated or anonymous).
 -	An optional resource that is being acted upon.
 
-The basic approach for a handler is to loop through the set of requirements. For each requirement, the handler does one of the following:
+The basic approach for a handler is to iterate over the collection of requirements. For each requirement, the handler does one of the following:
 
 -	Mark the requirement as "succeeded".
 -	Mark the requirement as "failed".
@@ -83,7 +88,7 @@ Notes:
 ## Deriving from AuthorizationHandler
 
 Authorization handlers are often designed to handle a single requirement type. In that case, you can derive from the **AuthorizationHandler** class, which is strongly typed for a single requirement type.
-The following example does the same thing as the previous version.
+The following example does the same thing as the previous version, except the base class handles iterating through the requirements collection.
 
     public class SimpleAuthZHandler2 : AuthorizationHandler<SimpleRequirement>
     {
@@ -93,7 +98,7 @@ The following example does the same thing as the previous version.
         }
     }
 
-The **Handle** method is called once for every requirement of type `SimpleRequirement`. Notice that this version doesn't need to filter the requirements by type. The base class does this for you.
+The base class calls the **Handle** method once for every requirement of type `SimpleRequirement` in the `context.Requirements` collection. Notice that this version doesn't need to filter the requirements by type, because the base class does it for you.
 
 ## Resource-based authorization
 

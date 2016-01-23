@@ -2,15 +2,18 @@
 This topic describes how to run the [Tailspin Surveys](02-tailspin-scenario.md) application locally, from Visual Studio. In these steps, you won't deploy the application to Azure. However, you will need to create some Azure resources (an Azure AD tenant and a Redis cache).
 
 ## Prerequisites:
--	[Visual Studio 2015](http://go.microsoft.com/fwlink/?LinkId=532606)
+-	[Visual Studio 2015][VS2015]
 -	[ASP.NET 5 and Microsoft Web Developer Tools](https://docs.asp.net/en/latest/getting-started/installing-on-windows.html#install-asp-net-with-visual-studio)
 -	[Microsoft Azure](https://azure.microsoft.com) account
 
 ## Set up your Azure AD directory
 
-The Surveys application must be registered with an Azure AD directory. This enables the application to authenticate using Azure AD and store application roles.
+In this step, you will register the Surveys application in an Azure AD directory.
 
-### Create a new Azure AD directory or use an existing one.
+> This AD directory would belong to the application provider (Tailspin, in our example), not the customers who use the application.
+Registering the application enables the application to use Azure AD for authentication. For more information, see [Authentication and sign-in](03-authentication.md).
+
+### Create a new Azure AD directory
 
 1. Sign into the [Azure management portal](https://manage.windowsazure.com).
 
@@ -284,3 +287,8 @@ Next, repeat the same steps to assign roles for the Survey.WebAPI application.
 Now go back to the app and sign in again. Click **My Surveys**. If the user is assigned to the SurveyAdmin or SurveyCreator role, you will see a **Create Survey** button, indicating that the user has permissions to create a new survey.
 
 ![My surveys](media/running-the-app/screenshot3.png)
+
+
+<!-- links -->
+
+[VS2015]: https://www.visualstudio.com/products/vs-2015-product-editions

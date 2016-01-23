@@ -44,7 +44,7 @@ So far, all of this is fairly abstract, especially the idea of the “grant.” 
 
 ### Authorization code grant
 
-**Authorization code grant** is appropriate for web-server based applications. In this flow, the web app retrieves the access token on the server side. The token never passes through the user agent.
+**Authorization code grant** is appropriate for web-server based applications. In this flow, the web app retrieves the access token on the server side. The token never passes through the user agent. (The [user agent][user-agent] is the client software that makes the HTTP requests, such as a web browser.)
 
 1.	The client sends the user-agent to the authorization endpoint, where the user authenticates. Typically, the authorization server shows a login screen. There may be additional safeguards such as 2-factor authentication. In any case, this step is outside the client’s control.
 2.	The authorization server redirects the user-agent back to the client. The redirect URL includes an _authorization code_ in the query string. This code represents the grant.
@@ -53,6 +53,8 @@ So far, all of this is fairly abstract, especially the idea of the “grant.” 
 5.	To get the resource, the client includes the token in the Authorize header of the HTTP requests to the resource server.
 
 ![OAuth 2 authorizaton code grant](../media/oidc/auth-code-grant.png)
+
+> There is a variation of this flow where the authorization server uses HTTP POST to send the authorization code, instead than putting the code in the query string (step 2).
 
 ### Implicit grant
 
@@ -75,15 +77,15 @@ Sometimes you will hear that an app “authenticates using OAuth2,” but that�
 However, OAuth 2 can be used to _build_ an authentication protocol. The idea is to treat the user’s identity as a resource. The identity provider (IDP) acts as both authorization server and resource server.
 
 1.	The user authenticates with the IDP
-2.	The user authorizes the client to get the user’s profile from the IdP. This may be a limited grant, to view only portions of the user's identity. For example, name and email address, but not phone number.
-3.	The client gets an OAuth access token from the IdP.
+2.	The user authorizes the client to get the user’s profile from the IDP. This may be a limited grant, to view only portions of the user's identity. For example, name and email address, but not phone number.
+3.	The client gets an OAuth access token from the IDP.
 4.	The client uses this token to request the user profile.
 
 For step (4), the IDP must provide an API for getting the profile. For example, Facebook provides the Facebook Graph API. Crucially, whatever API is used, it falls outside the scope of OAuth.
 
 ![Authenticating with OAuth2 and...](../media/oidc/oauth-authn.png)
 
-Notice that the user authenticates with the IdP in step (1). This is a prerequisite for authorizing the client. But at that point, the user is still not authenticated with the _client_. The client does not authenticate the user until step (4), when it requests the user’s ID from the IdP.
+Notice that the user authenticates with the IDP in step (1). This is a prerequisite for authorizing the client. But at that point, the user is still not authenticated with the _client_. The client does not authenticate the user until step (4), when it requests the user’s ID from the IDP.
 
 Two problems with this approach:
 
@@ -96,7 +98,7 @@ Which brings us to OpenID Connect …
 
 OpenID Connect is an authentication protocol built on top of OAuth 2, and was designed to solve some of the problems with using OAuth 2 for authentication.
 
-OpenID Connect adds the concept of an ID token. An ID token contains has claims about the authenticated user. The ID token is also signed and has an audience. The audience specifies who the token was issued for, and contains the client ID of the client. This lets the client verify that the token was not tampered with, and was not issued to some other client.
+OpenID Connect adds the concept of an ID token. An ID token holds claims about the authenticated user. The ID token is also signed and has an audience. The audience specifies who the token was issued for, and contains the client ID of the client. This lets the client verify that the token was not tampered with, and was not issued to some other client.
 
 In OpenID Connect, the authorization server exposes several endpoints:
 
@@ -133,3 +135,8 @@ Hybrid | "`code id_token`", "`code token`", or "`code id_token token`"
 ## Further reading
 
 - [OpenID Connect in a nutshell](http://nat.sakimura.org/2012/01/20/openid-connect-nutshell/)
+
+
+<-- links -->
+
+[user-agent]: https://tools.ietf.org/html/rfc7230#section-2.1

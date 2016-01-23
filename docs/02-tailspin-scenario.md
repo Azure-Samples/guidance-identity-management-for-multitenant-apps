@@ -10,7 +10,7 @@ Tailspin is a fictitious company that is developing a SaaS application named Sur
 
 ![Edit survey](media/tailspin/edit-survey.png)
 
-This screenshot shows the Edit Survey page. Notice that the user is signed in with his organizational identity, "bob@contoso.com".
+This screenshot shows the Edit Survey page. Notice that the user is signed in with his organizational identity, `bob@contoso.com`.
 
 Users can view surveys created by other users within the same tenant.
 
@@ -20,7 +20,7 @@ When a user creates a survey, he or she can invite other people to be contributo
 
 ![Add contributor](media/tailspin/add-contributor.png)
 
-A user can add contributors from other tenants, which enables cross-tenant sharing of resources. In this screenshot, Bob ('bob@contoso.com') is adding Alice ('alice@fabrikam.com') as a contributor to a survey that Bob created.
+A user can add contributors from other tenants, which enables cross-tenant sharing of resources. In this screenshot, Bob (`bob@contoso.com`) is adding Alice (`alice@fabrikam.com`) as a contributor to a survey that Bob created.
 
 When Alice logs in, she sees the survey listed under "Surveys I can contribute to".
 
@@ -32,6 +32,6 @@ Note that Alice signs into her own tenant, not as a guest of the Contoso tenant.
 
 The Surveys application consists of a web front end and a web API backend. Both are implemented using [ASP.NET 5](https://docs.asp.net/en/latest/).
 
-The web application uses Azure Active Directory (Azure AD) to authenticate users. The web application also calls Azure AD to get an OAUth 2 access token for the Web API. Access tokens are cached in Azure Redis Cache. The cache enables multiple app instances to share the same token cache.
+The web application uses Azure Active Directory (Azure AD) to authenticate users. The web application also calls Azure AD to get an OAUth 2 access token for the Web API. Access tokens are cached in Azure Redis Cache. The cache enables multiple instances to share the same token cache (e.g., in a server farm).
 
 ![Architecture](media/tailspin/architecture.png)

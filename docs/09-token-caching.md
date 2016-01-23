@@ -34,7 +34,7 @@ Tokens are sensitive data, because they grant access to a user's resources. (Mor
 
 ## DistributedTokenCache implementation
 
-The `DistributedTokenCache` class derives from the ADAL [TokenCache][tokencache-class] class.
+The [DistributedTokenCache][DistributedTokenCache] class derives from the ADAL [TokenCache][tokencache-class] class.
 
 In the constructor, the `DistributedTokenCache` class creates a key for the current user and loads the cache from the backing store:
 
@@ -75,7 +75,6 @@ To load the cache data, read the serialized blob from the backing store, and cal
             this.Deserialize(_protector.Unprotect(cacheData));
         }
     }
-
 
 Whenever ADAL access the cache, it fires an `AfterAccess` event. If the cache data has changed, the `HasStateChanged` property is true. In that case, update the backing store to reflect the change, and then set `HasStateChanged` to false.
 
@@ -119,6 +118,7 @@ In our case, we decided not to handle these two events.
 [ADAL]: https://msdn.microsoft.com/en-us/library/azure/jj573266.aspx
 [data-protection]: https://docs.asp.net/en/latest/security/data-protection/index.html
 [distributed-cache]: https://docs.asp.net/en/latest/fundamentals/distributed-cache.html
+[DistributedTokenCache]: https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.TokenStorage/DistributedTokenCache.cs
 [key-management]: https://docs.asp.net/en/latest/security/data-protection/configuration/default-settings.html
 [in-memory-cache]: https://docs.asp.net/en/latest/fundamentals/caching.html
 [tokencache-class]: https://msdn.microsoft.com/en-us/library/azure/microsoft.identitymodel.clients.activedirectory.tokencache.aspx

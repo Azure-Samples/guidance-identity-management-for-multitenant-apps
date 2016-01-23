@@ -54,6 +54,7 @@ public IActionResult SignIn()
         OpenIdConnectDefaults.AuthenticationScheme,
         new AuthenticationProperties
         {
+            IsPersistent = true,
             RedirectUri = Url.Action("SignInCallback", "Account")
         });
 }
@@ -86,7 +87,7 @@ The state information in `AuthenticationProperties` gets added to the OpenID Con
 
 ![State parameter](media/sign-up/state-parameter.png)
 
-After the user authenticates in Azure AD and gets redirected back to the application, the authentication ticket contains the state. We are using this fact to make sure the "signup" value persists acrross the entire authentication flow.
+After the user authenticates in Azure AD and gets redirected back to the application, the authentication ticket contains the state. We are using this fact to make sure the "signup" value persists across the entire authentication flow.
 
 ## Adding the admin consent prompt
 
@@ -118,10 +119,7 @@ Note that the prompt is only needed during sign-up. Regular sign-in should not i
 ```
 internal static bool IsSigningUp(this BaseControlContext context)
 {
-    if (context == null)
-    {
-        throw new ArgumentNullException(nameof(context));
-    }
+    Guard.ArgumentNotNull(context, nameof(context));
 
     string signupValue;
     object obj;
@@ -171,41 +169,42 @@ Here is the relevant code from the Surveys application:
     public override async Task AuthenticationValidated(AuthenticationValidatedContext context)
     {
         var principal = context.AuthenticationTicket.Principal;
-        try
+        var userId = principal.GetObjectIdentifierValue();
+        var tenantManager = context.HttpContext.RequestServices.GetService<TenantManager>();
+        var userManager = context.HttpContext.RequestServices.GetService<UserManager>();
+        var issuerValue = principal.GetIssuerValue();
+        _logger.AuthenticationValidated(userId, issuerValue);
+
+        // Normalize the claims first.
+        NormalizeClaims(principal);
+        var tenant = await tenantManager.FindByIssuerValueAsync(issuerValue)
+            .ConfigureAwait(false);
+
+        if (context.IsSigningUp())
         {
-            var userId = principal.GetObjectIdentifierValue();
-            var tenantManager = context.HttpContext.RequestServices.GetService<TenantManager>();
-            var userManager = context.HttpContext.RequestServices.GetService<UserManager>();
-            var issuerValue = principal.GetIssuerValue();
-
-            // Normalize the claims first.
-            NormalizeClaims(principal);
-            var tenant = await tenantManager.FindByIssuerValueAsync(issuerValue);
-
-            if (context.IsSigningUp())
+            // Originally, we were checking to see if the tenant was non-null, however, this would not allow
+            // permission changes to the application in AAD since a re-consent may be required.  Now we just don't
+            // try to recreate the tenant.
+            if (tenant == null)
             {
-                if (tenant == null)
-                {
-                    tenant = await SignUpTenantAsync(context, tenantManager);
-                }
-
-                // In this case, we need to go ahead and set up the user signing us up.
-                await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant);
-            }
-            else
-            {
-                if (tenant == null)
-                {
-                    throw new SecurityTokenValidationException($"Tenant {issuerValue} is not registered");
-                }
-
-                await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant);
+                tenant = await SignUpTenantAsync(context, tenantManager)
+                    .ConfigureAwait(false);
             }
 
+            // In this case, we need to go ahead and set up the user signing us up.
+            await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant)
+                .ConfigureAwait(false);
         }
-        catch
+        else
         {
-            // Handle error (not shown)
+            if (tenant == null)
+            {
+                _logger.UnregisteredUserSignInAttempted(userId, issuerValue);
+                throw new SecurityTokenValidationException($"Tenant {issuerValue} is not registered");
+            }
+
+            await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant)
+                .ConfigureAwait(false);
         }
     }
 
@@ -225,15 +224,8 @@ Here is the [SignUpTenantAsync](https://github.com/mspnp/multitenant-saas-guidan
 
     private async Task<Tenant> SignUpTenantAsync(BaseControlContext context, TenantManager tenantManager)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (tenantManager == null)
-        {
-            throw new ArgumentNullException(nameof(tenantManager));
-        }
+        Guard.ArgumentNotNull(context, nameof(context));
+        Guard.ArgumentNotNull(tenantManager, nameof(tenantManager));
 
         var principal = context.AuthenticationTicket.Principal;
         var issuerValue = principal.GetIssuerValue();
@@ -245,7 +237,8 @@ Here is the [SignUpTenantAsync](https://github.com/mspnp/multitenant-saas-guidan
 
         try
         {
-            await tenantManager.CreateAsync(tenant);
+            await tenantManager.CreateAsync(tenant)
+                .ConfigureAwait(false);
         }
         catch(Exception ex)
         {
