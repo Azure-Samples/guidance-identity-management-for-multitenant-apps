@@ -8,9 +8,11 @@ Tailspin is a fictitious company that is developing a SaaS application named Sur
 
 > To get started with the application, see [Running the Surveys application](running-the-app.md).
 
+This screenshot shows the Edit Survey page:
+
 ![Edit survey](media/tailspin/edit-survey.png)
 
-This screenshot shows the Edit Survey page. Notice that the user is signed in with his organizational identity, `bob@contoso.com`.
+Notice that the user is signed in with his organizational identity, `bob@contoso.com`.
 
 Users can view surveys created by other users within the same tenant.
 
@@ -32,6 +34,6 @@ Note that Alice signs into her own tenant, not as a guest of the Contoso tenant.
 
 The Surveys application consists of a web front end and a web API backend. Both are implemented using [ASP.NET 5](https://docs.asp.net/en/latest/).
 
-The web application uses Azure Active Directory (Azure AD) to authenticate users. The web application also calls Azure AD to get an OAUth 2 access token for the Web API. Access tokens are cached in Azure Redis Cache. The cache enables multiple instances to share the same token cache (e.g., in a server farm).
+The web application uses Azure Active Directory (Azure AD) to authenticate users. The web application also calls Azure AD to get OAuth 2 access tokens for the Web API. Access tokens are cached in Azure Redis Cache. The cache enables multiple instances to share the same token cache (e.g., in a server farm).
 
 ![Architecture](media/tailspin/architecture.png)

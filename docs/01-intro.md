@@ -10,7 +10,7 @@ But those users belong to organizations:
 
 ![Organizational users](media/intro/org-users.png)
 
-When Alice (`alice@contoso`) signs in, the application should know that Alice is part of Contoso.
+Example: Tailspin sells subscriptions to its SaaS application. Contoso and Fabrikam sign up for the app. When Alice (`alice@contoso`) signs in, the application should know that Alice is part of Contoso.
 
 - Alice _should_ have access to Contoso data.
 - Alice _should not_ have access to Fabrikam data.
@@ -21,11 +21,9 @@ This guidance will show you how to manage user identities in a multitenant appli
 
 A _tenant_ is a group of users. In a SaaS applicaton, the tenant is a subscriber or customer of the application. _Multitenancy_ is an architecture where multiple tenants share the same physical instance of the app. Although tenants share physical resources (such as VMs or storage), each tenant gets its own logical instance of the app.
 
-Tenants generally have many users. This is what makes an application multi-_tenant_ as opposed to just multi-_user_. Often, application data is shared among the users within a tenant, but not with other tenants.
+Typically, application data is shared among the users within a tenant, but not with other tenants.
 
 ![Multitenant](media/intro/multitenant.png)
-
-Example: Tailspin sells subscriptions to its SaaS application. Contoso and Fabrikam sign up for the app. Employees of Contoso can log into the app and access Contoso’s data, but not Fabrikam’s data, and vice-versa.
 
 Compare this architecture with a single-tenant architecture, where each tenant has a dedicated physical instance. In a single-tenant architecture, you add tenants by spinning up new instances of the app.
 
@@ -41,15 +39,18 @@ Any request can be routed to any instance. Together, the system functions as a s
 
 ## Identity in a multitenant app
 
-In a multitenant app, you have to consider users in the context of tenants. Here are some of the goals:
+In a multitenant app, you must consider users in the context of tenants.
 
-- **Authentication**
-    - When signing into the app, users sign in with their organization credentials. They don't have to create new user profiles for the app.
-    - Users within the same organization are part of the same tenant.
-    - When a user signs in, the application knows which tenant the user belongs to.
-- **Authorization**
-    - When authorizing a user's actions (say, viewing a resource), the app must take into account the user's tenant.
-    - Users might be assigned roles within the application, such as "Admin" or "Standard User". Role assignments should be managed by the customer, not by the SaaS provider.
+**Authentication**
+
+- Users sign into the app with their organization credentials. They don't have to create new user profiles for the app.
+- Users within the same organization are part of the same tenant.
+- When a user signs in, the application knows which tenant the user belongs to.
+
+**Authorization**
+
+- When authorizing a user's actions (say, viewing a resource), the app must take into account the user's tenant.
+- Users might be assigned roles within the application, such as "Admin" or "Standard User". Role assignments should be managed by the customer, not by the SaaS provider.
 
 **Example.** Alice, an employee at Contoso, navigates to the application in her browser and clicks the “Log in” button. She is redirected to a login screen where she enters her corporate credentials (username and password). At this point, she is logged into the app as `alice@contoso.com`. The application also knows that Alice is an admin user for this application. Because she is an admin, she can see a list of all the resources that belong to Contoso. However, she cannot view Fabrikam's resources, because she is an admin only within her tenant.
 
