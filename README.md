@@ -2,12 +2,12 @@
 
 # Identity Management for Multitenant Applications in Microsoft Azure
 
-[![Build status](https://ci.appveyor.com/api/projects/status/expd24tusuu7cowc/branch/master?svg=true)](https://ci.appveyor.com/project/mspnp/multitenant-saas-guidance/branch/master)
+This sample shows how to manage user identities in a multitenant application on Microsoft Azure, using Azure Active Directory for authentication.
 
-This project consists of:
+The project consists of:
 
-- The Tailspin Surveys application, a reference implementation of a multi-tenant SaaS application.
-- Written guidance on best practices for multitenant applications in Microsoft Azure.
+- A reference implementation of a multi-tenant SaaS application.
+- Written guidance on best practices for identity management in multitenant applications on Microsoft Azure.
 
 The written guidance reflects what we learned in the process of building the application. To get started with the application, see [Running the Surveys application](docs/running-the-app.md).
 
