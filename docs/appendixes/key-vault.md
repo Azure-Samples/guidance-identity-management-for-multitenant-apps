@@ -82,7 +82,7 @@ When the application starts, `KeyVaultConfigurationProvider` enumerates all of t
         }
     }
 
-> See [KeyVaultConfigurationProvider.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Configuration.KeyVault/KeyVaultConfigurationProvider.cs).
+> See [KeyVaultConfigurationProvider.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Configuration.KeyVault/KeyVaultConfigurationProvider.cs).
 
 ## Setting up Key Vault in the Surveys app
 
@@ -362,13 +362,13 @@ Replace the entries in [square brackets] and save the secrets.json file.
 [client-assertion]: client-assertion.md
 [configuration]: https://docs.asp.net/en/latest/fundamentals/configuration.html
 [KeyVault]: https://azure.microsoft.com/en-us/services/key-vault/
-[KeyVaultConfigurationProvider]: https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Configuration.KeyVault/KeyVaultConfigurationProvider.cs
+[KeyVaultConfigurationProvider]: https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Configuration.KeyVault/KeyVaultConfigurationProvider.cs
 [key-tags]: https://msdn.microsoft.com/en-us/library/azure/dn903623.aspx#BKMK_Keytags
 [Microsoft.Azure.KeyVault]: https://www.nuget.org/packages/Microsoft.Azure.KeyVault/
 [options]: https://docs.asp.net/en/latest/fundamentals/configuration.html#using-options-and-configuration-objects
 [running-the-app]: ../running-the-app.md
-[Setup-KeyVault]: https://github.com/mspnp/multitenant-saas-guidance/blob/master/scripts/Setup-KeyVault.ps1
+[Setup-KeyVault]: https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/scripts/Setup-KeyVault.ps1
 [Surveys]: ../02-tailspin-scenario.md
 [user-secrets]: http://go.microsoft.com/fwlink/?LinkID=532709
-[web-startup]: https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Startup.cs
-[web-api-startup]: https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.WebAPI/Startup.cs
+[web-startup]: https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Startup.cs
+[web-api-startup]: https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.WebAPI/Startup.cs

@@ -60,7 +60,7 @@ In your startup class, add the OpenID Connect middleware:
         options.Events = [event callbacks];
     });
 
-> See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Startup.cs).
+> See [Startup.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Startup.cs).
 
 
 > For more information about the startup class, see [Application Startup](https://docs.asp.net/en/latest/fundamentals/startup.html) in the ASP.NET 5 documentation.
@@ -200,7 +200,7 @@ app.UseOpenIdConnectAuthentication(options =>
 });
 ```
 
-The second approach is recommended if your event callbacks have any substantial logic, so they don't clutter your startup class. Our reference implementation uses this approach; see [SurveyAuthenticationEvents.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs).
+The second approach is recommended if your event callbacks have any substantial logic, so they don't clutter your startup class. Our reference implementation uses this approach; see [SurveyAuthenticationEvents.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs).
 
 ### OpenID connect endpoints
 
