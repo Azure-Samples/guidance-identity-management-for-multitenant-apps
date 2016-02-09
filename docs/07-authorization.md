@@ -39,7 +39,7 @@ Here is an example from the Tailspin Surveys application:
         }
     }
 
-> See [SurveyCreatorRequirement.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Security/Policy/SurveyCreatorRequirement.cs)
+> See [SurveyCreatorRequirement.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Security/Policy/SurveyCreatorRequirement.cs)
 
 This class defines the requirement for a user to create a new survey. The user must be in the SurveyAdmin or SurveyCreator role.
 
@@ -62,7 +62,7 @@ In your startup class, define a named policy that includes one or more requireme
             });
     });
 
-> See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Startup.cs)
+> See [Startup.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Startup.cs)
 
 This code also sets the authentication scheme, which tells ASP.NET which authentication middleware should run if authorization fails. In this case, we specify the cookie authentication middleware, because the cookie authentication middleware can redirect the user to a "Forbidden" page. The location of the Forbidden page is set in the AccessDeniedPath option for the cookie middleware; see [Configuring the authentication middleware](03-authentication.md#configuring-the-authentication-middleware).
 
@@ -194,7 +194,7 @@ The following code creates a list of permissions for a particular user and surve
     }
 
 
-> See [Surveyauthorizationhandler.cs.](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Security/Policy/SurveyAuthorizationHandler.cs).
+> See [Surveyauthorizationhandler.cs.](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Security/Policy/SurveyAuthorizationHandler.cs).
 
 In a multi-tenant application, you must ensure that permissions don't "leak" to other tenant's data. In the Surveys app, the Contributor permission is allowed across tenants &mdash; you can assign someone from another tenant as a contriubutor. The other permission types are restricted to resources that belong to that user's tenant, so the code checks the tenant ID before granting those permission types. (The `TenantId` field as assigned when the survey is created.)
 

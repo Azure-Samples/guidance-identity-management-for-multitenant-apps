@@ -118,7 +118,7 @@ In our case, we decided not to handle these two events.
 [ADAL]: https://msdn.microsoft.com/en-us/library/azure/jj573266.aspx
 [data-protection]: https://docs.asp.net/en/latest/security/data-protection/index.html
 [distributed-cache]: https://docs.asp.net/en/latest/fundamentals/distributed-cache.html
-[DistributedTokenCache]: https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.TokenStorage/DistributedTokenCache.cs
+[DistributedTokenCache]: https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.TokenStorage/DistributedTokenCache.cs
 [key-management]: https://docs.asp.net/en/latest/security/data-protection/configuration/default-settings.html
 [in-memory-cache]: https://docs.asp.net/en/latest/fundamentals/caching.html
 [tokencache-class]: https://msdn.microsoft.com/en-us/library/azure/microsoft.identitymodel.clients.activedirectory.tokencache.aspx

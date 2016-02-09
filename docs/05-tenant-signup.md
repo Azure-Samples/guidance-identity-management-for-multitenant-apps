@@ -41,7 +41,7 @@ When an anonymous user visits the Surveys application, the user is shown two but
 
 ![Application sign-up page](media/sign-up/sign-up-page.png)
 
-These buttons invoke actions in the [AccountController](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Controllers/AccountController.cs) class.
+These buttons invoke actions in the [AccountController](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Controllers/AccountController.cs) class.
 
 The `SignIn` action returns a **ChallegeResult**, which causes the OpenID Connect middleware to redirect to the authentication endpoint. This is the default way to trigger authentication in ASP.NET 5.  
 
@@ -107,7 +107,7 @@ public override Task RedirectToAuthenticationEndpoint(RedirectContext context)
 }
 ```
 
-> See [SurveyAuthenticationEvents.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs).
+> See [SurveyAuthenticationEvents.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs).
 
 Setting` ProtocolMessage.Prompt` tells the middleware to add the "prompt" parameter to the authentication request.
 
@@ -147,7 +147,7 @@ internal static bool IsSigningUp(this BaseControlContext context)
 }
 ```
 
-> See [BaseControlContextExtensions.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Security/BaseControlContextExtensions.cs).
+> See [BaseControlContextExtensions.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Security/BaseControlContextExtensions.cs).
 
 > Note: This code includes a workaround for a known bug in ASP.NET 5 RC1. In the `RedirectToAuthenticationEndpoint` event, there is no way to get the authentication properties that contains the "signup" state. As a workaround, the `AccountController.SignUp` method also puts the "signup" state into the `HttpContext`. This works because `RedirectToAuthenticationEndpoint` happens before the redirect, so we still have the same `HttpContext`.
 
@@ -205,7 +205,7 @@ Here is the relevant code from the Surveys application:
         }
     }
 
-> See [SurveyAuthenticationEvents.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs).
+> See [SurveyAuthenticationEvents.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs).
 
 This code does the following:
 
@@ -217,7 +217,7 @@ This code does the following:
   1.	If the tenant's issuer was not found in the database, it means the tenant is not registered, and the customer needs to sign up. In that case, throw an exception to cause the authentication to fail.
   2.	Otherwise, create a database record for this user, if there isn't one already (`CreateOrUpdateUserAsync`).
 
-Here is the [SignUpTenantAsync](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs) method that adds the tenant to the database.
+Here is the [SignUpTenantAsync](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Web/Security/SurveyAuthenticationEvents.cs) method that adds the tenant to the database.
 
     private async Task<Tenant> SignUpTenantAsync(BaseControlContext context, TenantManager tenantManager)
     {

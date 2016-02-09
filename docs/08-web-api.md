@@ -130,7 +130,7 @@ The following extension method from the Surveys application sets the Authorizati
         return response;
     }
 
-> See [HttpClientExtensions](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Common/HttpClientExtensions.cs).
+> See [HttpClientExtensions](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.Common/HttpClientExtensions.cs).
 
 ## Authenticating in the web API
 
@@ -150,7 +150,7 @@ Register the middleware in your web API `Startup` class.
         options.Events = new SurveysJwtBearerEvents();
     });
 
-> See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.WebAPI/Startup.cs).
+> See [Startup.cs](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.WebAPI/Startup.cs).
 
 - **Audience**. Set this to the App ID URL for the web API, which you created when you registered the web API with Azure AD.
 - **Authority**. For a multitenant application, set this to `https://login.microsoftonline.com/common/``.
@@ -178,7 +178,7 @@ In the Surveys application, the web API doesn't handle [tenant sign-up](05-tenan
         }
     }
 
-> See [SurveysJwtBearerEvents](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.WebAPI/SurveyJwtBearerEvents.cs).
+> See [SurveysJwtBearerEvents](https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/src/Tailspin.Surveys.WebAPI/SurveyJwtBearerEvents.cs).
 
 You can also use the **ValidatedToken** event to do [claims transformation](04-working-with-claims.md#claims-transformations). Remember that the claims come directly from Azure AD, so if the web application did any claims transformations, those are not reflected in the bearer token that the web API receives.
 
