@@ -1,3 +1,9 @@
+---
+services: guidance
+platforms: dotnet
+author: MikeWasson
+---
+
 # Identity Management for Multitenant Applications in Microsoft Azure
 
 This sample is a multitenant web application, called Surveys, that allows users to create online surveys. The sample demonstrates some key concerns when managing user identities in a multitenant application, including sign-up, authentication, authorization, and app roles.
