@@ -1,4 +1,8 @@
-![Microsoft patterns & practices](http://pnp.azurewebsites.net/images/pnp-logo.png)
+---
+services: guidance
+platforms: dotnet
+author: MikeWasson
+---
 
 # Identity Management for Multitenant Applications in Microsoft Azure
 
