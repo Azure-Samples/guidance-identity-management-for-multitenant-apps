@@ -1,30 +1,28 @@
-# Running the Surveys application
-This topic describes how to run the [Tailspin Surveys](02-tailspin-scenario.md) application locally, from Visual Studio. In these steps, you won't deploy the application to Azure. However, you will need to create some Azure resources (an Azure AD tenant and a Redis cache).
+# How to run the Tailspin Surveys sample application
 
-## Prerequisites:
+To run this sample, you will need:
+
 -	[Visual Studio 2015][VS2015]
--	[ASP.NET 5 and Microsoft Web Developer Tools](https://docs.asp.net/en/latest/getting-started/installing-on-windows.html#install-asp-net-with-visual-studio)
--	[Microsoft Azure](https://azure.microsoft.com) account
+-	[ASP.NET 5 and Microsoft Web Developer Tools][aspnet]
+-	A [Microsoft Azure](https://azure.microsoft.com) account
 
-## Set up your Azure AD directory
+In these steps, you won't deploy the application to Azure. However, you will need to create some Azure resources (an Azure AD tenant and a Redis cache).
 
-In this step, you will register the Surveys application in an Azure AD directory.
+## Step 1. Create a new Azure AD directory
 
 > This AD directory would belong to the application provider (Tailspin, in our example), not the customers who use the application.
-Registering the application enables the application to use Azure AD for authentication. For more information, see [Authentication and sign-in](03-authentication.md).
+Registering the application enables the application to use Azure AD for authentication. For more information, see [Authentication and sign-in][authz].
 
-### Create a new Azure AD directory
-
-1. Sign into the [Azure management portal](https://manage.windowsazure.com).
+1. Sign into the [Azure management portal][portal].
 
 2. Click **New** > **App Services** > **Active Directory** > **Directory** > **Custom Create**.
 
 3. Enter the required information and click the **Finish** (checkmark) button.
     - Do _not_ check **This is a B2C directory**.
 
-## Register the Surveys web API in your AD directory
+## Step 2. Register the Surveys web API in your AD directory
 
-1.	In the [Azure management portal](https://manage.windowsazure.com), navigate to your AD directory.
+1.	In the [Azure management portal][portal], navigate to your AD directory.
 
 2.	Click **Applications**.
 
@@ -46,16 +44,16 @@ Registering the application enables the application to use Azure AD for authenti
 
 8.	In the portal, click **Configure**.
 
-    ![Configure](media/running-the-app/configure.png)
+    ![Configure](media/configure.png)
 
 9.	Set **Application is Multi-Tenant** to **YES**.
 
 10.	Click **Save**.
 
 
-## Register the Surveys web app in your AD directory
+## Step 3. Register the Surveys web app in your AD directory
 
-1. In the [Azure management portal](https://manage.windowsazure.com), navigate to your AD directory.
+1. In the [Azure management portal][portal], navigate to your AD directory.
 
 2. Add a new application as described in the previous section.
 
@@ -79,7 +77,7 @@ Registering the application enables the application to use Azure AD for authenti
 
     _Note_: Do this now, because the key won't be visible after you navigate away from this page, although you can always generate a new one.
 
-## Give the Surveys web app permissions to call the web API
+## Step 4. Give the Surveys web app permissions to call the web API
 
 1.	In the Azure management portal, navigate to your Azure AD tenant and select the Surveys application.
 
@@ -93,18 +91,18 @@ Registering the application enables the application to use Azure AD for authenti
 
 6.	Select `Surveys.WebAPI`.
 
-    ![Permssions to other application](media/running-the-app/permissions.png)
+    ![Permssions to other application](media/permissions.png)
 
 7.	Click the bottom checkmark to complete the dialog. This will add `Surveys.WebAPI` to the permissions list.
 
 8.	In the **Delegated Permissions** dropdown, select **Access Surveys.WebAPI**.
 
-    ![Setting delegated permissions](media/running-the-app/delegated-permissions.png)
+    ![Setting delegated permissions](media/delegated-permissions.png)
 
 9.	Click **Save**.
 
 
-## Update the application manifests
+## Step 5. Update the application manifests
 
 Update the application manifest for the web API.
 
@@ -128,7 +126,7 @@ Update the application manifest for the web API.
             "allowedMemberTypes": ["User"],
             "description": "Administrators can manage the surveys in their tenant",
             "displayName": "SurveyAdmin",
-            "id": "[Generate a new GUID]",  
+            "id": "[Generate a new GUID]",
             "isEnabled": true,
             "value": "SurveyAdmin"
           }
@@ -147,7 +145,7 @@ Update the application manifest for the web API.
 
 Now repeat the same steps for the Surveys app, except do not add an entry for `knownClientApplications`. Use the same role definitions, but generate new GUIDs for the IDs.
 
-## Create a new Redis Cache instance
+## Step 6. Create a new Redis Cache instance
 
 The Surveys application uses Redis to cache OAuth 2 access tokens. To create the cache:
 
@@ -155,11 +153,11 @@ The Surveys application uses Redis to cache OAuth 2 access tokens. To create the
 2.	Fill in the required information (DNS name, subscription, etc) and click **Create**.
 3.	When the cache is created, click **Show access keys** and copy the primary key.
 
-For more information about creating a Redis cache, see [How to Use Azure Redis Cache](https://azure.microsoft.com/en-us/documentation/articles/cache-dotnet-how-to-use-azure-redis-cache/).
+For more information about creating a Redis cache, see [How to Use Azure Redis Cache][redis]
 
-![Creating a Redis cache](media/running-the-app/redis-cache.png)
+![Creating a Redis cache](media/redis-cache.png)
 
-## Set user secrets
+## Step 7. Set user secrets
 
 1.	Open the Tailspin.Surveys solution in Visual Studio.
 
@@ -201,7 +199,7 @@ For more information about creating a Redis cache, see [How to Use Azure Redis C
 
       Replace the entries in [square brackets] with the correct values, as above.
 
-## Initialize the database
+## Step 8. Initialize the database
 
 In this step, you will use Entity Framework 7 to create a local SQL database, using LocalDB.
 
@@ -214,21 +212,11 @@ In this step, you will use Entity Framework 7 to create a local SQL database, us
           dnvm use 1.0.0-rc1-final
           dnx ef database update
 
-## Run the application
+## Step 9. Run the application
 
-To run the application, start both the Tailspin.Surveys.Web and Tailspin.Surveys.WebAPI projects.
+To run the application, start both the Tailspin.Surveys.Web and Tailspin.Surveys.WebAPI projects. When the application starts, you are not signed in, so you see the welcome page:
 
-Note: You can set Visual Studio to run both projects automatically on F5, as follows:
-
-1.	In Solution Explorer, right-click the solution and click **Set Startup Projects**.
-2.	Select **Multiple startup projects**.
-3.	Set **Action** = **Start** for the Tailspin.Surveys.Web and Tailspin.Surveys.WebAPI projects.
-
-## Sign up a new tenant
-
-When the application starts, you are not signed in, so you see the welcome page:
-
-![Welcome page](media/running-the-app/screenshot1.png)
+![Welcome page](media/screenshot1.png)
 
 To sign up:
 
@@ -238,16 +226,16 @@ To sign up:
 
 The application registers the tenant, and then signs you out. The app signs you out because you need to set up the application roles in Azure AD, before using the application.
 
-![After sign up](media/running-the-app/screenshot2.png)
+![After sign up](media/screenshot2.png)
 
-## Assign application roles
+## Step 10. Assign application roles
 
-When a tenant signs up, an AD admin for the tenant must assign application roles to users.
+After a tenant signs up, an AD admin for the tenant must assign application roles to users.
 
 1. Sign into the Azure management portal and navigate to the Azure AD tenant that signed up for the application.
 2. Click **Applications**. The portal will list `Survey` and `Survey.WebAPI` under "Applications that my company uses". If not, make sure you completed the sign up process.
 
-![Registered apps](media/running-the-app/registered-apps.png)
+![Registered apps](media/registered-apps.png)
 
 If you have Azure AD Premium:
 
@@ -259,18 +247,17 @@ If you have Azure AD Premium:
 
 4.	Click the top checkmark to search.
 
-    ![Assigned users](media/running-the-app/app-roles.png)
+    ![Assigned users](media/app-roles.png)
 
 5.	Select a user or group.
 
 6.	At the bottom of the portal, click **Assign**.
 
-    ![Assign button](media/running-the-app/assign-button.png)
+    ![Assign button](media/assign-button.png)
 
 7.	Select a role and click the bottom checkmark.
 
-    ![Assign a role to a user](media/running-the-app/assign-users.png)
-
+    ![Assign a role to a user](media/assign-users.png)
 
 If you do not have Azure AD Premium, the steps are similar, except there is no option for Groups:
 
@@ -286,9 +273,10 @@ Next, repeat the same steps to assign roles for the Survey.WebAPI application.
 
 Now go back to the app and sign in again. Click **My Surveys**. If the user is assigned to the SurveyAdmin or SurveyCreator role, you will see a **Create Survey** button, indicating that the user has permissions to create a new survey.
 
-![My surveys](media/running-the-app/screenshot3.png)
+![My surveys](media/screenshot3.png)
 
 
-<!-- links -->
-
+[aspnet]: https://docs.asp.net/en/latest/getting-started/installing-on-windows.html#install-asp-net-with-visual-studio
+[redis]: https://azure.microsoft.com/documentation/articles/cache-dotnet-how-to-use-azure-redis-cache/
+[portal]: https://manage.windowsazure.com
 [VS2015]: https://www.visualstudio.com/products/vs-2015-product-editions

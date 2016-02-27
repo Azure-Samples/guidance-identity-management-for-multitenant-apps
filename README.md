@@ -6,36 +6,32 @@ author: MikeWasson
 
 # Identity Management for Multitenant Applications in Microsoft Azure
 
-This sample shows how to manage user identities in a multitenant application on Microsoft Azure, using Azure Active Directory for authentication.
+This sample is a multitenant web application, called Surveys, that allows users to create online surveys. The sample demonstrates some key concerns when managing user identities in a multitenant application, including sign-up, authentication, authorization, and app roles.
 
-The project consists of:
+To run this sample, see [How to run the Tailspin Surveys sample application][running-the-app].
 
-- A reference implementation of a multi-tenant SaaS application.
-- Written guidance on best practices for identity management in multitenant applications on Microsoft Azure.
+We also created a set of [written guidance][guidance] to accompany the sample. The written guidance and the sample are designed to complement each other.
 
-The written guidance reflects what we learned in the process of building the application. To get started with the application, see [Running the Surveys application](docs/running-the-app.md).
+Here are the main scenarios covered in both the guidance and the sample:
 
-### Table of Contents
+- [Authentication using Azure Active Directory (Azure AD) and OpenID Connect][authn]
+- [Working with claims-based identities][claims]
+- [Tenant onboarding (signup)][signup]
+- [Application roles][app-roles]
+- [Role-based and resource-based authorization][authz]
+- [Authenticating in a backend web API][web-api]
+- [Caching OAuth tokens in a distributed cache][token-cache]
+- [Reading app configuration settings from Azure Key Vault][key-vault]  
 
-- [Introduction](docs/01-intro.md)
-- [About the Tailspin Surveys application](docs/02-tailspin-scenario.md)
-- [Authentication with Azure AD](docs/03-authentication.md)
-    - How to authenticate users from Azure Active Directory (Azure AD), using OpenID Connect (OIDC) to authenticate
-- [Working with claims](docs/04-working-with-claims.md)
-- [Sign-up and tenant onboarding](docs/05-tenant-signup.md)
-    - How to implement a sign-up process that allows a customer to sign up their organization for your application
-- [Application roles](docs/06-application-roles.md)
-    - How to define and manage application roles.
-- [Authorization](docs/07-authorization.md)
-    - Role-based authorization
-    - Resource-based authorization
-- [Securing a backend web API](docs/08-web-api.md)
-    - How to use bearer tokens to authenticate calls from the web app to a backend web API.
-- [Caching access tokens](docs/09-token-caching.md)
-    - Caching OAuth2 access tokens in a web app.
-- Appendixes
-    - [Federating with a customer's AD FS](docs/appendixes/adfs.md)
-    - [Using client assertion to get access tokens from Azure AD](docs/appendixes/client-assertion.md)
-    - [Using Key Vault to protect application secrets](docs/appendixes/key-vault.md)
-    - [Overview of OAuth 2 and OpenID Connect](docs/appendixes/about-oauth2-oidc.md)
-    - [Understanding ASP.NET 5 authorization handlers](docs/appendixes/aspnet5-authorization.md)
+<!-- links -->
+
+[guidance]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity
+[authn]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity-authenticate
+[claims]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity-claims
+[signup]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity-signup
+[authz]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity-authorize
+[app-roles]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity-app-roles
+[token-cache]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity-token-cache
+[web-api]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity-web-api
+[key-vault]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity-key-vault
+[running-the-app]: docs/running-the-app.md
