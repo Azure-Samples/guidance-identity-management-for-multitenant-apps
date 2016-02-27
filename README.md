@@ -34,4 +34,4 @@ Here are the main scenarios covered in both the guidance and the sample:
 [token-cache]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity-token-cache
 [web-api]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity-web-api
 [key-vault]: https://azure.microsoft.com/documentation/articles/guidance-multitenant-identity-key-vault
-[running-the-app]: docs/running-the-app.md
+[running-the-app]: https://github.com/Azure-Samples/guidance-identity-management-for-multitenant-apps/blob/master/docs/running-the-app.md
