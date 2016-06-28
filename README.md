@@ -35,3 +35,7 @@ The written guidance reflects what we learned in the process of building the app
     - [Using Key Vault to protect application secrets](docs/appendixes/key-vault.md)
     - [Overview of OAuth 2 and OpenID Connect](docs/appendixes/about-oauth2-oidc.md)
     - [Understanding ASP.NET 5 authorization handlers](docs/appendixes/aspnet5-authorization.md)
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+
