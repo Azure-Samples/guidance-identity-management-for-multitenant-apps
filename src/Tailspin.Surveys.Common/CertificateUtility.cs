@@ -38,8 +38,8 @@ namespace Tailspin.Surveys.Common
             }
             finally
             {
-#if DNX451
-                // IDisposable not implemented in DNX451
+#if NET451
+                // IDisposable not implemented in NET451
                 store.Close();
 #else
                 // Close is private in DNXCORE, but Dispose calls close internally

@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.Data.Entity;
-using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Metadata;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 
 namespace Tailspin.Surveys.Data.DataModels
@@ -15,11 +15,8 @@ namespace Tailspin.Surveys.Data.DataModels
 
         }
 
-        // For unit testing
-        public ApplicationDbContext(IServiceProvider provider, DbContextOptions options) : base(provider, options)
-        {
-
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -91,6 +88,11 @@ namespace Tailspin.Surveys.Data.DataModels
                     .HasMaxLength(256);
                 b.Property(cr => cr.SurveyId)
                     .IsRequired();
+            });
+
+            modelBuilder.Entity<SurveyContributor>(b =>
+            {
+                b.ToTable("SurveyContributor");
             });
         }
 

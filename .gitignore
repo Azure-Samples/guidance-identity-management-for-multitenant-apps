@@ -1,8 +1,12 @@
 ﻿#please don't put the ignore folder in the first line. it will not be processed.
 /.vs
+/.vscode
 /artifacts
 /src/Tailspin.Surveys.Web/node_modules
 /src/Tailspin.Surveys.Web/wwwroot/lib
+
+bin/
+obj/
 
 *.user
 *.publishproj

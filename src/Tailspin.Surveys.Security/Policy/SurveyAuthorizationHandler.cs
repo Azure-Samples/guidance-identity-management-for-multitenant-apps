@@ -5,8 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Authorization.Infrastructure;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Tailspin.Surveys.Data.DataModels;
 
@@ -51,7 +52,7 @@ namespace Tailspin.Surveys.Security.Policy
             _logger = logger;
         }
 
-        protected override void Handle(AuthorizationContext context, OperationAuthorizationRequirement operation, Survey resource)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement requirement, Survey resource)
         {
             // if the survey is in the same tenant
             //      Add SURVEYADMIN/SURVEYCREATER/SURVEYREADER to permission set
@@ -70,8 +71,8 @@ namespace Tailspin.Surveys.Security.Policy
                 // Admin can do anything, as long as the resource belongs to the admin's tenant.
                 if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin))
                 {
-                    context.Succeed(operation);
-                    return;
+                    context.Succeed(requirement);
+                    return Task.FromResult(0);
                 }
 
                 if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyCreator))
@@ -93,11 +94,13 @@ namespace Tailspin.Surveys.Security.Policy
                 permissions.Add(UserPermissionType.Contributor);
             }
 
-            if (ValidateUserPermissions[operation](permissions))
+            if (ValidateUserPermissions[requirement](permissions))
             {
-                _logger.ValidatePermissionsSucceeded(user, context.User.GetTenantIdValue(), operation.Name, permissions.Select(p => p.ToString()));
-                context.Succeed(operation);
+                _logger.ValidatePermissionsSucceeded(user, context.User.GetTenantIdValue(), requirement.Name, permissions.Select(p => p.ToString()));
+                context.Succeed(requirement);
             }
+
+            return Task.FromResult(0);
         }
     }
 }

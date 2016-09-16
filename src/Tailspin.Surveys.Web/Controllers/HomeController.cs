@@ -2,9 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using Microsoft.AspNet.Diagnostics;
-using Microsoft.AspNet.Http.Features;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Tailspin.Surveys.Web.Services;
 
 namespace Tailspin.Surveys.Web.Controllers
@@ -33,7 +33,7 @@ namespace Tailspin.Surveys.Web.Controllers
                 return View(result.Item);
             }
 
-            return new HttpStatusCodeResult(result.StatusCode);
+            return new ObjectResult(result.StatusCode);
         }
 
         /// <summary>

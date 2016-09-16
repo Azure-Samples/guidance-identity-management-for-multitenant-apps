@@ -1,21 +1,25 @@
 {
   "version": "1.0.0-*",
   "description": "Tailspin.Surveys.Common Class Library",
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
-  "frameworks": {
-    "dnx451": {
-      "dependencies": {
-      }
-    },
-    "dnxcore50": { }
-  },
+  
   "dependencies": {
-    "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
-    "System.Net.Http": "4.0.1-beta-23516",
+    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
+    "System.Net.Http": "4.1.0",
     "Newtonsoft.Json": "7.0.1"
+  },
+  
+  "frameworks": {
+    "net451": {
+      "dependencies": { }
+    },
+    "netcoreapp1.0": {
+      "imports": [
+        "dotnet5.6",
+        "dnxcore50",
+        "portable-net45+win8"
+      ]
+    }
   }
 }

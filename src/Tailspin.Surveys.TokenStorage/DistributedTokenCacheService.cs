@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.DataProtection;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
@@ -21,9 +21,9 @@ namespace Tailspin.Surveys.TokenStorage
         /// <summary>
         /// Initializes a new instance of <see cref="Tailspin.Surveys.TokenStorage.DistributedTokenCacheService"/>
         /// </summary>
-        /// <param name="contextAccessor">An instance of <see cref="Microsoft.AspNet.Http.IHttpContextAccessor"/> used to get access to the current HTTP context.</param>
+        /// <param name="contextAccessor">An instance of <see cref="Microsoft.AspNetCore.Http.IHttpContextAccessor"/> used to get access to the current HTTP context.</param>
         /// <param name="loggerFactory"><see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> used to create type-specific <see cref="Microsoft.Extensions.Logging.ILogger"/> instances.</param>
-        /// <param name="dataProtectionProvider">An <see cref="Microsoft.AspNet.DataProtection.IDataProtectionProvider"/> for creating a data protector.</param>
+        /// <param name="dataProtectionProvider">An <see cref="Microsoft.AspNetCore.DataProtection.IDataProtectionProvider"/> for creating a data protector.</param>
         public DistributedTokenCacheService(
             IDistributedCache distributedCache,
             IHttpContextAccessor contextAccessor,

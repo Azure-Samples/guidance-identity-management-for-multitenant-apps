@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using Microsoft.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Tailspin.Surveys.Data.DataModels;
 
 namespace Tailspin.Surveys.Data.DataStore

@@ -5,8 +5,8 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.Data.DataModels

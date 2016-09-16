@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.DataProtection;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Tailspin.Surveys.Common;
+using System.Threading;
+using Microsoft.AspNetCore.Http.Authentication;
 
 namespace Tailspin.Surveys.TokenStorage
 {
@@ -26,7 +28,7 @@ namespace Tailspin.Surveys.TokenStorage
         /// <param name="claimsPrincipal">A <see cref="System.Security.Claims.ClaimsPrincipal"/> for the signed in user</param>
         /// <param name="distributedCache">An implementation of <see cref="Microsoft.Extensions.Caching.Distributed.IDistributedCache"/> in which to store the access tokens.</param>
         /// <param name="loggerFactory"><see cref="Microsoft.Extensions.Logging.ILoggerFactory"/> used to create type-specific <see cref="Microsoft.Extensions.Logging.ILogger"/> instances.</param>
-        /// <param name="dataProtectionProvider">An <see cref="Microsoft.AspNet.DataProtection.IDataProtectionProvider"/> for creating a data protector.</param>
+        /// <param name="dataProtectionProvider">An <see cref="Microsoft.AspNetCore.DataProtection.IDataProtectionProvider"/> for creating a data protector.</param>
         public DistributedTokenCache(
             ClaimsPrincipal claimsPrincipal,
             IDistributedCache distributedCache,

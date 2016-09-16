@@ -13,6 +13,7 @@ namespace Tailspin.Surveys.Common.Configuration
         public string ClientSecret { get; set; }
         public string PostLogoutRedirectUri { get; set; }
         public string WebApiResourceId { get; set; }
+        public string Tenant { get; set; }
 
         public AsymmetricEncryptionOptions Asymmetric { get; set; }
 

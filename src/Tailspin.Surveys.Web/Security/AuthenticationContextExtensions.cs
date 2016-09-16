@@ -31,9 +31,11 @@ namespace Tailspin.Surveys.Web.Security
 
             switch (credentials.CredentialType)
             {
+#if NET451
                 case AdalCredentialType.ClientAssertionCertificate:
                     return authenticationContext.AcquireTokenByAuthorizationCodeAsync(authorizationCode, redirectUri,
                         credentials.ClientAssertionCertificate, resource);
+#endif
                 case AdalCredentialType.ClientCredential:
                     return authenticationContext.AcquireTokenByAuthorizationCodeAsync(authorizationCode, redirectUri,
                         credentials.ClientCredential, resource);
@@ -62,8 +64,10 @@ namespace Tailspin.Surveys.Web.Security
 
             switch (credentials.CredentialType)
             {
+#if NET451
                 case AdalCredentialType.ClientAssertionCertificate:
                     return authenticationContext.AcquireTokenSilentAsync(resource, credentials.ClientAssertionCertificate, userId);
+#endif
                 case AdalCredentialType.ClientCredential:
                     return authenticationContext.AcquireTokenSilentAsync(resource, credentials.ClientCredential, userId);
                 default:

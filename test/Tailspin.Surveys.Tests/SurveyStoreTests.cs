@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Tailspin.Surveys.Data.DataModels;
-using Microsoft.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Tailspin.Surveys.Data.DataStore;
-using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Tailspin.Surveys.Tests

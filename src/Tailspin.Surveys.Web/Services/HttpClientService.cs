@@ -3,9 +3,9 @@
 
 using System;
 using System.Net.Http;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 using Tailspin.Surveys.Web.Configuration;
 using Tailspin.Surveys.Web.Logging;
 

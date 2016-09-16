@@ -3,7 +3,7 @@
 
 using Tailspin.Surveys.Common.Configuration;
 
-namespace Tailspin.Surveys.WebApi.Configuration
+namespace Tailspin.Surveys.WebAPI.Configuration
 {
     /// <summary>
     /// This class holds various configuration values used by the Tailspin.Surveys.WebApi project.

@@ -1,25 +1,25 @@
-﻿{
+{
   "version": "1.0.0-*",
   "description": "Tailspin.Surveys.Configuration.KeyVault Class Library",
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
+
+  "dependencies": {
+    "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.13.4",
+    "Tailspin.Surveys.Common": "1.0.0-*"
+  },
+  
   "frameworks": {
-    "dnx451": {
+    "net451": {
       "frameworkAssemblies": {
         "System.Runtime": "4.0.10.0",
         "System.Threading.Tasks": "4.0.0.0"
       },
       "dependencies": {
-        "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.5.208051316-alpha",
-        "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
-        "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.Abstractions": "1.0.0",
+        "Microsoft.Extensions.Configuration": "1.0.0",
         "Microsoft.Azure.KeyVault": "1.0.0"
       }
     }
-  },
-  "dependencies": {
-    "Tailspin.Surveys.Common": "1.0.0-*"
   }
+  
 }
 

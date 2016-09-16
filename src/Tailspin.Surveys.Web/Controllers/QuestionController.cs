@@ -3,15 +3,15 @@
 
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Tailspin.Surveys.Data.DTOs;
 using Tailspin.Surveys.Web.Security;
 using Tailspin.Surveys.Web.Services;
-using Microsoft.AspNet.Authentication.OpenIdConnect;
-using Microsoft.AspNet.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Tailspin.Surveys.Web.Models;
-using Microsoft.AspNet.Http.Authentication;
+using Microsoft.AspNetCore.Http.Authentication;
 
 namespace Tailspin.Surveys.Web.Controllers
 {
