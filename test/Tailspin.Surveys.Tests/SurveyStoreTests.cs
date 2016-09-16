@@ -19,48 +19,52 @@ namespace Tailspin.Surveys.Tests
 
     public class SurveyStoreTests
     {
-        private readonly ServiceCollection _serviceCollection;
-        private readonly DbContextOptions<ApplicationDbContext> _options;
-
-        public SurveyStoreTests()
+        // FROM: https://docs.efproject.net/en/latest/miscellaneous/testing.html Revision 50e38b00
+        private static DbContextOptions<ApplicationDbContext> CreateNewContextOptions()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseInMemoryDatabase();
-            _options = optionsBuilder.Options;
+            // Create a fresh service provider, and therefore a fresh 
+            // InMemory database instance.
+            var serviceProvider = new ServiceCollection()
+                .AddEntityFrameworkInMemoryDatabase()
+                .BuildServiceProvider();
 
-            _serviceCollection = new ServiceCollection();
-            _serviceCollection
-                .AddEntityFramework()
-                .AddInMemoryDatabase();
-            _serviceCollection.AddTransient<ApplicationDbContext>(provider => new ApplicationDbContext(provider, _options));
-            _serviceCollection.AddTransient<SqlServerSurveyStore>();
-        }
+            // Create a new options instance telling the context to use an
+            // InMemory database and the new service provider.
+            var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            builder.UseInMemoryDatabase()
+                   .UseInternalServiceProvider(serviceProvider);
 
-        private ApplicationDbContext GetContext(IServiceProvider provider)
-        {
-            return new ApplicationDbContext(provider, _options);
+            return builder.Options;
         }
 
         [Fact]
         public async Task GetSurveyAsync_Returns_CorrectSurvey()
         {
-            IServiceProvider provider = _serviceCollection.BuildServiceProvider();
-            using (var context = provider.GetService<ApplicationDbContext>())
+            // All contexts that share the same service provider will share the same InMemory database
+            var options = CreateNewContextOptions();
+
+            using (var context = new ApplicationDbContext(options))
             {
                 context.Add(new Survey { Id = 1 });
                 context.SaveChanges();
             }
 
-            var store = provider.GetService<SqlServerSurveyStore>();
-            var result = await store.GetSurveyAsync(1);
-            Assert.Equal(1, result.Id);
+            using (var context = new ApplicationDbContext(options))
+            {
+                var store = new SqlServerSurveyStore(context);
+                var result = await store.GetSurveyAsync(1);
+                Assert.Equal(1, result.Id);
+            }
         }
 
         [Fact]
         public async Task GetSurveyAsync_Returns_Survey_Contributors()
         {
-            IServiceProvider provider = _serviceCollection.BuildServiceProvider();
-            using (var context = provider.GetService<ApplicationDbContext>())
+            // All contexts that share the same service provider will share the same InMemory database
+            var options = CreateNewContextOptions();
+
+            // Run the test against one instance of the context
+            using (var context = new ApplicationDbContext(options))
             {
                 var survey = new Survey
                 {
@@ -74,18 +78,25 @@ namespace Tailspin.Surveys.Tests
                 context.SaveChanges();
             }
 
-            var store = provider.GetService<SqlServerSurveyStore>();
-            var result = await store.GetSurveyAsync(1);
+            // Use a separate instance of the context to verify correct data was saved to database
+            using (var context = new ApplicationDbContext(options))
+            {
+                var store = new SqlServerSurveyStore(context);
+                var result = await store.GetSurveyAsync(1);
 
-            Assert.NotNull(result.Contributors);
-            Assert.NotEmpty(result.Contributors);
+                Assert.NotNull(result.Contributors);
+                Assert.NotEmpty(result.Contributors);
+            }
         }
 
         [Fact]
         public async Task GetSurveyAsync_Returns_Survey_Questions()
         {
-            IServiceProvider provider = _serviceCollection.BuildServiceProvider();
-            using (var context = provider.GetService<ApplicationDbContext>())
+            // All contexts that share the same service provider will share the same InMemory database
+            var options = CreateNewContextOptions();
+
+            // Run the test against one instance of the context
+            using (var context = new ApplicationDbContext(options))
             {
                 var survey = new Survey
                 {
@@ -99,18 +110,25 @@ namespace Tailspin.Surveys.Tests
                 context.SaveChanges();
             }
 
-            var store = provider.GetService<SqlServerSurveyStore>();
-            var result = await store.GetSurveyAsync(1);
+            // Use a separate instance of the context to verify correct data was saved to database
+            using (var context = new ApplicationDbContext(options))
+            {
+                var store = new SqlServerSurveyStore(context);
+                var result = await store.GetSurveyAsync(1);
 
-            Assert.NotNull(result.Questions);
-            Assert.NotEmpty(result.Questions);
+                Assert.NotNull(result.Questions);
+                Assert.NotEmpty(result.Questions);
+            }
         }
 
         [Fact]
         public async Task GetSurveyAsync_Returns_Survey_Requests()
         {
-            IServiceProvider provider = _serviceCollection.BuildServiceProvider();
-            using (var context = provider.GetService<ApplicationDbContext>())
+            // All contexts that share the same service provider will share the same InMemory database
+            var options = CreateNewContextOptions();
+
+            // Run the test against one instance of the context
+            using (var context = new ApplicationDbContext(options))
             {
                 var survey = new Survey
                 {
@@ -124,18 +142,25 @@ namespace Tailspin.Surveys.Tests
                 context.SaveChanges();
             }
 
-            var store = provider.GetService<SqlServerSurveyStore>();
-            var result = await store.GetSurveyAsync(1);
+            // Use a separate instance of the context to verify correct data was saved to database
+            using (var context = new ApplicationDbContext(options))
+            {
+                var store = new SqlServerSurveyStore(context);
+                var result = await store.GetSurveyAsync(1);
 
-            Assert.NotNull(result.Requests);
-            Assert.NotEmpty(result.Requests);
+                Assert.NotNull(result.Requests);
+                Assert.NotEmpty(result.Requests);
+            }
         }
 
         [Fact]
         public async Task GetSurveysByOwnerAsync_Returns_CorrectSurveys()
         {
-            IServiceProvider provider = _serviceCollection.BuildServiceProvider();
-            using (var context = provider.GetService<ApplicationDbContext>())
+            // All contexts that share the same service provider will share the same InMemory database
+            var options = CreateNewContextOptions();
+
+            // Run the test against one instance of the context
+            using (var context = new ApplicationDbContext(options))
             {
                 context.AddRange(
                     new Survey { Id = 1, OwnerId = 1 },
@@ -145,19 +170,26 @@ namespace Tailspin.Surveys.Tests
                 context.SaveChanges();
             }
 
-            var store = provider.GetService<SqlServerSurveyStore>();
-            var result = await store.GetSurveysByOwnerAsync(1);
+            // Use a separate instance of the context to verify correct data was saved to database
+            using (var context = new ApplicationDbContext(options))
+            {
+                var store = new SqlServerSurveyStore(context);
+                var result = await store.GetSurveysByOwnerAsync(1);
 
-            Assert.NotEmpty(result);
-            // Returned collection should only contain surveys with the matching owner ID.
-            Assert.True(result.All(s => s.OwnerId == 1));
+                Assert.NotEmpty(result);
+                // Returned collection should only contain surveys with the matching owner ID.
+                Assert.True(result.All(s => s.OwnerId == 1));
+            }
         }
 
         [Fact]
         public async Task GetPublishedSurveysByOwnerAsync_Returns_PublishedSurveys()
         {
-            IServiceProvider provider = _serviceCollection.BuildServiceProvider();
-            using (var context = provider.GetService<ApplicationDbContext>())
+            // All contexts that share the same service provider will share the same InMemory database
+            var options = CreateNewContextOptions();
+
+            // Run the test against one instance of the context
+            using (var context = new ApplicationDbContext(options))
             {
                 context.AddRange(
                     new Survey { Id = 1, OwnerId = 1 },
@@ -168,19 +200,26 @@ namespace Tailspin.Surveys.Tests
                 context.SaveChanges();
             }
 
-            var store = provider.GetService<SqlServerSurveyStore>();
-            var result = await store.GetPublishedSurveysByOwnerAsync(1);
+            // Use a separate instance of the context to verify correct data was saved to database
+            using (var context = new ApplicationDbContext(options))
+            {
+                var store = new SqlServerSurveyStore(context);
+                var result = await store.GetPublishedSurveysByOwnerAsync(1);
 
-            Assert.Equal(2, result.Count);
-            Assert.True(result.All(s => s.OwnerId == 1));  // must match owner ID
-            Assert.True(result.All(s => s.Published == true)); // only published surveys
+                Assert.Equal(2, result.Count);
+                Assert.True(result.All(s => s.OwnerId == 1));  // must match owner ID
+                Assert.True(result.All(s => s.Published == true)); // only published surveys
+            }
         }
 
         [Fact]
         public async Task GetSurveysByContributorAsync_Returns_CorrectSurveys()
         {
-            IServiceProvider provider = _serviceCollection.BuildServiceProvider();
-            using (var context = provider.GetService<ApplicationDbContext>())
+            // All contexts that share the same service provider will share the same InMemory database
+            var options = CreateNewContextOptions();
+
+            // Run the test against one instance of the context
+            using (var context = new ApplicationDbContext(options))
             {
                 context.AddRange(
                     new SurveyContributor { SurveyId = 1, UserId = 10 },
@@ -197,19 +236,26 @@ namespace Tailspin.Surveys.Tests
                 context.SaveChanges();
             }
 
-            var store = provider.GetService<SqlServerSurveyStore>();
-            var result = await store.GetSurveysByContributorAsync(10);
+            // Use a separate instance of the context to verify correct data was saved to database
+            using (var context = new ApplicationDbContext(options))
+            {
+                var store = new SqlServerSurveyStore(context);
+                var result = await store.GetSurveysByContributorAsync(10);
 
-            Assert.Equal(2, result.Count);
-            Assert.Contains(result, s => s.Id == 1);
-            Assert.Contains(result, s => s.Id == 2);
+                Assert.Equal(2, result.Count);
+                Assert.Contains(result, s => s.Id == 1);
+                Assert.Contains(result, s => s.Id == 2);
+            }
         }
 
         [Fact]
         public async Task GetPublishedSurveysByTenantAsync_Returns_CorrectSurveys()
         {
-            IServiceProvider provider = _serviceCollection.BuildServiceProvider();
-            using (var context = provider.GetService<ApplicationDbContext>())
+            // All contexts that share the same service provider will share the same InMemory database
+            var options = CreateNewContextOptions();
+
+            // Run the test against one instance of the context
+            using (var context = new ApplicationDbContext(options))
             {
                 context.AddRange(
                     new Survey { Id = 1, TenantId = 1 },
@@ -220,18 +266,25 @@ namespace Tailspin.Surveys.Tests
                 context.SaveChanges();
             }
 
-            var store = provider.GetService<SqlServerSurveyStore>();
-            var result = await store.GetPublishedSurveysByTenantAsync(1);
+            // Use a separate instance of the context to verify correct data was saved to database
+            using (var context = new ApplicationDbContext(options))
+            {
+                var store = new SqlServerSurveyStore(context);
+                var result = await store.GetPublishedSurveysByTenantAsync(1);
 
-            Assert.Equal(1, result.Count);
-            Assert.Equal(2, result.First().Id);
+                Assert.Equal(1, result.Count);
+                Assert.Equal(2, result.First().Id);
+            }
         }
 
         [Fact]
         public async Task GetUnPublishedSurveysByTenantAsync_Returns_CorrectSurveys()
         {
-            IServiceProvider provider = _serviceCollection.BuildServiceProvider();
-            using (var context = provider.GetService<ApplicationDbContext>())
+            // All contexts that share the same service provider will share the same InMemory database
+            var options = CreateNewContextOptions();
+
+            // Run the test against one instance of the context
+            using (var context = new ApplicationDbContext(options))
             {
                 context.AddRange(
                     new Survey { Id = 1, TenantId = 1 },
@@ -242,18 +295,25 @@ namespace Tailspin.Surveys.Tests
                 context.SaveChanges();
             }
 
-            var store = provider.GetService<SqlServerSurveyStore>();
-            var result = await store.GetUnPublishedSurveysByTenantAsync(1);
+            // Use a separate instance of the context to verify correct data was saved to database
+            using (var context = new ApplicationDbContext(options))
+            {
+                var store = new SqlServerSurveyStore(context);
+                var result = await store.GetUnPublishedSurveysByTenantAsync(1);
 
-            Assert.Equal(1, result.Count);
-            Assert.Equal(1, result.First().Id);
+                Assert.Equal(1, result.Count);
+                Assert.Equal(1, result.First().Id);
+            }
         }
 
         [Fact]
         public async Task GetPublishedSurveysAsync_Returns_CorrectSurveys()
         {
-            IServiceProvider provider = _serviceCollection.BuildServiceProvider();
-            using (var context = provider.GetService<ApplicationDbContext>())
+            // All contexts that share the same service provider will share the same InMemory database
+            var options = CreateNewContextOptions();
+
+            // Run the test against one instance of the context
+            using (var context = new ApplicationDbContext(options))
             {
                 context.AddRange(
                     new Survey { Id = 1, TenantId = 1 },
@@ -264,11 +324,15 @@ namespace Tailspin.Surveys.Tests
                 context.SaveChanges();
             }
 
-            var store = provider.GetService<SqlServerSurveyStore>();
-            var result = await store.GetPublishedSurveysAsync();
+            // Use a separate instance of the context to verify correct data was saved to database
+            using (var context = new ApplicationDbContext(options))
+            {
+                var store = new SqlServerSurveyStore(context);
+                var result = await store.GetPublishedSurveysAsync();
 
-            Assert.Equal(2, result.Count);
-            Assert.True(result.All(x => x.Published));
+                Assert.Equal(2, result.Count);
+                Assert.True(result.All(x => x.Published));
+            }
         }
     }
 }
