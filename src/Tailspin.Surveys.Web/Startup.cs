@@ -23,6 +23,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Tailspin.Surveys.Web
 {
@@ -175,8 +176,7 @@ namespace Tailspin.Surveys.Web
             app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions {
                 ClientId = configOptions.AzureAd.ClientId,
                 ClientSecret = configOptions.AzureAd.ClientSecret, // for code flow
-                Authority = string.Format(CultureInfo.InvariantCulture, Constants.AuthEndpointPrefix, configOptions.AzureAd.Tenant),
-                //Authority = configOptions.AzureAd.Tenant,
+                Authority = Constants.AuthEndpointPrefix,
                 ResponseType = OpenIdConnectResponseType.CodeIdToken,
                 PostLogoutRedirectUri = configOptions.AzureAd.PostLogoutRedirectUri,
                 SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme,

@@ -211,8 +211,7 @@ In this step, you will use Entity Framework 7 to create a local SQL database, us
 
 3.	Run the following commands:
 
-          dnvm use 1.0.0-rc1-final
-          dnx ef database update
+          dotnet ef database update
 
 ## Run the application
 

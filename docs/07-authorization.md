@@ -153,7 +153,7 @@ The application also defines a set of possible operations on surveys:
 
 The following code creates a list of permissions for a particular user and survey. Notice that this code looks at both the user's app roles, and the owner/contributor fields in the survey.
 
-    protected override void Handle(AuthorizationContext context, OperationAuthorizationRequirement operation, Survey resource)
+    protected override void HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement operation, Survey resource)
     {
         var permissions = new List<UserPermissionType>();
         string userTenantId = context.User.GetTenantIdValue();

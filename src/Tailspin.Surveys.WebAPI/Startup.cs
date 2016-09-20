@@ -116,7 +116,7 @@ namespace Tailspin.Surveys.WebAPI
 
             app.UseJwtBearerAuthentication(new JwtBearerOptions {
                 Audience = configOptions.AzureAd.WebApiResourceId,
-                Authority = string.Format(CultureInfo.InvariantCulture, Constants.AuthEndpointPrefix, configOptions.AzureAd.Tenant),
+                Authority = Constants.AuthEndpointPrefix,
                 TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters {
                     ValidateIssuer = false
                 },

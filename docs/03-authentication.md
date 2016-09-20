@@ -44,21 +44,20 @@ This section describes how to configure the authentication middleware in ASP.NET
 
 In your startup class, add the OpenID Connect middleware:
 
-    app.UseOpenIdConnectAuthentication(options =>
-    {
-        options.AutomaticAuthenticate = true;
-        options.AutomaticChallenge = true;
-        options.ClientId = [client ID];
-        options.Authority = "https://login.microsoftonline.com/common/";
-        options.CallbackPath = [callback path];
-        options.PostLogoutRedirectUri = [application URI];
-        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = false
-        };
-        options.Events = [event callbacks];
-    });
+    app.UseOpenIdConnectAuthentication(
+        new OpenIdConnectOptions {
+            ClientId = [client ID],
+            ClientSecret = [client Secret]
+            Authority = https://login.microsoftonline.com/common/,
+            ResponseType = OpenIdConnectResponseType.CodeIdToken,
+            PostLogoutRedirectUri = [application URI],
+            SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme,
+            TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false
+            },
+            Events = [event callbacks]
+        });
 
 > See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Startup.cs).
 

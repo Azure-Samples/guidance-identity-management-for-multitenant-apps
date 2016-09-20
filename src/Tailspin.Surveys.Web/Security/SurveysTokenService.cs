@@ -92,7 +92,7 @@ namespace Tailspin.Surveys.Web.Security
             Guard.ArgumentNotNull(claimsPrincipal, nameof(claimsPrincipal));
 
             return new AuthenticationContext(
-                string.Format(CultureInfo.InvariantCulture, Constants.AuthEndpointPrefix, _adOptions.Tenant),
+                Constants.AuthEndpointPrefix,
                 await _tokenCacheService.GetCacheAsync(claimsPrincipal)
                 .ConfigureAwait(false));
         }
