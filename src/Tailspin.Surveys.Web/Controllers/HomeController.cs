@@ -33,7 +33,7 @@ namespace Tailspin.Surveys.Web.Controllers
                 return View(result.Item);
             }
 
-            return new ObjectResult(result.StatusCode);
+            return StatusCode(result.StatusCode);
         }
 
         /// <summary>
