@@ -11,7 +11,7 @@ This chapter describes how a multitenant application can authenticate users from
 
 ## Overview
 
-Our [reference implementation](02-tailspin-scenario.md) is an ASP.NET 5 application. The application uses the built-in OpenID Connect middleware to perform the OIDC authentication flow. The following diagram shows what happens when the user signs in, at a high level.
+Our [reference implementation](02-tailspin-scenario.md) is an ASP.NET Core application. The application uses the built-in OpenID Connect middleware to perform the OIDC authentication flow. The following diagram shows what happens when the user signs in, at a high level.
 
 ![Authentication flow](media/authentication/auth-flow.png)
 
@@ -40,7 +40,7 @@ In the **Configure** page:
 
 ## Configuring the authentication middleware
 
-This section describes how to configure the authentication middleware in ASP.NET 5 for multitenant authentication with OpenID Connect.
+This section describes how to configure the authentication middleware in ASP.NET Core for multitenant authentication with OpenID Connect.
 
 In your startup class, add the OpenID Connect middleware:
 
@@ -62,7 +62,7 @@ In your startup class, add the OpenID Connect middleware:
 > See [Startup.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Startup.cs).
 
 
-> For more information about the startup class, see [Application Startup](https://docs.asp.net/en/latest/fundamentals/startup.html) in the ASP.NET 5 documentation.
+> For more information about the startup class, see [Application Startup](https://docs.asp.net/en/latest/fundamentals/startup.html) in the ASP.NET Core documentation.
 
 Set the following middleware options:
 

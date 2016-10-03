@@ -3,7 +3,7 @@ This topic describes how to run the [Tailspin Surveys](02-tailspin-scenario.md) 
 
 ## Prerequisites:
 -	[Visual Studio 2015][VS2015]
--	[ASP.NET 5 and Microsoft Web Developer Tools](https://docs.asp.net/en/latest/getting-started/installing-on-windows.html#install-asp-net-with-visual-studio)
+-	[ASP.NET Core and Microsoft Web Developer Tools](https://docs.asp.net/en/latest/getting-started/installing-on-windows.html#install-asp-net-with-visual-studio)
 -	[Microsoft Azure](https://azure.microsoft.com) account
 
 ## Set up your Azure AD directory

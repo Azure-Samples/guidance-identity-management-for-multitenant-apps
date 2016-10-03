@@ -43,7 +43,7 @@ When an anonymous user visits the Surveys application, the user is shown two but
 
 These buttons invoke actions in the [AccountController](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Controllers/AccountController.cs) class.
 
-The `SignIn` action returns a **ChallegeResult**, which causes the OpenID Connect middleware to redirect to the authentication endpoint. This is the default way to trigger authentication in ASP.NET 5.  
+The `SignIn` action returns a **ChallegeResult**, which causes the OpenID Connect middleware to redirect to the authentication endpoint. This is the default way to trigger authentication in ASP.NET Core.  
 
 ```
 [AllowAnonymous]
@@ -146,8 +146,6 @@ internal static bool IsSigningUp(this BaseControlContext context)
 
 > See [BaseControlContextExtensions.cs](https://github.com/mspnp/multitenant-saas-guidance/blob/master/src/Tailspin.Surveys.Web/Security/BaseControlContextExtensions.cs).
 
-> Note: This code includes a workaround for a known bug in ASP.NET 5 RC1. In the `RedirectToAuthenticationEndpoint` event, there is no way to get the authentication properties that contains the "signup" state. As a workaround, the `AccountController.SignUp` method also puts the "signup" state into the `HttpContext`. This works because `RedirectToAuthenticationEndpoint` happens before the redirect, so we still have the same `HttpContext`.
-
 ## Registering a Tenant
 
 The Surveys application stores some information about each tenant and user in the application database.
@@ -160,7 +158,7 @@ When a new tenant signs up, the Surveys application writes a tenant record to th
 
 Here is the relevant code from the Surveys application:
 
-    public override async Task AuthenticationValidated(AuthenticationValidatedContext context)
+    public override async Task TokenValidated(TokenValidatedContext context)
     {
         var principal = context.AuthenticationTicket.Principal;
         var userId = principal.GetObjectIdentifierValue();
@@ -186,7 +184,7 @@ Here is the relevant code from the Surveys application:
             }
 
             // In this case, we need to go ahead and set up the user signing us up.
-            await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant)
+            await CreateOrUpdateUserAsync(context.Ticket, userManager, tenant)
                 .ConfigureAwait(false);
         }
         else
@@ -197,7 +195,7 @@ Here is the relevant code from the Surveys application:
                 throw new SecurityTokenValidationException($"Tenant {issuerValue} is not registered");
             }
 
-            await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant)
+            await CreateOrUpdateUserAsync(context.Ticket, userManager, tenant)
                 .ConfigureAwait(false);
         }
     }
@@ -221,7 +219,7 @@ Here is the [SignUpTenantAsync](https://github.com/mspnp/multitenant-saas-guidan
         Guard.ArgumentNotNull(context, nameof(context));
         Guard.ArgumentNotNull(tenantManager, nameof(tenantManager));
 
-        var principal = context.AuthenticationTicket.Principal;
+        var principal = context.Ticket.Principal;
         var issuerValue = principal.GetIssuerValue();
         var tenant = new Tenant
         {

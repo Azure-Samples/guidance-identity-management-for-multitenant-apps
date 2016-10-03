@@ -32,7 +32,7 @@ tid	| Tenant ID. This value is a unique identifier for the tenant in Azure AD. E
 unique_name	| A human readable display name of the user. Example: `"alice@contoso.com"`
 upn	| User principal name. Example: `"alice@contoso.com"`
 
-This table lists the claim types as they appear in the ID token. In ASP.NET 5, the OpenID Connect middleware converts some of the claim types when it populates the Claims collection for the user principal:
+This table lists the claim types as they appear in the ID token. In ASP.NET Core, the OpenID Connect middleware converts some of the claim types when it populates the Claims collection for the user principal:
 
 -	oid > `http://schemas.microsoft.com/identity/claims/objectidentifier`
 -	tid > `http://schemas.microsoft.com/identity/claims/tenantid`
@@ -41,7 +41,7 @@ This table lists the claim types as they appear in the ID token. In ASP.NET 5, t
 
 ## Claims transformations
 
-During the authentication flow, you might want to modify the claims that you get from the IDP. In ASP.NET 5, you can perform claims transformation inside of the **AuthenticationValidated** event from the OpenID Connect middleware. (See [Authentication events](03-authentication.md#authentication-events).)
+During the authentication flow, you might want to modify the claims that you get from the IDP. In ASP.NET Core, you can perform claims transformation inside of the **AuthenticationValidated** event from the OpenID Connect middleware. (See [Authentication events](03-authentication.md#authentication-events).)
 
 Any claims that you add during **AuthenticationValidated** are stored in the session authentication cookie. They don't get pushed back to Azure AD.
 

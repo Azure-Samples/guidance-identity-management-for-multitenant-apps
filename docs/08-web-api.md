@@ -134,7 +134,7 @@ The following extension method from the Surveys application sets the Authorizati
 
 ## Authenticating in the web API
 
-The web API has to authenticate the bearer token. In ASP.NET 5, you can use the [Microsoft.AspNet.Authentication.JwtBearer][JwtBearer] package. This package provides middleware that enables the application to receive OpenID Connect bearer tokens.
+The web API has to authenticate the bearer token. In ASP.NET Core, you can use the [Microsoft.AspNet.Authentication.JwtBearer][JwtBearer] package. This package provides middleware that enables the application to receive OpenID Connect bearer tokens.
 
 Register the middleware in your web API `Startup` class.
 
