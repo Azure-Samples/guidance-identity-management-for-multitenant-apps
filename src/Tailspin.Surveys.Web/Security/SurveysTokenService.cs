@@ -5,13 +5,14 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Tailspin.Surveys.Common;
 using Tailspin.Surveys.Common.Configuration;
 using Tailspin.Surveys.TokenStorage;
 using Tailspin.Surveys.Web.Configuration;
 using Tailspin.Surveys.Web.Logging;
+using System.Globalization;
 
 namespace Tailspin.Surveys.Web.Security
 {
@@ -91,7 +92,7 @@ namespace Tailspin.Surveys.Web.Security
             Guard.ArgumentNotNull(claimsPrincipal, nameof(claimsPrincipal));
 
             return new AuthenticationContext(
-               Constants.AuthEndpointPrefix + claimsPrincipal.GetTenantIdValue(),
+                Constants.AuthEndpointPrefix,
                 await _tokenCacheService.GetCacheAsync(claimsPrincipal)
                 .ConfigureAwait(false));
         }

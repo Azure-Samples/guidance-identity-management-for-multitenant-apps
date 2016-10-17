@@ -1,10 +1,10 @@
-# ASP.NET 5 authorization handlers
+# ASP.NET Core authorization handlers
 
-In ASP.NET 5, authorization logic can be encapsulated by writing an _authorization handler_, which implements the IAuthorizationHandler interface. This appendix shows some patterns for writing authorization handlers. We'll start by implementing `IAuthorizationHandler` directly (it's not much code), then show the more typical approach, which is to derive from the abstract `AuthorizationHandler` class.
+In ASP.NET Core, authorization logic can be encapsulated by writing an _authorization handler_, which implements the IAuthorizationHandler interface. This appendix shows some patterns for writing authorization handlers. We'll start by implementing `IAuthorizationHandler` directly (it's not much code), then show the more typical approach, which is to derive from the abstract `AuthorizationHandler` class.
 
 ## What is an authorization handler?
 
-The [authorization APIs](https://docs.asp.net/en/latest/security/authorization/index.html) in ASP.NET 5 define three main abstractions:
+The [authorization APIs](https://docs.asp.net/en/latest/security/authorization/index.html) in ASP.NET Core define three main abstractions:
 
 -	**Authorization handler**. Makes authorization decisions
 -	**Authorization requirement**. Defines a requirement that must be met, in order to authorize an action.
@@ -171,7 +171,7 @@ It may seem redundant to define a requirement of type _T_ and a handler that act
 
 Here, `EmailRequirement` is both a requirement and a handler. Notice that it derives from **AuthorizationHandler** and specifies itself as the requirement type.
 
-ASP.NET 5 has a special built-in authorization handler, called the pass-through handler, that will invoke any requirement that is also a handler.
+ASP.NET Core has a special built-in authorization handler, called the pass-through handler, that will invoke any requirement that is also a handler.
 
 The pass-through handler is automatically registered when you call **AddAuthorization** on startup. That means you don't need to register `EmailRequirement` as an authorization handler, because the pass-through handler will automatically invoke it.
 

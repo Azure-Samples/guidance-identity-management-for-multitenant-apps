@@ -4,10 +4,10 @@
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Authentication.OpenIdConnect;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http.Authentication;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Tailspin.Surveys.Data.DataModels;
 using Tailspin.Surveys.Data.DTOs;
@@ -15,7 +15,7 @@ using Tailspin.Surveys.Security.Policy;
 using Tailspin.Surveys.Web.Logging;
 using Tailspin.Surveys.Web.Models;
 using Tailspin.Surveys.Web.Services;
-using Microsoft.AspNet.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
 using System.Linq;
 using Tailspin.Surveys.Web.Security;
@@ -59,7 +59,7 @@ namespace Tailspin.Surveys.Web.Controllers
                 var userId = User.GetSurveyUserIdValue();
                 var user = User.GetObjectIdentifierValue();
                 var issuerValue = User.GetIssuerValue();
-                var actionName = ActionContext.ActionDescriptor.Name;
+                var actionName = ControllerContext.ActionDescriptor.DisplayName;
                 _logger.GetSurveysForUserOperationStarted(actionName, user, issuerValue);
 
                 // The SurveyService.GetSurveysForUserAsync returns a UserSurveysDTO that has properties for Published, Own, and Contribute

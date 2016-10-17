@@ -5,7 +5,7 @@ using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 using Tailspin.Surveys.Common;
 using Tailspin.Surveys.Web.Configuration;
 
@@ -19,7 +19,8 @@ namespace Tailspin.Surveys.Web.Security
     public class CertificateCredentialService : ICredentialService
     {
         private Lazy<Task<AdalCredential>> _credential;
-        
+
+#if NET451
         /// <summary>
         /// Initializes a new instance of <see cref="Tailspin.Surveys.Security.CertificateCredentialService"/>.
         /// </summary>
@@ -39,9 +40,10 @@ namespace Tailspin.Surveys.Web.Security
                     aadOptions.Asymmetric.ValidationRequired);
                 string password = null;
                 var certBytes = CertificateUtility.ExportCertificateWithPrivateKey(cert, out password);
-                return Task.FromResult(new AdalCredential(new ClientAssertionCertificate(aadOptions.ClientId, certBytes, password)));
+                return Task.FromResult(new AdalCredential(new ClientAssertionCertificate(aadOptions.ClientId, new X509Certificate2(certBytes, password))));
             });
         }
+#endif
 
         /// <summary>
         /// Returns an instance of an <see cref="Tailspin.Surveys.Web.Security.AdalCredential"/> containing an instance of <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.ClientAssertionCertificate"/>.

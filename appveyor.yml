@@ -1,0 +1,12 @@
+version: 1.0.{build}
+before_build:
+- cmd: >-
+    dotnet restore
+build:
+  project: Tailspin.Surveys.sln
+  verbosity: minimal
+test_script:
+- cmd: >-
+    cd test/Tailspin.Surveys.Tests
+
+    dotnet test

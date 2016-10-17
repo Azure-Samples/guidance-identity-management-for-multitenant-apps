@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using Microsoft.AspNet.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Tailspin.Surveys.Common;
 
 namespace Tailspin.Surveys.Web.Security
@@ -35,8 +35,8 @@ namespace Tailspin.Surveys.Web.Security
             else
             {
                 // It's not in the HTTP context, so check the authentication ticket.  If it's not there, we aren't signing up.
-                if ((context.AuthenticationTicket == null) ||
-                    (!context.AuthenticationTicket.Properties.Items.TryGetValue("signup", out signupValue)))
+                if ((context.Ticket == null) ||
+                    (!context.Ticket.Properties.Items.TryGetValue("signup", out signupValue)))
                 {
                     return false;
                 }

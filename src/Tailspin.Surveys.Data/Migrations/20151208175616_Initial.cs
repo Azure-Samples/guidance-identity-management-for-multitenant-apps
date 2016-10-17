@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.Entity.Migrations;
-using Microsoft.Data.Entity.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Tailspin.Surveys.Data.Migrations
 {
@@ -17,7 +17,7 @@ namespace Tailspin.Surveys.Data.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ConcurrencyStamp = table.Column<string>(nullable: false),
                     Created = table.Column<DateTimeOffset>(nullable: false),
-                    IssuerValue = table.Column<string>(nullable: false)
+                    IssuerValue = table.Column<string>(maxLength: 450, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,7 +33,7 @@ namespace Tailspin.Surveys.Data.Migrations
                     Created = table.Column<DateTimeOffset>(nullable: false),
                     DisplayName = table.Column<string>(nullable: false),
                     Email = table.Column<string>(nullable: false),
-                    ObjectId = table.Column<string>(nullable: false),
+                    ObjectId = table.Column<string>(maxLength: 450, nullable: false),
                     TenantId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -74,7 +74,7 @@ namespace Tailspin.Surveys.Data.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Created = table.Column<DateTimeOffset>(nullable: false),
-                    EmailAddress = table.Column<string>(nullable: false),
+                    EmailAddress = table.Column<string>(maxLength: 254, nullable: false),
                     SurveyId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -93,7 +93,7 @@ namespace Tailspin.Surveys.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    PossibleAnswers = table.Column<string>(nullable: true),
+                    PossibleAnswers = table.Column<string>(nullable: false),
                     SurveyId = table.Column<int>(nullable: false),
                     Text = table.Column<string>(nullable: false),
                     Type = table.Column<int>(nullable: false)
@@ -134,6 +134,7 @@ namespace Tailspin.Surveys.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "SurveyIdEmailAddressIndex",
                 table: "ContributorRequest",
+                // FIX: Column 'EmailAddress' in table 'ContributorRequest' is of a type that is invalid for use as a key column in an index.
                 columns: new[] { "SurveyId", "EmailAddress" },
                 unique: true);
             migrationBuilder.CreateIndex(

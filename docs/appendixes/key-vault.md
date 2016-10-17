@@ -22,7 +22,7 @@ In the [Tailspin Surveys][Surveys] application, the following settings are secre
 - The Redis connection string.
 - The client secret for the web application.
 
-To store configuration secrets in Key Vault, the Surveys application implements a custom configuration provider, which hooks into the ASP.NET 5 [configuration system][configuration]. The custom provider reads configuration settings from Key Vault on startup.
+To store configuration secrets in Key Vault, the Surveys application implements a custom configuration provider, which hooks into the ASP.NET Core [configuration system][configuration]. The custom provider reads configuration settings from Key Vault on startup.
 
 The Surveys application loads configuration settings from the following places:
 
@@ -41,7 +41,7 @@ At startup, the application reads settings from every registered configuration p
 
 ## Implementation
 
-The [KeyVaultConfigurationProvider][KeyVaultConfigurationProvider] class is a configuration provider that plugs into the ASP.NET 5 [configuration system][configuration].
+The [KeyVaultConfigurationProvider][KeyVaultConfigurationProvider] class is a configuration provider that plugs into the ASP.NET Core [configuration system][configuration].
 
 To use the `KeyVaultConfigurationProvider`, call the `AddKeyVaultSecrets` extension method in the startup class:
 

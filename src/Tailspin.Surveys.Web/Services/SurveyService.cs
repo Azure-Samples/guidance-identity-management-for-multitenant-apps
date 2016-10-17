@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 using Tailspin.Surveys.Common;
 using Tailspin.Surveys.Data.DataModels;
 using Tailspin.Surveys.Data.DTOs;

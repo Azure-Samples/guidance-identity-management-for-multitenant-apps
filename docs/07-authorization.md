@@ -19,7 +19,7 @@ Roles apply to _users_ of the application. In the Surveys application, a user is
 
 For a discussion of how to define and manage roles, see [Application roles](06-application-roles.md).
 
-Regardless of how you manage the roles, your authorization code will look similar. ASP.NET 5 introduces an abstraction called _authorization policies_. With this feature, you define authorization policies in code, and then apply those policies to controller actions. The policy is decoupled from the controller.
+Regardless of how you manage the roles, your authorization code will look similar. ASP.NET Core introduces an abstraction called _authorization policies_. With this feature, you define authorization policies in code, and then apply those policies to controller actions. The policy is decoupled from the controller.
 
 ### Create policies
 
@@ -29,7 +29,7 @@ Here is an example from the Tailspin Surveys application:
 
     public class SurveyCreatorRequirement : AuthorizationHandler<SurveyCreatorRequirement>, IAuthorizationRequirement
     {
-        protected override void Handle(AuthorizationContext context, SurveyCreatorRequirement requirement)
+        protected override void HandleRequirementAsync(AuthorizationHandlerContext context, SurveyCreatorRequirement requirement)
         {
             if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin) ||
                 context.User.HasClaim(ClaimTypes.Role, Roles.SurveyCreator))
@@ -71,7 +71,7 @@ This code also sets the authentication scheme, which tells ASP.NET which authent
 Finally, to authorize an action in an MVC controller, set the policy in the `Authorize` attribute:
 
 ```
-[Authorize(Policy = "SurveyCreatorRequirement")]
+[Authorize(Policy = "RequireSurveyCreator")]
 public IActionResult Create()
 {
     // ...
@@ -86,7 +86,7 @@ In earlier versions of ASP.NET, you would set the **Roles** property on the attr
 
 ```
 
-This is still supported in ASP.NET 5, but it has some drawbacks compared with authorization policies:
+This is still supported in ASP.NET Core, but it has some drawbacks compared with authorization policies:
 
 -	It assumes a particular claim type. Policies can check for any claim type. Roles are just a type of claim.
 -	The role name is hard-coded into the attribute. With policies, the authorization logic is all in one place, making it easier to update or even load from configuration settings.
@@ -102,12 +102,12 @@ _Resource based authorization_ occurs whenever the authorization depends on a sp
 
 Note that "owner" and "contributor" are not application roles; they are stored per survey, in the application database. To check whether a user can delete a survey, for example, the app checks whether the user is the owner for that survey.
 
-In ASP.NET 5, implement resource-based authorization by deriving from **AuthorizationHandler** and overriding the **Handle** method.
+In ASP.NET Core, implement resource-based authorization by deriving from **AuthorizationHandler** and overriding the **Handle** method.
 
 ```
 public class SurveyAuthorizationHandler : AuthorizationHandler<OperationAuthorizationRequirement, Survey>
 {
-     protected override void Handle(AuthorizationContext context, OperationAuthorizationRequirement operation, Survey resource)
+     protected override void HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement operation, Survey resource)
     {
     }
 }
@@ -153,7 +153,7 @@ The application also defines a set of possible operations on surveys:
 
 The following code creates a list of permissions for a particular user and survey. Notice that this code looks at both the user's app roles, and the owner/contributor fields in the survey.
 
-    protected override void Handle(AuthorizationContext context, OperationAuthorizationRequirement operation, Survey resource)
+    protected override void HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement operation, Survey resource)
     {
         var permissions = new List<UserPermissionType>();
         string userTenantId = context.User.GetTenantIdValue();
@@ -227,7 +227,7 @@ static readonly Dictionary<OperationAuthorizationRequirement, Func<List<UserPerm
 
 - [Resource Based Authorization](https://docs.asp.net/en/latest/security/authorization/resourcebased.html) (ASP.NET documentation)
 - [Custom Policy-Based Authorization](https://docs.asp.net/en/latest/security/authorization/policies.html) (ASP.NET documentation)
-- [Understanding ASP.NET 5 authorization handlers](appendixes/aspnet5-authorization.md)
+- [Understanding ASP.NET Core authorization handlers](appendixes/aspnet5-authorization.md)
 
 
 [Tailspin]: 02-tailspin-scenario.md

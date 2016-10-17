@@ -1,24 +1,28 @@
 {
   "version": "1.0.0-*",
   "description": "Tailspin.Surveys.TokenStorage Class Library",
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
+  
   "dependencies": {
-    "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.5.208051316-alpha",
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
-    "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+    "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.13.4",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0",
+    "Microsoft.Extensions.DependencyInjection": "1.0.0",
+    "Microsoft.AspNetCore.DataProtection": "1.0.0",
     "Tailspin.Surveys.Common": "1.0.0-*",
     "Tailspin.Surveys.Security": "1.0.0-*"
   },
   "frameworks": {
-    "dnx451": {
+    "net451": {
       "frameworkAssemblies": {
         "System.Runtime": "4.0.10.0"
       }
     },
-    "dnxcore50": { }
+    "netcoreapp1.0": {
+      "imports": [
+        "dotnet5.6",
+        "dnxcore50",
+        "portable-net45+win8"
+      ]
+    }
   }
 }
 

@@ -2,7 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Tailspin.Surveys.Security.Policy
 {
@@ -12,13 +13,15 @@ namespace Tailspin.Surveys.Security.Policy
     /// </summary>
     public class SurveyAdminRequirement : AuthorizationHandler<SurveyAdminRequirement>, IAuthorizationRequirement
     {
-        protected override void Handle(AuthorizationContext context, SurveyAdminRequirement requirement)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, SurveyAdminRequirement requirement)
         {
             //Check user claims for Role
             if (context.User.HasClaim(ClaimTypes.Role, Roles.SurveyAdmin))
             {
                 context.Succeed(requirement);
             }
+
+            return Task.FromResult(0);
         }
     }
 }

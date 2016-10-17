@@ -12,10 +12,10 @@ Instead, you should implement a custom token cache that derives from the ADAL `T
 
 The `TokenCache` class stores a dictionary of tokens, indexed by issuer, resource, client ID, and user. A custom token cache should write this dictionary to a backing store, such as a Redis cache.
 
-In the Tailspin Surveys application, the `DistributedTokenCache` class implements the token cache. This implementation uses the [IDistributedCache][distributed-cache] abstraction from ASP.NET 5. That way, any `IDistributedCache` implementation can be used as a backing store.
+In the Tailspin Surveys application, the `DistributedTokenCache` class implements the token cache. This implementation uses the [IDistributedCache][distributed-cache] abstraction from ASP.NET Core. That way, any `IDistributedCache` implementation can be used as a backing store.
 
 -	By default, the Surveys app uses a Redis cache.
--	For a single-instance web server, you could use the ASP.NET 5 [in-memory cache][in-memory-cache]. (This is also a good option for running the app locally during development.)
+-	For a single-instance web server, you could use the ASP.NET Core [in-memory cache][in-memory-cache]. (This is also a good option for running the app locally during development.)
 
 > Currently the Redis cache is not supported for .NET Core.
 
@@ -27,7 +27,7 @@ The backing store is partitioned by user. For each HTTP request, the tokens for 
 
 ## Encrypting cached tokens
 
-Tokens are sensitive data, because they grant access to a user's resources. (Moreover, unlike a user's password, you can't just store a hash of the token.) Therefore, it's critical to protect tokens from being compromised. The Redis-backed cache is protected by a password, but if someone obtains the password, they could get all of the cached access tokens. For that reason, the `DistributedTokenCache` encrypts everything that it writes to the backing store. Encryption is done using the ASP.NET 5 [data protection][data-protection] APIs.
+Tokens are sensitive data, because they grant access to a user's resources. (Moreover, unlike a user's password, you can't just store a hash of the token.) Therefore, it's critical to protect tokens from being compromised. The Redis-backed cache is protected by a password, but if someone obtains the password, they could get all of the cached access tokens. For that reason, the `DistributedTokenCache` encrypts everything that it writes to the backing store. Encryption is done using the ASP.NET Core [data protection][data-protection] APIs.
 
 > If you deploy to Azure Web Sites, the encryption keys are backed up to network storage and synchronized across all machines (see [Key Management][key-management]). By default, keys are not encrypted when running in Azure Web Sites, but you can [enable encryption using an X.509 certificate][x509-cert-encryption].
 

@@ -1,21 +1,17 @@
 {
   "version": "1.0.0-*",
   "description": "Tailspin.Surveys.Tests Class Library",
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
-  "commands": {
-    "test": "xunit.runner.dnx"
-  },
+  "testRunner": "xunit",
+  
   "dependencies": {
     "Tailspin.Surveys.Web": "1.0.0-*",
-    "EntityFramework.InMemory": "7.0.0-rc1-final",
-    "xunit": "2.1.0",
-    "xunit.runner.dnx": "2.1.0-*",
+    "Microsoft.EntityFrameworkCore.InMemory": "1.0.0",
+    "xunit": "2.2.0-beta2-build3300",
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Moq": "4.2.1507.118",
     "Tailspin.Surveys.WebAPI": "1.0.0-*"
   },
   "frameworks": {
-    "dnx451": { }
+    "net451": { }
    }
 }
