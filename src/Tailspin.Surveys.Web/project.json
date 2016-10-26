@@ -4,19 +4,15 @@
     "version": "1.0.0-*",
 
   "dependencies": {
-    "Microsoft.EntityFrameworkCore.SqlServer": "1.0.0",
     "Microsoft.EntityFrameworkCore.Tools": {
       "version": "1.0.0-preview2-final",
       "type": "build"
     },
-    "Microsoft.AspNetCore.Mvc": "1.0.0",
-    "Microsoft.AspNetCore.Mvc.TagHelpers": "1.0.0",
     "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0",
     "Microsoft.AspNetCore.Authentication.OpenIdConnect": "1.0.0",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.0.0",
     "Microsoft.AspNetCore.Session": "1.0.0",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0",
     "Microsoft.AspNetCore.Razor.Tools": "1.0.0-preview2-final",
     "Microsoft.VisualStudio.Web.CodeGeneration.Tools": {
@@ -32,16 +28,21 @@
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
     "Tailspin.Surveys.Data": "1.0.0-*",
-    "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.0.0",
-    "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.13.4",
+    "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.13.5",
     "Tailspin.Surveys.Common": "1.0.0-*",
     "Tailspin.Surveys.Security": "1.0.0-*",
     "Tailspin.Surveys.TokenStorage": "1.0.0-*",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
-    "Microsoft.Extensions.Options": "1.0.0",
-    "Microsoft.Extensions.Caching.Abstractions": "1.0.0",
+    "Microsoft.Extensions.Options": "1.1.0-preview1-final",
+    "Microsoft.Extensions.Caching.Abstractions": "1.1.0-preview1-final",
     "Microsoft.Extensions.Caching.Memory": "1.0.0",
-    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0"
+    "Microsoft.Extensions.Caching.Redis":  "1.1.0-preview1-final",
+    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0",
+    "Microsoft.AspNetCore.Mvc": "1.0.1",
+    "Microsoft.AspNetCore.Mvc.TagHelpers": "1.0.1",
+    "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.0.1",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+    "Microsoft.EntityFrameworkCore.SqlServer": "1.0.1"
   },
 
   "tools": {
@@ -60,7 +61,6 @@
   "frameworks": {
     "net451": {
       "dependencies": {
-        "Microsoft.Extensions.Caching.Redis": "1.0.0",
         "Tailspin.Surveys.Configuration.KeyVault": "1.0.0-*"
       }
     },
@@ -72,8 +72,8 @@
       ],
       "dependencies": {
         "Microsoft.NETCore.App": {
-          "version": "1.0.0",
-          "type": "platform"
+          "type": "platform",
+          "version": "1.0.1"
         }
       }
     }
