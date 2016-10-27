@@ -3,7 +3,7 @@
   "description": "Tailspin.Surveys.Configuration.KeyVault Class Library",
 
   "dependencies": {
-    "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.13.4",
+    "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.13.5",
     "Tailspin.Surveys.Common": "1.0.0-*"
   },
   

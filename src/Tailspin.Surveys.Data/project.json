@@ -3,7 +3,6 @@
   "description": "Tailspin.Surveys.Data Class Library",
 
   "dependencies": {
-    "Microsoft.EntityFrameworkCore.SqlServer": "1.0.0",
     "Microsoft.EntityFrameworkCore.Tools": {
       "version": "1.0.0-preview2-final",
       "type": "build"
@@ -14,7 +13,8 @@
     "Tailspin.Surveys.Common": "1.0.0-*",
     "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0",
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
-    "Microsoft.Extensions.PlatformAbstractions": "1.0.0"
+    "Microsoft.Extensions.PlatformAbstractions": "1.0.0",
+    "Microsoft.EntityFrameworkCore.SqlServer": "1.0.1"
   },
 
   "frameworks": {

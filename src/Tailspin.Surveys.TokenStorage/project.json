@@ -3,7 +3,7 @@
   "description": "Tailspin.Surveys.TokenStorage Class Library",
   
   "dependencies": {
-    "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.13.4",
+    "Microsoft.IdentityModel.Clients.ActiveDirectory": "3.13.5",
     "Microsoft.Extensions.Logging.Abstractions": "1.0.0",
     "Microsoft.Extensions.DependencyInjection": "1.0.0",
     "Microsoft.AspNetCore.DataProtection": "1.0.0",

@@ -17,8 +17,6 @@ In the Tailspin Surveys application, the `DistributedTokenCache` class implement
 -	By default, the Surveys app uses a Redis cache.
 -	For a single-instance web server, you could use the ASP.NET Core [in-memory cache][in-memory-cache]. (This is also a good option for running the app locally during development.)
 
-> Currently the Redis cache is not supported for .NET Core.
-
 `DistributedTokenCache` stores the cache data as key/value pairs in the backing store. The key is the user ID plus client ID, so the backing store holds separate cache data for each unique combination of user/client.
 
 ![Token cache](media/token-caching/token-cache.png)
